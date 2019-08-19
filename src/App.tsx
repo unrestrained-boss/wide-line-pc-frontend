@@ -6,6 +6,7 @@ import {LoginPage} from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 
 const App: React.FC = () => {
+  console.log(process.env);
     return (
         <Router history={history}>
             <Switch>
