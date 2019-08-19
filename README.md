@@ -1,5 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+[![Build Status](https://travis-ci.org/unrestrained-boss/wide-line-pc-frontend.svg?branch=master)](https://travis-ci.org/unrestrained-boss/wide-line-pc-frontend)
+
 ## Available Scripts
 
 In the project directory, you can run:

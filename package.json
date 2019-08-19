@@ -2,6 +2,7 @@
   "name": "wide-line",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://unrestrained-boss.github.io/wide-line-pc-frontend",
   "dependencies": {
     "@types/jest": "24.0.17",
     "@types/node": "12.7.2",
@@ -19,7 +20,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build --help",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
