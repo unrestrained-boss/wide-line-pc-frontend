@@ -34,7 +34,7 @@ class ClrTable extends PureComponent<Props, State> {
         <colgroup>
           {columns.map(col => {
             return (
-              <col style={{width: col.width}}/>
+              <col key={col.title} style={{width: col.width}}/>
             );
           })}
         </colgroup>
@@ -42,7 +42,7 @@ class ClrTable extends PureComponent<Props, State> {
         <tr>
           {columns.map(col => {
             return (
-              <th style={{textAlign: col.align || 'left'}}>{col.title}</th>
+              <th key={col.title} style={{textAlign: col.align || 'left'}}>{col.title}</th>
             );
           })}
         </tr>
@@ -51,9 +51,9 @@ class ClrTable extends PureComponent<Props, State> {
         <tbody>
         {data.map((item, index) => {
           return (
-            <tr>{columns.map(col => {
+            <tr key={index}>{columns.map(col => {
               return (
-                <td style={{textAlign: col.align || 'left'}}>{col.render ? col.render(item, index, data) : item[col.dataIndex as string]}</td>
+                <td key={col.title} style={{textAlign: col.align || 'left'}}>{col.render ? col.render(item, index, data) : item[col.dataIndex as string]}</td>
               );
             })}</tr>
           );

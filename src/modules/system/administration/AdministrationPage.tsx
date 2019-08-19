@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import ClrTable, {ITableColumn, ITableData} from "../../../components/clr-table/ClrTable";
 import ClrButton from "../../../components/clr-button/ClrButton";
+import {openModal} from "../../../components/clr-modal/ClrModalService";
 
 interface OwnProps {
 }
@@ -44,7 +45,9 @@ class AdministrationPage extends PureComponent<Props, State> {
         title: '操作', align: 'center', width: '160px', render: (row, index, data) => {
           return (
             <>
-              <ClrButton onClick={e => console.log(row, index, data, e)} type="primary">编辑</ClrButton>
+              <ClrButton onClick={(e) => {
+                openModal(<ClrButton>123</ClrButton>, { title: '编辑 Banner'});
+              }} type="primary">编辑</ClrButton>
               &nbsp;&nbsp;
               <ClrButton onClick={e => console.log(row, index, data, e)} type="danger">删除</ClrButton>
             </>
