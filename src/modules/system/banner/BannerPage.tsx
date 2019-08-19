@@ -1,17 +1,14 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 
-interface OwnProps {}
+interface OwnProps {
+}
 
 type Props = OwnProps;
 
-type State = Readonly<{
-
-}>;
+type State = Readonly<{}>;
 
 class BannerPage extends PureComponent<Props, State> {
-  readonly state: State = {
-
-  };
+  readonly state: State = {};
 
   render() {
     return (

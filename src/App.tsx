@@ -7,16 +7,16 @@ import NotFound from "./pages/NotFound";
 
 const App: React.FC = () => {
   console.log(process.env);
-    return (
-        <Router history={history}>
-            <Switch>
-                <Route path={dashBoardPath} component={DashBoardPage}/>
-                <Redirect exact path="/" to={dashBoardPath}/>
-                <Route exact path="/login" component={LoginPage}/>
-                <Route component={NotFound}/>
-            </Switch>
-        </Router>
-    );
+  return (
+    <Router history={history}>
+      <Switch>
+        <Route path={dashBoardPath} component={DashBoardPage}/>
+        <Redirect exact path="/" to={dashBoardPath}/>
+        <Route exact path="/login" component={LoginPage}/>
+        <Route component={NotFound}/>
+      </Switch>
+    </Router>
+  );
 };
 
 export default App;
