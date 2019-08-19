@@ -15,7 +15,7 @@ class BannerPage extends PureComponent<Props, State> {
 
   render() {
     return (
-      <div>BannerPage</div>
+      <div>BannerPage1</div>
     );
   }
 }
