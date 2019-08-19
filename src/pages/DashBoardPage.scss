@@ -1,0 +1,20 @@
+.dashboard-container {
+  height: 100%;
+  width: 100%;
+  background-color: #FAFAFA;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    flex: 1;
+    height: 0;
+    display: flex;
+    .router-outlet {
+      flex: 1;
+      width: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+  }
+}
