@@ -24,9 +24,9 @@ $tableSmallHeight: 32px;
   }
 
   td {
-    * {
-      vertical-align: middle;
-    }
+    //>* {
+    //  vertical-align: middle;
+    //}
     img {
       padding: 10px 0;
     }

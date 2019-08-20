@@ -1,0 +1,51 @@
+$primaryActiveColor: #2478B8;
+.clr-switch {
+  cursor: pointer;
+  display: inline-block;
+  > i {
+    vertical-align: middle;
+    padding: 0 10px;
+    display: inline-block;
+    width: 30px;
+    height: 24px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    position: relative;
+    top: 0;
+    left: 0;
+    transition: border .3s, background-color .3s;
+
+    &::before {
+      content: '';
+      height: 18px;
+      width: 18px;
+      background-color: #ccc;
+      position: absolute;
+      top: 3px;
+      left: 5px;
+      border-radius: 50%;
+      transition: background-color .3s, transform .3s;
+    }
+
+  }
+
+  &.clr-switch-on {
+    > i {
+      background-color: $primaryActiveColor;
+      border-color: $primaryActiveColor;
+
+      &::before {
+        background-color: #fff;
+        transform: translateX(22px);
+      }
+    }
+  }
+  &.disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+  > span {
+    margin-left: 10px;
+  }
+}

@@ -1,0 +1,41 @@
+$primaryActiveColor: #2478B8;
+.clr-pagination {
+  user-select: none;
+  padding: 5px 0;
+  list-style: none;
+  display: block;
+  margin: 0;
+  font-size: 0;
+  text-align: right;
+  &.disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+  >li {
+    display: inline-block;
+    height: 36px;
+    padding: 0 15px;
+    line-height: 36px;
+    text-align: center;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    background-color: #fff;
+    &:first-child {
+      margin-left: 0;
+    }
+    &:hover:not(.disabled),
+    &.active {
+      background-color: $primaryActiveColor;
+      border-color: $primaryActiveColor;
+      color: #fff;
+    }
+
+    &.disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+  }
+}

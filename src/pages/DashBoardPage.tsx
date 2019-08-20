@@ -62,7 +62,7 @@ export class DashBoardPage extends PureComponent<Props, State> {
     if (this.state.currentIndex === -1) {
       return [];
     }
-    return this.state.menus[this.state.currentIndex].children as IMenu[];
+    return this.state.menus[this.state.currentIndex].children!;
   }
 
   handleMenuIndexChanged(index: number) {

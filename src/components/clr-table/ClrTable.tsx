@@ -1,6 +1,7 @@
 import React, {PureComponent, ReactNode} from 'react';
 import './ClrTable.scss'
 import {TextAlignProperty} from "csstype";
+import {withSpinner} from "../hoc/clr-with-spinner/ClrWithSpinner";
 
 interface OwnProps {
   columns: ITableColumn[];
@@ -65,7 +66,7 @@ class ClrTable extends PureComponent<Props, State> {
 }
 
 export default ClrTable;
-
+export const ClrTableWithSpinner = withSpinner(ClrTable);
 export interface ITableColumn {
   title: string;
   dataIndex?: string;

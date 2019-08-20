@@ -1,0 +1,64 @@
+$primaryActiveColor: #2478B8;
+.clr-checkbox {
+  vertical-align: middle;
+  position: relative;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  height: 24px;
+  line-height: 24px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 0 5px;
+  display: inline-block;
+  box-sizing: border-box;
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 24px;
+    border-right: 1px solid #ccc;
+  }
+
+  > span {
+    margin-left: 22px;
+    font-size: 14px;
+    color: #868686;
+    transition: color .3s;
+    padding: 0 5px;
+  }
+
+  > i {
+    position: absolute;
+    top: 8px;
+    left: 4px;
+    display: block;
+    width: 14px;
+    height: 6px;
+    border-bottom: 1px solid white;
+    border-left: 1px solid white;
+    background-color: $primaryActiveColor;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity .3s, transform .3s;
+  }
+
+  input[type="checkbox"]:checked {
+    &+ i {
+      opacity: 1;
+      transform: scale(1);
+      &+span {
+        color: $primaryActiveColor;
+      }
+    }
+  }
+  &.disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+
+}
