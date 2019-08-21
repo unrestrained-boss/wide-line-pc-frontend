@@ -11,7 +11,7 @@ export const getBannerList: TList = (page: number, pageSize: number = 20) => {
         id: i,
         name: '好酒' + i,
         image: 'https://img13.360buyimg.com/img/jfs/t1/79625/4/7282/87331/5d53a2b0E0a73c40e/394aff7e452ab18a.jpg',
-        link: 'https://www.baidu.com/',
+        link: 'https://www.baidu.com/s?wd=' + i,
         enable: i % 2 === 0,
         sort: i
       };
@@ -25,6 +25,13 @@ export const getBannerList: TList = (page: number, pageSize: number = 20) => {
   });
 };
 
+export const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) =>  {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 1000);
+  })
+};
 export interface IBanner {
   id: number;
   name: string,

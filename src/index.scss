@@ -19,8 +19,11 @@ html, body, #root {
 
 //表单
 .clr-form {
+  background-color: #fff;
+  padding: 10px;
   .clr-form-item {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
   }
 
   .clr-form-label {
@@ -30,5 +33,9 @@ html, body, #root {
     font-weight: 400;
     line-height: 20px;
     text-align: right;
+  }
+  .clr-validate-field {
+    margin-top: 5px;
+    color: red;
   }
 }

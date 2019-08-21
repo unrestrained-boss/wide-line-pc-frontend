@@ -106,7 +106,7 @@ class AdministrationPage extends PureComponent<Props, State> {
         <ClrInput size="small" placeholder="请输入用户名" value={this.state.inputValue} disabled/>
         <ClrInput size="lager" placeholder="请输入用户名" value={this.state.inputValue}/>
         <ClrInput placeholder="请输入密码" onChange={e => {
-          this.setState({inputValue: e});
+          this.setState({inputValue: e.target.value});
         }} value={this.state.inputValue} type="text"/>
         <br/>
         <br/>

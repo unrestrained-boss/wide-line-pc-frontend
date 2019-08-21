@@ -12,7 +12,7 @@ interface WithSpinnerProps {
 export const withSpinner = <P extends object>(
   WrappedComponent: ComponentType<P>
 ) =>
-  class WithLoading extends Component<P & WithSpinnerProps> {
+  class extends Component<P & WithSpinnerProps> {
     static defaultProps = {
       spinnerSize: 'small',
       showText: false,

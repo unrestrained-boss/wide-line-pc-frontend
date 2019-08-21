@@ -27,10 +27,12 @@ class ClrModal extends PureComponent<Props, State> {
   }
 
   render() {
-    return (<div onClick={(e) => this.handleContainerClicked(e)} className="clr-modal-container">
+    return (<div onClick={(e) => this.handleContainerClicked(e)}
+                 className="clr-modal-container">
       <div className="clr-modal-wrapper">
         <div className="clr-modal-header">
-          {this.props.title}
+          <span className="title">{this.props.title}</span>
+          <i onClick={() => this.close()}>x</i>
         </div>
         <div>
           {this.props.children}

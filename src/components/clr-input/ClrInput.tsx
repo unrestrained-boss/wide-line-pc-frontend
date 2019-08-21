@@ -1,9 +1,10 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import './ClrInput.scss'
 
 interface OwnProps {
   value?: string;
-  onChange?: (e:string) => void;
+  onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -13,22 +14,25 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-type State = Readonly<{
-  
-}>;
+type State = Readonly<{}>;
 
 class ClrInput extends PureComponent<Props, State> {
-  readonly state: State = {
-    
-  };
-  
+  readonly state: State = {};
+
   render() {
-    const { value, size, name, type, placeholder, onChange, disabled} = this.props;
+    const {value, size, name, type, placeholder, onBlur, onChange, disabled} = this.props;
     const classNames = ['clr-input'];
     size === 'lager' && classNames.push('lager');
     size === 'small' && classNames.push('small');
     return (
-      <input name={name} value={value} onChange={e => onChange && onChange(e.target.value)} disabled={disabled} placeholder={placeholder} className={classNames.join(' ')} type={type}/>
+      <input name={name}
+             value={value}
+             onBlur={e => onBlur && onBlur(e)}
+             onChange={e => onChange && onChange(e)}
+             disabled={disabled}
+             placeholder={placeholder}
+             className={classNames.join(' ')}
+             type={type}/>
     );
   }
 }
