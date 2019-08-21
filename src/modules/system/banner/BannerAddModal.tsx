@@ -1,11 +1,13 @@
 import React, {PureComponent} from 'react';
 import './BannerAddModal.scss'
 import {IBanner} from "../../../services/system/BannerService";
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import {Field, Formik} from "formik";
 import ClrInput from "../../../components/clr-input/ClrInput";
 import ClrButton from "../../../components/clr-button/ClrButton";
 import * as Yup from 'yup';
 import ClrUpload from "../../../components/clr-upload/ClrUpload";
+import ClrFormItem from "../../../components/clr-form-item/ClrFormItem";
+import ClrForm from "../../../components/clr-form/ClrForm";
 
 interface OwnProps {
   data: IBanner;
@@ -29,6 +31,7 @@ class BannerAddModal extends PureComponent<Props, State> {
       .required('密码必填'),
 
   });
+  labelWith = '100px';
 
   render() {
     return (
@@ -42,24 +45,25 @@ class BannerAddModal extends PureComponent<Props, State> {
                 }}
                 validationSchema={this.testSchema}>
           {({isSubmitting}) => {
-            return <Form className="clr-form">
-              <div className="clr-form-item">
-               <ClrUpload maximum={1}/>
-              </div>
-              <div className="clr-form-item">
-                <Field name="username" render={({field}: any) => <ClrInput {...field} placeholder="请输入用户名" type="text"/>}/>
-                <ErrorMessage name="username" component="div" className="clr-validate-field"/>
-              </div>
-              <div className="clr-form-item">
-                <Field name="password" render={({field}: any) => <ClrInput {...field} placeholder="请输入密码" type="password"/>}/>
-                <ErrorMessage name="password" component="div" className="clr-validate-field"/>
-              </div>
-              <div className="clr-form-item">
-                <ClrButton type="primary" disabled={isSubmitting}>
+            return <ClrForm>
+              <ClrFormItem label="banner图片" labelWidth={this.labelWith}>
+                <ClrUpload withCredentials={true} data={{id: 123}} multiple={true} name="x" headers={{a: 'xxx'}}
+                           limit={10} action="https://jsonplaceholder.typicode.com/posts/"/>
+              </ClrFormItem>
+              <ClrFormItem labelWidth={this.labelWith} label="用户名" name="username">
+                <Field name="username"
+                       render={({field}: any) => <ClrInput {...field} placeholder="请输入用户名" type="text"/>}/>
+              </ClrFormItem>
+              <ClrFormItem labelWidth={this.labelWith} label="密码" name="password">
+                <Field name="password"
+                       render={({field}: any) => <ClrInput {...field} placeholder="请输入密码" type="password"/>}/>
+              </ClrFormItem>
+              <ClrFormItem labelWidth={this.labelWith}>
+                <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
                   立即登录
                 </ClrButton>
-              </div>
-            </Form>
+              </ClrFormItem>
+            </ClrForm>
           }}
 
         </Formik>

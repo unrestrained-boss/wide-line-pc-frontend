@@ -31,6 +31,10 @@
     }
     .action {
       cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 60px;
     }
     .action-mask {
       background-color: rgba(0, 0, 0, .5);

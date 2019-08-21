@@ -22,8 +22,22 @@ html, body, #root {
   background-color: #fff;
   padding: 10px;
   .clr-form-item {
-    margin-bottom: 20px;
-    box-sizing: border-box;
+    margin-bottom: 26px;
+    .clr-form-item-label {
+      display: flex;
+    }
+    .clr-form-item-head {
+      display: flex;
+      align-items: center;
+      margin-right: 5px;
+    }
+    .clr-form-item-body {
+      flex: 1;
+      position: relative;
+      //>* {
+      //  width: 100%;
+      //}
+    }
   }
 
   .clr-form-label {
@@ -34,8 +48,14 @@ html, body, #root {
     line-height: 20px;
     text-align: right;
   }
-  .clr-validate-field {
-    margin-top: 5px;
-    color: red;
+  .error-message{
+    position: absolute;
+    left: 0;
+    height: 26px;
+    line-height: 24px;
+    > span {
+      color: red;
+      font-size: 12px;
+    }
   }
 }

@@ -3,7 +3,14 @@ import uniqueId from 'lodash/uniqueId'
 import './ClrUpload.scss'
 
 interface OwnProps {
-  maximum: number;
+  limit?: number;
+  accept?: string;
+  name?: string;
+  multiple?: boolean;
+  withCredentials?: boolean,
+  data?: { [s: string]: any },
+  headers?: { [s: string]: string },
+  action: string;
 }
 
 type Props = OwnProps;
@@ -12,65 +19,91 @@ type State = Readonly<{
   tasks: IUploadTask[];
 }>;
 
-function getXhr() {
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', 'https://jsonplaceholder.typicode.com/posts/');
-  return xhr;
-}
 
 export enum EUploadState {
+  waiting,
   uploading,
   error,
   saving,
   complete,
 }
-const TUploadStateText: {[s: number]: string} = {
+
+const TUploadStateText: { [s: number]: string } = {
+  [EUploadState.waiting]: '等待中',
   [EUploadState.uploading]: '上传中',
   [EUploadState.error]: '上传出错',
   [EUploadState.saving]: '保存中',
   [EUploadState.complete]: '上传成功',
 };
+
 class ClrUpload extends PureComponent<Props, State> {
   readonly state: State = {
     tasks: []
   };
   static defaultProps = {
     maximum: 0,
+    accept: '*/*',
+    data: {},
+    headers: {},
+    name: 'file',
+    multiple: false,
+    withCredentials: false,
   };
   file = createRef<HTMLInputElement>();
   xhrMap: { [s: string]: XMLHttpRequest } = {};
+
+  setStateAsync<K extends keyof Readonly<{ tasks: IUploadTask[] }>>(state: ((prevState: Readonly<Readonly<{ tasks: IUploadTask[] }>>, props: Readonly<OwnProps>) => (Pick<Readonly<{ tasks: IUploadTask[] }>, K> | Readonly<{ tasks: IUploadTask[] }> | null)) | Pick<Readonly<{ tasks: IUploadTask[] }>, K> | Readonly<{ tasks: IUploadTask[] }> | null): Promise<void> {
+    return new Promise((resolve) => {
+      this.setState(state, resolve);
+    });
+  }
 
   handleClick() {
     this.file.current!.click();
   }
 
-  handleFileChanged(e: React.ChangeEvent<HTMLInputElement>) {
+  async handleFileChanged(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (files!.length > 0) {
-      this.handleCreateItem(files![0]);
-      this.file.current!.value = '';
+      // @ts-ignore
+      for (let file of files!) {
+        await this.handleCreateItem(file);
+      }
+
+      if (this.file.current) {
+        this.file.current.value = '';
+      }
     }
   }
 
-  handleCreateItem(file: File) {
+  async handleCreateItem(file: File) {
     const id = uniqueId('clr-');
-    this.setState({
-      tasks: [
-        ...this.state.tasks,
-        {
-          file: file,
-          state: EUploadState.uploading,
-          percentage: 0,
-          __uniqueId: id,
-        },
-      ]
+    const tasks = [...this.state.tasks];
+    tasks.push({
+      file: file,
+      state: EUploadState.uploading,
+      percentage: 0,
+      __uniqueId: id,
     });
-   this._makeRequest(id, file);
+    await this.setStateAsync({
+      tasks,
+    });
+    this._makeRequest(id, file);
+
   }
+
   _makeRequest(id: string, file: File) {
-    const xhr = getXhr();
+    const xhr = new XMLHttpRequest();
     const fd = new FormData();
-    fd.append('file', file);
+    fd.append(this.props.name!, file);
+    Object.keys(this.props.data!).forEach(key => {
+      fd.append(key, this.props.data![key]);
+    });
+    xhr.open('POST', this.props.action);
+    Object.keys(this.props.headers!).forEach(key => {
+      xhr.setRequestHeader(key, this.props.headers![key]);
+    });
+    xhr.withCredentials = this.props.withCredentials!;
     xhr.upload.onprogress = e => {
       const isUploadComplete = e.loaded === e.total;
       this._setTaskDetailWithId(id, task => {
@@ -103,7 +136,7 @@ class ClrUpload extends PureComponent<Props, State> {
       }
     };
     this._setTaskDetailWithId(id, task => {
-      task.state = EUploadState.uploading;
+      task.state = EUploadState.waiting;
       task.percentage = 0;
     });
     this.xhrMap[id] = xhr;
@@ -183,6 +216,7 @@ class ClrUpload extends PureComponent<Props, State> {
                   {TUploadStateText[task.state]}
                   {task.state === EUploadState.uploading ? `(${task.percentage}%)` : null}
                 </span>
+                <div style={{height: '10px'}}/>
                 <div>
                   {buttons}
                 </div>
@@ -190,14 +224,15 @@ class ClrUpload extends PureComponent<Props, State> {
             </li>
           );
         })}
-        {this.props.maximum === 0 || this.state.tasks.length < this.props.maximum ? (
+        {this.props.limit === 0 || this.state.tasks.length < this.props.limit! ? (
           <li>
             <div>
-              <input onChange={(e) => this.handleFileChanged(e)} ref={this.file} type="file" hidden/>
+              <input multiple={this.props.multiple!} accept={this.props.accept}
+                     onChange={(e) => this.handleFileChanged(e)} ref={this.file} type="file" hidden/>
               <div onClick={() => this.handleClick()} className="action">+</div>
             </div>
           </li>
-        ): null}
+        ) : null}
       </ul>
     );
   }

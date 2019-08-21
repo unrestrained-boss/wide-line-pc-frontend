@@ -4,6 +4,7 @@ import './ClrButton.scss'
 interface OwnProps {
   type?: TButtonType;
   disabled?: boolean;
+  nativeType?: 'submit' | 'reset' | 'button';
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -13,9 +14,11 @@ type State = Readonly<{}>;
 
 class ClrButton extends PureComponent<Props, State> {
   readonly state: State = {};
-
+  static defaultProps = {
+    nativeType: 'button'
+  };
   render() {
-    const {type, disabled, onClick} = this.props;
+    const {type, disabled, onClick, nativeType} = this.props;
     const classNames = ['clr-button'];
     type === 'primary' && classNames.push('clr-button-primary');
     type === 'success' && classNames.push('clr-button-success');
@@ -23,7 +26,7 @@ class ClrButton extends PureComponent<Props, State> {
     type === 'warning' && classNames.push('clr-button-warning');
 
     return (
-      <button onClick={(e) => onClick && onClick(e)} disabled={disabled} className={classNames.join(' ')}>{this.props.children}</button>
+      <button type={nativeType} onClick={(e) => onClick && onClick(e)} disabled={disabled} className={classNames.join(' ')}>{this.props.children}</button>
     );
   }
 }
