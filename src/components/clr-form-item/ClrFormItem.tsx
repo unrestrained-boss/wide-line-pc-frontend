@@ -26,17 +26,16 @@ class ClrFormItem extends PureComponent<Props, State> {
     const {name, label, labelWidth, labelAlign} = this.props;
     return (
       <div className="clr-form-item">
-        <label className="clr-form-item-label">
-          <span className="clr-form-item-head" style={{width: labelWidth, justifyContent: labelAlign}}>{label ? (`${label}:`) : null} </span>
-          <div className="clr-form-item-body">
+        <span className="clr-form-item-label"
+              style={{width: labelWidth, justifyContent: labelAlign}}>{label ? (`${label}:`) : null} </span>
+        <div className="clr-form-item-children">
           {this.props.children}
-            <div className="error-message">
-              {name ? (
-                <ErrorMessage name={name} component="span"/>
-              ) : null}
-            </div>
+          <div className="error-message">
+            {name ? (
+              <ErrorMessage name={name} component="span"/>
+            ) : null}
           </div>
-        </label>
+        </div>
 
       </div>
     );

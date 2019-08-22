@@ -14,11 +14,10 @@
     box-sizing: border-box;
     border-radius: 5px;
     display: inline-block;
-    margin-left: 10px;
+    margin-right: 10px;
     margin-top: 10px;
     font-size: 16px;
     vertical-align: middle;
-
 
     .action,
     .action-mask {
@@ -27,7 +26,6 @@
       left: 0;
       right: 0;
       bottom: 0;
-      //background-color: red;
     }
     .action {
       cursor: pointer;

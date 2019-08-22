@@ -1,7 +1,10 @@
 import React, { PureComponent } from 'react';
 import {Form} from "formik";
 
-interface OwnProps {}
+interface OwnProps {
+  // labelWidth?: string;
+  // layout?: 'horizontal'|'vertical'|'inline';
+}
 
 type Props = OwnProps;
 
@@ -12,6 +15,10 @@ type State = Readonly<{
 class ClrForm extends PureComponent<Props, State> {
   readonly state: State = {
 
+  };
+  static defaultProps = {
+    // labelWidth: 'auto',
+    // layout: 'horizontal',
   };
 
   render() {

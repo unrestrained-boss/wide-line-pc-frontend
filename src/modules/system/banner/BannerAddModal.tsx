@@ -21,6 +21,7 @@ type State = Readonly<{}>;
 class BannerAddModal extends PureComponent<Props, State> {
   readonly state: State = {};
   testSchema = Yup.object().shape({
+    banner: Yup.array().min(2, '请选择两张banner'),
     username: Yup.string()
       .min(2, '用户名至少 2 位')
       .max(8, '用户名最多 8 位')
@@ -36,7 +37,7 @@ class BannerAddModal extends PureComponent<Props, State> {
   render() {
     return (
       <div className="banner-add-modal">
-        <Formik initialValues={{username: '', password: ''}}
+        <Formik initialValues={{banner: [], username: '', password: ''}}
                 onSubmit={(values, {setSubmitting}) => {
                   setTimeout(() => {
                     setSubmitting(false);
@@ -46,9 +47,11 @@ class BannerAddModal extends PureComponent<Props, State> {
                 validationSchema={this.testSchema}>
           {({isSubmitting}) => {
             return <ClrForm>
-              <ClrFormItem label="banner图片" labelWidth={this.labelWith}>
-                <ClrUpload withCredentials={true} data={{id: 123}} multiple={true} name="x" headers={{a: 'xxx'}}
-                           limit={10} action="https://jsonplaceholder.typicode.com/posts/"/>
+              <ClrFormItem name="banner" label="banner图片" labelWidth={this.labelWith}>
+                <Field name="banner"
+                       render={({field}: any) => <ClrUpload {...field} headers={{a: 'xxx'}}
+                                                            limit={2} action="https://jsonplaceholder.typicode.com/posts/"/>}/>
+
               </ClrFormItem>
               <ClrFormItem labelWidth={this.labelWith} label="用户名" name="username">
                 <Field name="username"

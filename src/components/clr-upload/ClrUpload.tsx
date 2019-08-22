@@ -3,6 +3,7 @@ import uniqueId from 'lodash/uniqueId'
 import './ClrUpload.scss'
 
 interface OwnProps {
+  value?: any[],
   limit?: number;
   accept?: string;
   name?: string;
@@ -11,6 +12,7 @@ interface OwnProps {
   data?: { [s: string]: any },
   headers?: { [s: string]: string },
   action: string;
+  onChange?: (s: { target: { name: string, value: any } }) => void
 }
 
 type Props = OwnProps;
@@ -127,7 +129,9 @@ class ClrUpload extends PureComponent<Props, State> {
         this._setTaskDetailWithId(id, task => {
           task.state = EUploadState.complete;
           task.percentage = 100;
+          task.response = xhr.response;
         });
+        this._emitOnChange();
       } else {
         this._setTaskDetailWithId(id, task => {
           task.state = EUploadState.error;
@@ -141,6 +145,27 @@ class ClrUpload extends PureComponent<Props, State> {
     });
     this.xhrMap[id] = xhr;
     xhr.send(fd);
+  }
+
+  _getResponse(response: string) {
+    try {
+      return JSON.parse(response);
+    } catch (e) {
+      return response;
+    }
+  }
+
+  _emitOnChange() {
+    setTimeout(() => {
+      if (this.props.onChange) {
+        this.props.onChange({
+          target: {
+            name: this.props.name!,
+            value: this.state.tasks.filter(item => item.response).map(item => this._getResponse(item.response))
+          }
+        });
+      }
+    }, 0);
   }
 
   _setTaskDetailWithId(id: string, fn: (task: IUploadTask) => void) {
@@ -169,6 +194,7 @@ class ClrUpload extends PureComponent<Props, State> {
         tasks
       });
     }
+    this._emitOnChange();
   }
 
   // 取消
@@ -244,6 +270,7 @@ export interface IUploadTask {
   file?: File;
   url?: string;
   percentage?: number;
+  response?: any;
   state: EUploadState;
   __uniqueId: string;
 }
