@@ -12,6 +12,7 @@ import ClrCheckboxGroup from "../../../components/clr-checkbox/ClrCheckboxGroup"
 import ClrRadio from "../../../components/clr-radio/ClrRadio";
 import ClrRadioGroup from "../../../components/clr-radio/ClrRadioGroup";
 import ClrSwitch from "../../../components/clr-switch/ClrSwitch";
+import ClrUpload from "../../../components/clr-upload/ClrUpload";
 
 interface OwnProps {
   data: IBanner;
@@ -52,12 +53,12 @@ class BannerAddModal extends PureComponent<Props, State> {
           validationSchema={this.testSchema}>
           {({isSubmitting}) => {
             return <ClrForm>
-              {/*<ClrFormItem name="banner" label="banner图片" labelWidth={this.labelWith}>*/}
-              {/*  <Field name="banner"*/}
-              {/*         render={({field}: any) => <ClrUpload {...field} headers={{a: 'xxx'}}*/}
-              {/*                                              limit={2} action="https://jsonplaceholder.typicode.com/posts/"/>}/>*/}
+              <ClrFormItem name="banner" label="banner图片" labelWidth={this.labelWith}>
+                <Field name="banner"
+                       render={({field}: any) => <ClrUpload multiple={true} {...field} headers={{a: 'xxx'}}
+                                                            limit={2} action="https://jsonplaceholder.typicode.com/posts/"/>}/>
 
-              {/*</ClrFormItem>*/}
+              </ClrFormItem>
               <ClrFormItem labelWidth={this.labelWith} label="用户名" name="username">
                 <Field name="username"
                        render={({field}: any) => <ClrInput {...field} placeholder="请输入用户名" type="text"/>}/>

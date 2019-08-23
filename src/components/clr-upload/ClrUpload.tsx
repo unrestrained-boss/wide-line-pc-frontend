@@ -274,4 +274,3 @@ export interface IUploadTask {
   state: EUploadState;
   __uniqueId: string;
 }
-
