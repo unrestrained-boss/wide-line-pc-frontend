@@ -11,6 +11,7 @@ import ClrCheckbox from "../../../components/clr-checkbox/ClrCheckbox";
 import ClrCheckboxGroup from "../../../components/clr-checkbox/ClrCheckboxGroup";
 import ClrRadio from "../../../components/clr-radio/ClrRadio";
 import ClrRadioGroup from "../../../components/clr-radio/ClrRadioGroup";
+import ClrSwitch from "../../../components/clr-switch/ClrSwitch";
 
 interface OwnProps {
   data: IBanner;
@@ -40,14 +41,15 @@ class BannerAddModal extends PureComponent<Props, State> {
   render() {
     return (
       <div className="banner-add-modal">
-        <Formik initialValues={{banner: [], username: '', password: '', isSuperMan: ["a", "b", "c"], sex: "2",}}
-                onSubmit={(values, {setSubmitting}) => {
-                  setTimeout(() => {
-                    setSubmitting(false);
-                    console.log(values);
-                  }, 1000)
-                }}
-                validationSchema={this.testSchema}>
+        <Formik
+          initialValues={{banner: [], username: '', password: '', isSuperMan: ["a", "b", "c"], sex: "2", single: false}}
+          onSubmit={(values, {setSubmitting}) => {
+            setTimeout(() => {
+              setSubmitting(false);
+              console.log(values);
+            }, 1000)
+          }}
+          validationSchema={this.testSchema}>
           {({isSubmitting}) => {
             return <ClrForm>
               {/*<ClrFormItem name="banner" label="banner图片" labelWidth={this.labelWith}>*/}
@@ -87,6 +89,14 @@ class BannerAddModal extends PureComponent<Props, State> {
                              <ClrRadio value={"3"}>3</ClrRadio>
                              <ClrRadio value={"4"}>4</ClrRadio>
                            </ClrRadioGroup>
+                         );
+                       }}/>
+              </ClrFormItem>
+              <ClrFormItem labelWidth={this.labelWith} label="是否单身" name="single">
+                <Field name="single"
+                       render={({field}: any) => {
+                         return (
+                           <ClrSwitch {...field}/>
                          );
                        }}/>
               </ClrFormItem>

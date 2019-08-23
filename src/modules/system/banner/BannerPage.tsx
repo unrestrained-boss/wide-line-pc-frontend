@@ -66,8 +66,8 @@ class BannerPage extends PureComponent<Props, State> {
         return (
           <ClrSwitchWithSpinner spinner={!!row.__toggleStatusIng} inactiveValue={false}
                                 activeValue={true}
-                                onChange={async (value: any) => {
-                                  this.handleToggleBannerStatus(row as IBanner, index, value);
+                                onChange={async (e) => {
+                                  this.handleToggleBannerStatus(row as IBanner, index, e.target.value);
                                 }} value={row.enable}/>
         );
       }

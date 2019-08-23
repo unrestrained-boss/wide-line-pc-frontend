@@ -61,11 +61,11 @@ class AdministrationPage extends PureComponent<Props, State> {
             {/*}} name="city" value={row.enable}>北京</ClrCheckbox>*/}
             <ClrRadio disabled/>
             <ClrSwitch disabled inactiveValue={false} activeValue={true} onChange={value => {
-              const newData = [...this.state.data];
-              newData[index].enable = value;
-              this.setState({
-                data: newData
-              });
+              // const newData = [...this.state.data];
+              // newData[index].enable = value;
+              // this.setState({
+              //   data: newData
+              // });
             }} value={row.enable}/>
 
             <ClrSpinner size="small"/>

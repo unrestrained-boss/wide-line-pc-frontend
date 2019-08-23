@@ -1,9 +1,9 @@
-import React, {PureComponent, ReactNode} from 'react';
+import React, {ReactNode} from 'react';
 import './ClrTable.scss'
 import {TextAlignProperty} from "csstype";
 import {withSpinner} from "../hoc/clr-with-spinner/ClrWithSpinner";
 
-interface OwnProps {
+interface Props {
   columns: ITableColumn[];
   data: ITableData[];
   even?: boolean;
@@ -13,60 +13,55 @@ interface OwnProps {
   size?: TTableSize;
 }
 
-type Props = OwnProps;
+const ClrTable: React.FC<Props> = (props) => {
 
-type State = Readonly<{}>;
+  const {columns, data, even, line, row, nob, size} = props;
+  const classNames = ['clr-table'];
+  even && classNames.push('clr-table-even');
+  line && classNames.push('clr-table-line');
+  row && classNames.push('clr-table-row');
+  nob && classNames.push('clr-table-nob');
+  size === 'lager' && classNames.push('clr-table-lager');
+  size === 'small' && classNames.push('clr-table-small');
 
-class ClrTable extends PureComponent<Props, State> {
-  readonly state: State = {};
-
-  render() {
-    const {columns, data, even, line, row, nob, size} = this.props;
-    const classNames = ['clr-table'];
-    even && classNames.push('clr-table-even');
-    line && classNames.push('clr-table-line');
-    row && classNames.push('clr-table-row');
-    nob && classNames.push('clr-table-nob');
-    size === 'lager' && classNames.push('clr-table-lager');
-    size === 'small' && classNames.push('clr-table-small');
-
-    return (
-      <table className={classNames.join(' ')}>
-        <colgroup>
-          {columns.map(col => {
-            return (
-              <col key={col.title} style={{width: col.width}}/>
-            );
-          })}
-        </colgroup>
-        <thead>
-        <tr>
-          {columns.map(col => {
-            return (
-              <th key={col.title} style={{textAlign: col.align || 'left'}}>{col.title}</th>
-            );
-          })}
-        </tr>
-        </thead>
-
-        <tbody>
-        {data.map((item, index) => {
+  return (
+    <table className={classNames.join(' ')}>
+      <colgroup>
+        {columns.map(col => {
           return (
-            <tr key={index}>{columns.map(col => {
-              return (
-                <td key={col.title} style={{textAlign: col.align || 'left'}}>{col.render ? col.render(item, index, data) : item[col.dataIndex as string]}</td>
-              );
-            })}</tr>
+            <col key={col.title} style={{width: col.width}}/>
           );
         })}
-        </tbody>
-      </table>
-    );
-  }
-}
+      </colgroup>
+      <thead>
+      <tr>
+        {columns.map(col => {
+          return (
+            <th key={col.title} style={{textAlign: col.align || 'left'}}>{col.title}</th>
+          );
+        })}
+      </tr>
+      </thead>
+
+      <tbody>
+      {data.map((item, index) => {
+        return (
+          <tr key={index}>{columns.map(col => {
+            return (
+              <td key={col.title}
+                  style={{textAlign: col.align || 'left'}}>{col.render ? col.render(item, index, data) : item[col.dataIndex as string]}</td>
+            );
+          })}</tr>
+        );
+      })}
+      </tbody>
+    </table>
+  );
+};
 
 export default ClrTable;
 export const ClrTableWithSpinner = withSpinner(ClrTable);
+
 export interface ITableColumn {
   title: string;
   dataIndex?: string;
