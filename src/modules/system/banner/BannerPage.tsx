@@ -1,4 +1,4 @@
-import React, {ChangeEvent, createRef, PureComponent, RefObject} from 'react';
+import React, {createRef, PureComponent, RefObject} from 'react';
 import {getBannerList, IBanner, toggleBannerStatus} from "../../../services/system/BannerService";
 import {ClrTableWithSpinner, ITableColumn, ITableData} from "../../../components/clr-table/ClrTable";
 import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
@@ -6,8 +6,6 @@ import ClrButton from "../../../components/clr-button/ClrButton";
 import {openModal} from "../../../components/clr-modal/ClrModalService";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import BannerAddModal from "./BannerAddModal";
-import ClrCheckbox from "../../../components/clr-checkbox/ClrCheckbox";
-import ClrRadio from "../../../components/clr-radio/ClrRadio";
 
 interface OwnProps {
 }
@@ -73,20 +71,7 @@ class BannerPage extends PureComponent<Props, State> {
       }
     },
     {
-      title: '排序', dataIndex: 'sort', align: 'left', render: (row, index) => {
-        return (
-          <>
-            <ClrCheckbox value={row.enable} checked={row.enable} onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              let newData = [...this.state.data];
-              newData[index].enable = e.target.checked!;
-              this.setState({
-                data: newData,
-              });
-            }}>伤害</ClrCheckbox>
-            <ClrRadio>背景</ClrRadio>
-          </>
-        );
-      }
+      title: '排序', dataIndex: 'sort', align: 'left'
     },
     {
       title: '操作',
