@@ -30,6 +30,7 @@
     "build:prod": "env-cmd -f .env.prod react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -51,9 +52,8 @@
     "@types/enzyme": "^3.10.3",
     "@types/lodash": "^4.14.137",
     "@types/yup": "^0.26.23",
+    "coveralls": "^3.0.6",
     "env-cmd": "^9.0.3",
-    "gulp": "^4.0.2",
-    "gulp-coveralls": "^0.1.4",
     "node-sass": "^4.12.0"
   }
 }
