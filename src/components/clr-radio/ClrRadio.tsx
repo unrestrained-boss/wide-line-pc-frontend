@@ -1,39 +1,40 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import './ClrRadio.scss';
+import isUndefined from 'lodash/isUndefined';
 
 interface Props {
-  value?: any;
-  activeValue?: any;	// radio 选中的值
+  value?: string;
+  onBlur?: (e: ChangeEvent<HTMLLabelElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   disabled?: boolean;
+  checked?: boolean;
 }
 
 const ClrRadio: React.FC<Props> = (props) => {
-  const {disabled, activeValue = true, name, children} = props;
-  const [_value, _setValue] = useState(activeValue);
-  const isChecked = _value === activeValue;
+  const {value, disabled, onBlur, onChange, name, children} = props;
+  const [_checked, _setChecked] = useState(false);
   useEffect(() => {
-    _setValue(props.value)
-  }, [props.value]);
+    _setChecked(isUndefined(props.checked) ? false : props.checked)
+  }, [props.checked]);
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === 'on') {
-      _setValue(activeValue);
-    } else {
-      _setValue(undefined);
-    }
+    const newVal = !_checked;
+    _setChecked(newVal);
+    onChange && onChange(e);
   };
 
   return (
-    <label className={`clr-radio ${disabled ? 'disabled' : ''}`}>
+    <label onBlur={onBlur} className={`clr-radio ${disabled ? 'disabled' : ''}`}>
       <input name={name}
              disabled={disabled}
+             value={value}
              onChange={(e) => handleValueChange(e)}
              type="radio"
-             checked={isChecked}
+             checked={_checked}
              hidden/>
       <i/>
-      <span>{children}</span>
+      <span>{children}{_checked.toString()}</span>
     </label>
   );
 };

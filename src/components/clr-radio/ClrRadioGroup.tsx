@@ -4,42 +4,34 @@ import {map} from "../../utils/react-children";
 import isUndefined from 'lodash/isUndefined';
 
 interface Props {
-  value?: any[];
+  value?: string;
   onChange?: (e: IFormControlChangeEvent) => void;
   onBlur?: (e: ChangeEvent<HTMLDivElement>) => void;
   name?: string;
 }
 
-const ClrCheckboxGroup: React.FC<Props> = (props) => {
+const ClrRadioGroup: React.FC<Props> = (props) => {
   const {onChange, onBlur, name} = props;
-  const [_value, _setValue] = useState<any[]>([]);
+  const [_value, _setValue] = useState<any>('');
   useEffect(() => {
-    _setValue(isUndefined(props.value) ? [] : props.value);
+    _setValue(isUndefined(props.value) ? '' : props.value);
   }, [props.value]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      _value.push(e.target.value);
-    } else {
-      const index = _value.indexOf(e.target.value);
-      if (index !== -1) {
-        _value.splice(index, 1);
-      }
-    }
-    _setValue(_value);
+    _setValue(e.target.value);
     onChange && onChange({
       target: {
         name: name,
-        value: _value,
+        value: e.target.value,
       }
     });
   };
   const childrenTransform = map(props.children!, (child, index) => {
     // @ts-ignore
-    if (child.type.name === 'ClrCheckbox') {
+    if (child.type.name === 'ClrRadio') {
       return React.cloneElement(child, {
         key: index.toString(),
-        checked: _value.includes(child.props.value),
+        checked: child.props.value === _value,
         onChange: handleChange,
       });
     }
@@ -52,7 +44,7 @@ const ClrCheckboxGroup: React.FC<Props> = (props) => {
     </div>
   );
 };
-export default ClrCheckboxGroup;
+export default ClrRadioGroup;
 
 export interface IFormControlChangeEvent {
   target: {

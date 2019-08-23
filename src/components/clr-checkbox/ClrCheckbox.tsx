@@ -4,6 +4,7 @@ import isUndefined from 'lodash/isUndefined';
 
 interface Props {
   value?: any;
+  onBlur?: (e: ChangeEvent<HTMLLabelElement>) => void;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   disabled?: boolean;
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const ClrCheckbox: React.FC<Props> = (props) => {
-  const {value, disabled, name, onChange, children} = props;
+  const {value, disabled, name, onBlur, onChange, children} = props;
   const [_checked, _setChecked] = useState(false);
   useEffect(() => {
     _setChecked(isUndefined(props.checked) ? false : props.checked);
@@ -23,7 +24,7 @@ const ClrCheckbox: React.FC<Props> = (props) => {
   };
 
   return (
-    <label className={`clr-checkbox ${disabled ? 'disabled' : ''}`}>
+    <label onBlur={onBlur} className={`clr-checkbox ${disabled ? 'disabled' : ''}`}>
       <input disabled={disabled}
              name={name}
              value={value}

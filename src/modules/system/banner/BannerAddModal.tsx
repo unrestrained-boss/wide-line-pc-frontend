@@ -9,6 +9,8 @@ import ClrFormItem from "../../../components/clr-form-item/ClrFormItem";
 import ClrForm from "../../../components/clr-form/ClrForm";
 import ClrCheckbox from "../../../components/clr-checkbox/ClrCheckbox";
 import ClrCheckboxGroup from "../../../components/clr-checkbox/ClrCheckboxGroup";
+import ClrRadio from "../../../components/clr-radio/ClrRadio";
+import ClrRadioGroup from "../../../components/clr-radio/ClrRadioGroup";
 
 interface OwnProps {
   data: IBanner;
@@ -38,7 +40,7 @@ class BannerAddModal extends PureComponent<Props, State> {
   render() {
     return (
       <div className="banner-add-modal">
-        <Formik initialValues={{banner: [], username: '', password: '', isSuperMan: ["a", "b", "c"]}}
+        <Formik initialValues={{banner: [], username: '', password: '', isSuperMan: ["a", "b", "c"], sex: "2",}}
                 onSubmit={(values, {setSubmitting}) => {
                   setTimeout(() => {
                     setSubmitting(false);
@@ -72,6 +74,19 @@ class BannerAddModal extends PureComponent<Props, State> {
                              <ClrCheckbox value={"c"}>c</ClrCheckbox>
                              <ClrCheckbox value={"d"}>d</ClrCheckbox>
                            </ClrCheckboxGroup>
+                         );
+                       }}/>
+              </ClrFormItem>
+              <ClrFormItem labelWidth={this.labelWith} label="性别" name="sex">
+                <Field name="sex"
+                       render={({field}: any) => {
+                         return (
+                           <ClrRadioGroup {...field}>
+                             <ClrRadio value={"1"}>1</ClrRadio>
+                             <ClrRadio value={"2"}>2</ClrRadio>
+                             <ClrRadio value={"3"}>3</ClrRadio>
+                             <ClrRadio value={"4"}>4</ClrRadio>
+                           </ClrRadioGroup>
                          );
                        }}/>
               </ClrFormItem>
