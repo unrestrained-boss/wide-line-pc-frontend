@@ -1,7 +1,7 @@
-import React, {PureComponent} from 'react';
+import React, {useEffect, useState} from 'react';
 import './ClrInput.scss'
 
-interface OwnProps {
+interface Props {
   value?: string;
   onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -12,30 +12,30 @@ interface OwnProps {
   size?: TInputSize;
 }
 
-type Props = OwnProps;
 
-type State = Readonly<{}>;
-
-class ClrInput extends PureComponent<Props, State> {
-  readonly state: State = {};
-
-  render() {
-    const {value, size, name, type, placeholder, onBlur, onChange, disabled} = this.props;
-    const classNames = ['clr-input'];
-    size === 'lager' && classNames.push('lager');
-    size === 'small' && classNames.push('small');
-    return (
-      <input name={name}
-             value={value}
-             onBlur={e => onBlur && onBlur(e)}
-             onChange={e => onChange && onChange(e)}
-             disabled={disabled}
-             placeholder={placeholder}
-             className={classNames.join(' ')}
-             type={type}/>
-    );
-  }
-}
+const ClrInput: React.FC<Props> = (props) => {
+  const [_value, setValue] = useState('');
+  const {size, name, type, placeholder, onBlur, onChange, disabled} = props;
+  const classNames = ['clr-input'];
+  size === 'lager' && classNames.push('lager');
+  size === 'small' && classNames.push('small');
+  useEffect(() => {
+    setValue(props.value || '');
+  }, [props.value]);
+  return (
+    <input name={name}
+           value={_value}
+           onBlur={e => onBlur && onBlur(e)}
+           onChange={e => {
+             setValue(e.target.value);
+             onChange && onChange(e);
+           }}
+           disabled={disabled}
+           placeholder={placeholder}
+           className={classNames.join(' ')}
+           type={type}/>
+  );
+};
 
 export default ClrInput;
 

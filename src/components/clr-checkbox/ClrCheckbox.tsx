@@ -1,48 +1,39 @@
-import React, {PureComponent} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import './ClrCheckbox.scss';
+import isUndefined from 'lodash/isUndefined';
 
-interface OwnProps {
-  value: any;
-  onChange: (e: any) => void;
-  activeValue?: any;	// checkbox 打开时的值
-  inactiveValue?: any;	// checkbox 关闭时的值
+interface Props {
+  value?: any;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   disabled?: boolean;
+  checked?: boolean;
 }
 
-type Props = OwnProps;
+const ClrCheckbox: React.FC<Props> = (props) => {
+  const {value, disabled, name, onChange, children} = props;
+  const [_checked, _setChecked] = useState(false);
+  useEffect(() => {
+    _setChecked(isUndefined(props.checked) ? false : props.checked);
+  }, [props.checked]);
 
-type State = Readonly<{}>;
-
-class ClrCheckbox extends PureComponent<Props, State> {
-  static defaultProps = {
-    activeValue: true,
-    inactiveValue: false,
+  const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    _setChecked(e.target.checked);
+    onChange && onChange(e);
   };
-  readonly state: State = {};
 
-  handleLabelClicked() {
-    const {value, onChange, activeValue, inactiveValue} = this.props;
-    if (onChange) {
-      let currentValue = activeValue;
-      if (value === activeValue) {
-        currentValue = inactiveValue;
-      }
-      onChange(currentValue);
-    }
-  }
-
-  render() {
-    const {value, disabled, activeValue, name} = this.props;
-    const isChecked = value === activeValue;
-    return (
-      <label className={`clr-checkbox ${disabled ? 'disabled': ''}`}>
-        <input disabled={disabled} name={name} onChange={() => this.handleLabelClicked()} checked={isChecked} type="checkbox" hidden/>
-        <i/>
-        <span>{this.props.children}</span>
-      </label>
-    );
-  }
-}
-
+  return (
+    <label className={`clr-checkbox ${disabled ? 'disabled' : ''}`}>
+      <input disabled={disabled}
+             name={name}
+             value={value}
+             onChange={(e) => handleValueChange(e)}
+             checked={_checked}
+             type="checkbox"
+             hidden/>
+      <i/>
+      <span>{children}{_checked}</span>
+    </label>
+  );
+};
 export default ClrCheckbox;

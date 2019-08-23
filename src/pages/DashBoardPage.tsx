@@ -72,7 +72,8 @@ export class DashBoardPage extends PureComponent<Props, State> {
   render() {
     return (
       <main className="dashboard-container">
-        <ClrHeader currentIndex={this.state.currentIndex} onMenuChanged={index => this.handleMenuIndexChanged(index)}
+        <ClrHeader currentIndex={this.state.currentIndex}
+                   onMenuChanged={index => this.handleMenuIndexChanged(index)}
                    menus={this.state.menus}/>
         <section className="content">
           <ClrSidebar menus={this.subMenus}/>

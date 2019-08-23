@@ -1,146 +1,137 @@
-import React, {PureComponent} from 'react';
+import React, {useEffect, useState} from 'react';
 import './ClrPagination.scss'
 
-interface OwnProps {
-  total: number;
-  page: number;
-  pageSize: number;
+interface Props {
+  total?: number;
+  page?: number;
+  pageSize?: number;
   onChange?: (e: number) => void;
   disabled?: boolean;
 }
 
-type Props = OwnProps;
+const ClrPagination: React.FC<Props> = (props) => {
+  const [startPage, setStartPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(1);
+  const groupCount = 4;
 
-type State = Readonly<{
-  startPage: number;
-}>;
-
-class ClrPagination extends PureComponent<Props, State> {
-  static defaultProps = {
-    total: 1,
-    page: 1,
-    pageSize: 1,
-  };
-  groupCount = 4;
-
-  setStartPage(page: number) {
-    if (page % this.groupCount === 1) {
-      this.setState({startPage: page});
-    }
-    if (page % this.groupCount === 0) {
-      const startPage = page - this.groupCount + 1;
-      this.setState({startPage});
-    }
-    if (this.maxPage - page < 2) {
-      this.setState({
-        startPage: this.maxPage - this.groupCount,
-      })
-    }
-  };
-
-  get hasPrev(): boolean {
-    return this.props.page > 1;
-  }
-
-  get hasNext(): boolean {
-    return this.props.page < this.maxPage;
-  }
-
-  get maxPage(): number {
-    const {total, pageSize} = this.props;
-    return Math.ceil(total / pageSize);
-  }
-
-  readonly state: State = {
-    startPage: 1
-  };
-
-  handleToPrev() {
-    if (this.hasPrev) {
-      this.handleEmit(this.props.page - 1);
-    }
-  }
-
-  handleToNext() {
-    if (this.hasNext) {
-      this.handleEmit(this.props.page + 1);
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps: Readonly<OwnProps>, nextContext: any): void {
-    if (nextProps.page !== this.props.page) {
-      this.setStartPage(nextProps.page);
-    }
-  }
-
-  handleEmit(page: number) {
-    if (this.props.disabled) {
+  useEffect(() => {
+    // const {page = 1} = props;
+    if (maxPage <= 1) {
+      setStartPage(1);
       return;
     }
-    if (page !== this.props.page) {
-      this.props.onChange && this.props.onChange(page);
+    if (currentPage % groupCount === 1) {
+      setStartPage(currentPage);
     }
+    if (currentPage % groupCount === 0) {
+      const startPage = currentPage - groupCount + 1;
+      setStartPage(startPage);
+    }
+    if (maxPage - currentPage < 2) {
+      setStartPage(maxPage - groupCount)
+    }
+  }, [currentPage, maxPage, props]);
 
-  }
+  useEffect(() => {
+    const {total = 1, pageSize = 20} = props;
+    if (total === 1) {
+      setStartPage(1);
+      return;
+    }
+    setMaxPage(Math.ceil(total / pageSize));
+  }, [props]);
 
-  renderItem(key: string, pageNum: number) {
-    const {page, disabled} = this.props;
+
+  useEffect(() => {
+    const {page = 1,} = props;
+    setCurrentPage(page);
+  }, [props]);
+  const hasPrev = (): boolean => {
+    return currentPage > 1;
+  };
+
+  const hasNext = (): boolean => {
+    return currentPage < maxPage;
+  };
+
+
+  const handleToPrev = () => {
+    if (hasPrev()) {
+      handleEmit(currentPage - 1);
+    }
+  };
+
+  const handleToNext = () => {
+    if (hasNext()) {
+      handleEmit(currentPage + 1);
+    }
+  };
+
+  const handleEmit = (page: number) => {
+    if (props.disabled) {
+      return;
+    }
+    if (page !== currentPage) {
+      setCurrentPage(page);
+      props.onChange && props.onChange(page);
+    }
+  };
+
+  const renderItem = (key: string, pageNum: number) => {
+    const { disabled} = props;
     return (
-      <li key={key} className={`${page === pageNum ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
-          onClick={() => this.handleEmit(pageNum)}>{pageNum}</li>
+      <li key={key} className={`${currentPage === pageNum ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
+          onClick={() => handleEmit(pageNum)}>{pageNum}</li>
     );
-  }
+  };
 
-  getPageElements() {
+  const getPageElements = () => {
     const elements = [];
     // 小于等于一组
-    if (this.maxPage <= this.groupCount) {
-      for (let i = 1; i <= this.maxPage; i++) {
-        elements.push(this.renderItem(i.toString(), i));
+    if (maxPage <= groupCount) {
+      for (let i = 1; i <= maxPage; i++) {
+        elements.push(renderItem(i.toString(), i));
       }
       return elements;
     }
-    let end = this.state.startPage + this.groupCount;
-    if (end >= this.maxPage) {
-      end = this.maxPage;
+    let end = startPage + groupCount;
+    if (end >= maxPage) {
+      end = maxPage;
     }
-
-    for (let i = this.state.startPage; i <= end; i++) {
-      elements.push(this.renderItem(i.toString(), i));
+    for (let i = startPage; i <= end; i++) {
+      elements.push(renderItem(i.toString(), i));
     }
-    if (this.maxPage - end >= 2) {
+    if (maxPage - end >= 2) {
       elements.push(<li className="ellipsis" key="-1" onClick={() => {
       }}>...</li>);
-      elements.push(this.renderItem((this.maxPage - 1).toString(), this.maxPage - 1));
-      elements.push(this.renderItem(this.maxPage.toString(), this.maxPage));
+      elements.push(renderItem((maxPage - 1).toString(), maxPage - 1));
+      elements.push(renderItem(maxPage.toString(), maxPage));
     }
     return elements;
-  }
+  };
 
-  render() {
-    if (this.maxPage <= 1) {
-      return null;
-    }
-    const {page, disabled} = this.props;
-    const elements = [
-      <li key="head" onClick={() => this.handleEmit(1)}
-          className={`${page === 1 || disabled ? 'disabled' : ''}`}>首页</li>,
-      <li key="prev" onClick={() => this.handleToPrev()}
-          className={`${!this.hasPrev || disabled ? 'disabled' : ''}`}>&lt;</li>
-    ];
-    elements.push(...this.getPageElements());
-    elements.push(<li key="next" onClick={() => this.handleToNext()}
-                      className={`${!this.hasNext || disabled ? 'disabled' : ''}`}>&gt;</li>,
-      <li key="foot" onClick={() => this.handleEmit(this.maxPage)}
-          className={`${page === this.maxPage || disabled ? 'disabled' : ''}`}>尾页</li>);
-    return (
-      <ul className="clr-pagination">
-        {/*<li>{this.props.page}</li>*/}
-        {/*<li>{this.state.startPage}</li>*/}
-        {elements}
-      </ul>
-    );
+
+  if (maxPage <= 1) {
+    return null;
   }
-}
+  const {page, disabled} = props;
+  const elements = [
+    <li key="head" onClick={() => handleEmit(1)}
+        className={`${page === 1 || disabled ? 'disabled' : ''}`}>首页</li>,
+    <li key="prev" onClick={() => handleToPrev()}
+        className={`${!hasPrev() || disabled ? 'disabled' : ''}`}>&lt;</li>
+  ];
+  elements.push(...getPageElements());
+  elements.push(<li key="next" onClick={() => handleToNext()}
+                    className={`${!hasNext() || disabled ? 'disabled' : ''}`}>&gt;</li>,
+    <li key="foot" onClick={() => handleEmit(maxPage)}
+        className={`${page === maxPage || disabled ? 'disabled' : ''}`}>尾页</li>);
+  return (
+    <ul className="clr-pagination">
+      {elements}
+    </ul>
+  );
+};
 
 export default ClrPagination;

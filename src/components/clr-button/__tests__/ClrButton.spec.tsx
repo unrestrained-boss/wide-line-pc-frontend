@@ -1,4 +1,3 @@
-// @ts-ignore
 import React from "react";
 import {shallow, mount} from 'enzyme';
 import ClrButton from "../ClrButton";
@@ -28,18 +27,21 @@ describe('button test', () => {
   });
 
   it('render with disabled', () => {
-    let wrapper = mount(<ClrButton disabled={false}>按钮</ClrButton>);
+    const handleClick = jest.fn();
+    let wrapper = mount(<ClrButton onClick={handleClick} disabled={false}>按钮</ClrButton>);
     expect((wrapper.childAt(0).getDOMNode() as HTMLButtonElement).disabled).toBeFalsy();
     wrapper = mount(<ClrButton>按钮</ClrButton>);
     expect((wrapper.childAt(0).getDOMNode() as HTMLButtonElement).disabled).toBeFalsy();
     wrapper = mount(<ClrButton disabled={true}>按钮</ClrButton>);
     expect((wrapper.childAt(0).getDOMNode() as HTMLButtonElement).disabled).toBeTruthy();
+    wrapper.childAt(0).simulate('click');
+    expect(handleClick).not.toBeCalled();
   });
 
   it('render with onClick', () => {
-    const fn = jest.fn();
-    const wrapper = mount(<ClrButton nativeType="submit" onClick={fn}>按钮</ClrButton>);
+    const handleClick = jest.fn();
+    const wrapper = mount(<ClrButton nativeType="submit" onClick={handleClick}>按钮</ClrButton>);
     wrapper.childAt(0).simulate('click');
-    expect(fn).toBeCalled();
+    expect(handleClick).toBeCalledTimes(1);
   });
 });

@@ -20,7 +20,7 @@ export const LoginPage: React.FC = () => {
   });
   return (
     <div className="login-wrapper">
-
+      <ClrInput value={"hf"} placeholder="请输入用户名" type="text"/>
       <Formik initialValues={{username: '', password: ''}}
               onSubmit={(values, {setSubmitting}) => {
                 setTimeout(() => {

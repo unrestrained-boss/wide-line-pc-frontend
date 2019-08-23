@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react';
 import ClrTable, {ITableColumn, ITableData} from "../../../components/clr-table/ClrTable";
 import ClrButton from "../../../components/clr-button/ClrButton";
 import {openModal} from "../../../components/clr-modal/ClrModalService";
-import ClrCheckbox from "../../../components/clr-checkbox/ClrCheckbox";
 import ClrRadio from "../../../components/clr-radio/ClrRadio";
 import ClrSwitch from "../../../components/clr-switch/ClrSwitch";
 import ClrSpinner from "../../../components/clr-spinner/ClrSpinner";
@@ -53,13 +52,13 @@ class AdministrationPage extends PureComponent<Props, State> {
       title: '排序', dataIndex: 'sort', align: 'left', render: (row, index) => {
         return (
           <div>
-            <ClrCheckbox disabled onChange={value => {
-              const newData = [...this.state.data];
-              newData[index].enable = value;
-              this.setState({
-                data: newData
-              });
-            }} name="city" value={row.enable}>北京</ClrCheckbox>
+            {/*<ClrCheckbox disabled onChange={value => {*/}
+            {/*  const newData = [...this.state.data];*/}
+            {/*  newData[index].enable = value;*/}
+            {/*  this.setState({*/}
+            {/*    data: newData*/}
+            {/*  });*/}
+            {/*}} name="city" value={row.enable}>北京</ClrCheckbox>*/}
             <ClrRadio disabled/>
             <ClrSwitch disabled inactiveValue={false} activeValue={true} onChange={value => {
               const newData = [...this.state.data];

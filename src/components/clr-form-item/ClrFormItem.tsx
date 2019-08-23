@@ -1,8 +1,8 @@
-import React, {PureComponent} from 'react';
+import React from 'react';
 import {ErrorMessage} from "formik";
 import {JustifyContentProperty} from "csstype";
 
-interface OwnProps {
+interface Props {
   name?: string;
   label?: string;
   required?: boolean;
@@ -10,26 +10,16 @@ interface OwnProps {
   labelAlign?: JustifyContentProperty;
 }
 
-type Props = OwnProps;
 
-type State = Readonly<{}>;
+const ClrFormItem: React.FC<Props> = (props) => {
 
-class ClrFormItem extends PureComponent<Props, State> {
-  readonly state: State = {};
-  static defaultProps = {
-    required: false,
-    labelWidth: '80px',
-    labelAlign: 'flex-end',
-  };
-
-  render() {
-    const {name, label, labelWidth, labelAlign} = this.props;
+    const {name, label, labelWidth = '80px', labelAlign = 'flex-end', children} = props;
     return (
       <div className="clr-form-item">
         <span className="clr-form-item-label"
               style={{width: labelWidth, justifyContent: labelAlign}}>{label ? (`${label}:`) : null} </span>
         <div className="clr-form-item-children">
-          {this.props.children}
+          {children}
           <div className="error-message">
             {name ? (
               <ErrorMessage name={name} component="span"/>
@@ -39,7 +29,6 @@ class ClrFormItem extends PureComponent<Props, State> {
 
       </div>
     );
-  }
-}
+};
 
 export default ClrFormItem;

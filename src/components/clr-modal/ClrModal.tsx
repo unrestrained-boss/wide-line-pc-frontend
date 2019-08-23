@@ -1,45 +1,37 @@
-import React, {PureComponent} from 'react';
+import React from 'react';
 import './ClrModal.scss'
 
-interface OwnProps {
-  Close: () => void;
-  title: string;
+interface Props {
+  Close?: () => void;
+  title?: string;
 }
 
-type Props = OwnProps;
 
-type State = Readonly<{}>;
+const ClrModal: React.FC<Props> = (props) => {
 
-class ClrModal extends PureComponent<Props, State> {
-  readonly state: State = {};
-
-  handleContainerClicked(e: React.MouseEvent<HTMLDivElement>) {
+  const handleContainerClicked = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.currentTarget === e.target) {
-      this.close();
+      close();
     }
-  }
+  };
 
-  componentWillUnmount(): void {
-  }
 
-  close() {
-    this.props.Close();
-  }
-
-  render() {
-    return (<div onClick={(e) => this.handleContainerClicked(e)}
-                 className="clr-modal-container">
-      <div className="clr-modal-wrapper">
-        <div className="clr-modal-header">
-          <span className="title">{this.props.title}</span>
-          <i onClick={() => this.close()}>x</i>
-        </div>
-        <div>
-          {this.props.children}
-        </div>
+  const close = () => {
+    props.Close && props.Close();
+  };
+  const {title = ''} = props;
+  return (<div onClick={(e) => handleContainerClicked(e)}
+               className="clr-modal-container">
+    <div className="clr-modal-wrapper">
+      <div className="clr-modal-header">
+        <span className="title">{title}</span>
+        <i onClick={() => close()}>x</i>
       </div>
-    </div>);
-  }
-}
+      <div>
+        {props.children}
+      </div>
+    </div>
+  </div>);
+};
 
 export default ClrModal;

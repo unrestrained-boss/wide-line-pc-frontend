@@ -1,27 +1,40 @@
-import React, {PureComponent} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import './ClrRadio.scss';
 
-interface OwnProps {
+interface Props {
+  value?: any;
+  activeValue?: any;	// radio 选中的值
+  name?: string;
   disabled?: boolean;
 }
 
-type Props = OwnProps;
+const ClrRadio: React.FC<Props> = (props) => {
+  const {disabled, activeValue = true, name, children} = props;
+  const [_value, _setValue] = useState(activeValue);
+  const isChecked = _value === activeValue;
+  useEffect(() => {
+    _setValue(props.value)
+  }, [props.value]);
 
-type State = Readonly<{}>;
+  const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === 'on') {
+      _setValue(activeValue);
+    } else {
+      _setValue(undefined);
+    }
+  };
 
-class ClrRadio extends PureComponent<Props, State> {
-  readonly state: State = {};
-
-  render() {
-    const {disabled} = this.props;
-    return (
-      <label className={`clr-radio ${disabled ? 'disabled' : ''}`}>
-        <input disabled={disabled} type="radio" hidden/>
-        <i/>
-        <span>北京</span>
-      </label>
-    );
-  }
-}
-
+  return (
+    <label className={`clr-radio ${disabled ? 'disabled' : ''}`}>
+      <input name={name}
+             disabled={disabled}
+             onChange={(e) => handleValueChange(e)}
+             type="radio"
+             checked={isChecked}
+             hidden/>
+      <i/>
+      <span>{children}</span>
+    </label>
+  );
+};
 export default ClrRadio;
