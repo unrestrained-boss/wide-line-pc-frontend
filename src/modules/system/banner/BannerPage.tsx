@@ -1,11 +1,11 @@
 import React, {createRef, PureComponent, RefObject} from 'react';
-import {getBannerList, IBanner, toggleBannerStatus} from "../../../services/system/BannerService";
 import {ClrTableWithSpinner, ITableColumn, ITableData} from "../../../components/clr-table/ClrTable";
 import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
 import ClrButton from "../../../components/clr-button/ClrButton";
 import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import BannerAddModal from "./BannerAddModal";
+import BannerService, {IBanner} from "../../../services/system/BannerService";
 
 interface OwnProps {
 }
@@ -48,7 +48,7 @@ class BannerPage extends PureComponent<Props, State> {
       title: '链接',
       dataIndex: 'link',
       align: 'left',
-      width: '200px',
+      width: '300px',
       render: (row: ITableData) => {
         return (
           <a href={row.link} rel="noopener noreferrer" target="_blank">{row.link}</a>
@@ -101,7 +101,7 @@ class BannerPage extends PureComponent<Props, State> {
     this.setState({
       loading: true,
     });
-    const {total, data} = await getBannerList(this.state.page, 15);
+    const {total, data} = await BannerService.getBannerList(this.state.page, 15);
     this.setState({
       data,
       total,
@@ -117,7 +117,7 @@ class BannerPage extends PureComponent<Props, State> {
     this.setState({
       data: newData,
     });
-    await toggleBannerStatus(row.id!, !row.enable);
+    await BannerService.toggleBannerStatus(row.id!, !row.enable);
     newData = [...this.state.data];
     newData[index].enable = newValue;
     newData[index].__toggleStatusIng = false;

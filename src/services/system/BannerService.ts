@@ -2,7 +2,7 @@ type TList = (page: number, pageSize?: number) => Promise<{
   total: number;
   data: IBanner[];
 }>;
-export const getBannerList: TList = (page: number, pageSize: number = 20) => {
+ const getBannerList: TList = (page: number, pageSize: number = 20) => {
   console.log('getBannerList', page, pageSize);
   return new Promise((resolve) => {
     const result: IBanner[] = new Array(pageSize).fill(1).map((item, index) => {
@@ -25,7 +25,7 @@ export const getBannerList: TList = (page: number, pageSize: number = 20) => {
   });
 };
 
-export const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) =>  {
+ const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) =>  {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       resolve();
@@ -40,3 +40,8 @@ export interface IBanner {
   enable: boolean,
   sort: number
 }
+const BannerService = {
+  getBannerList,
+  toggleBannerStatus,
+};
+export default BannerService;

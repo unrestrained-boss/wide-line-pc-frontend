@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './ClrHeader.scss'
 import {IMenu} from "../../pages/DashBoardPage";
+import isUndefined from 'lodash/isUndefined';
 
 interface Props {
   menus?: IMenu[];
@@ -13,8 +14,8 @@ const ClrHeader: React.FC<Props> = (props) => {
   const [_menus, setMenus] = useState<IMenu[]>([]);
   const [_currentIndex, setCurrentIndex] = useState<number>(-1);
   useEffect(() => {
-    setMenus(props.menus || []);
-    setCurrentIndex(props.currentIndex || -1);
+    setMenus(isUndefined(props.menus) ? [] : props.menus);
+    setCurrentIndex(isUndefined(props.currentIndex) ? -1 : props.currentIndex);
   }, [props.menus, props.currentIndex]);
 
   return (

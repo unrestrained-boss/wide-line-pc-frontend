@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './ClrInput.scss'
+import isUndefined from 'lodash/isUndefined';
 
 interface Props {
   value?: string;
@@ -20,7 +21,7 @@ const ClrInput: React.FC<Props> = (props) => {
   size === 'lager' && classNames.push('lager');
   size === 'small' && classNames.push('small');
   useEffect(() => {
-    setValue(props.value || '');
+    setValue(isUndefined(props.value) ? '' : props.value);
   }, [props.value]);
   return (
     <input name={name}
