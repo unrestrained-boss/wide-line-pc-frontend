@@ -5,7 +5,7 @@ cache:
   directories:
     - node_modules
 script:
-  - npm test
+  - npm test:coverage
   - npm run build:staging
 deploy:
   provider: pages
@@ -14,3 +14,4 @@ deploy:
   local_dir: build
   on:
     branch: master
+after_script: gulp coveralls

@@ -52,6 +52,8 @@
     "@types/lodash": "^4.14.137",
     "@types/yup": "^0.26.23",
     "env-cmd": "^9.0.3",
+    "gulp": "^4.0.2",
+    "gulp-coveralls": "^0.1.4",
     "node-sass": "^4.12.0"
   }
 }
