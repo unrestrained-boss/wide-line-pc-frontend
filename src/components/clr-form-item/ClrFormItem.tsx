@@ -1,5 +1,5 @@
 import React from 'react';
-import {ErrorMessage} from "formik";
+import {ErrorMessage, Field} from "formik";
 import {JustifyContentProperty} from "csstype";
 
 interface Props {
@@ -13,22 +13,29 @@ interface Props {
 
 const ClrFormItem: React.FC<Props> = (props) => {
 
-    const {name, label, labelWidth = '80px', labelAlign = 'flex-end', children} = props;
-    return (
-      <div className="clr-form-item">
+  const {name, label, labelWidth = '80px', labelAlign = 'flex-end', children} = props;
+  return (
+    <div className="clr-form-item">
         <span className="clr-form-item-label"
               style={{width: labelWidth, justifyContent: labelAlign}}>{label ? (`${label}:`) : null} </span>
-        <div className="clr-form-item-children">
-          {children}
-          <div className="error-message">
-            {name ? (
-              <ErrorMessage name={name} component="span"/>
-            ) : null}
-          </div>
-        </div>
+      <div className="clr-form-item-children">
+        {name ? (
+          <>
+            <Field name={name}
+                   render={({field}: any) => {
+                     return React.cloneElement(children as any, {
+                       ...field
+                     });
+                   }}/>
 
+            <div className="error-message">
+              <ErrorMessage name={name} component="span"/>
+            </div>
+          </>
+        ) : children}
       </div>
-    );
+    </div>
+  );
 };
 
 export default ClrFormItem;

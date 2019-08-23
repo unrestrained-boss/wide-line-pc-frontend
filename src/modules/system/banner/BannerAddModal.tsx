@@ -1,21 +1,15 @@
 import React, {PureComponent} from 'react';
 import './BannerAddModal.scss'
 import {IBanner} from "../../../services/system/BannerService";
-import {Field, Formik} from "formik";
+import {Formik} from "formik";
 import ClrInput from "../../../components/clr-input/ClrInput";
 import ClrButton from "../../../components/clr-button/ClrButton";
 import * as Yup from 'yup';
 import ClrFormItem from "../../../components/clr-form-item/ClrFormItem";
 import ClrForm from "../../../components/clr-form/ClrForm";
-import ClrCheckbox from "../../../components/clr-checkbox/ClrCheckbox";
-import ClrCheckboxGroup from "../../../components/clr-checkbox/ClrCheckboxGroup";
-import ClrRadio from "../../../components/clr-radio/ClrRadio";
-import ClrRadioGroup from "../../../components/clr-radio/ClrRadioGroup";
-import ClrSwitch from "../../../components/clr-switch/ClrSwitch";
-import ClrUpload from "../../../components/clr-upload/ClrUpload";
 
 interface OwnProps {
-  data: IBanner;
+  data?: IBanner;
   close: () => void;
 }
 
@@ -31,10 +25,10 @@ class BannerAddModal extends PureComponent<Props, State> {
       .min(2, '用户名至少 2 位')
       .max(8, '用户名最多 8 位')
       .required('用户名必填'),
-    password: Yup.string()
-      .min(2, '密码至少 2 位')
-      .max(8, '密码最多 8 位')
-      .required('密码必填'),
+    // password: Yup.string()
+    //   .min(2, '密码至少 2 位')
+    //   .max(8, '密码最多 8 位')
+    //   .required('密码必填'),
 
   });
   labelWith = '100px';
@@ -53,58 +47,25 @@ class BannerAddModal extends PureComponent<Props, State> {
           validationSchema={this.testSchema}>
           {({isSubmitting}) => {
             return <ClrForm>
-              <ClrFormItem name="banner" label="banner图片" labelWidth={this.labelWith}>
-                <Field name="banner"
-                       render={({field}: any) => <ClrUpload multiple={true} {...field} headers={{a: 'xxx'}}
-                                                            limit={2} action="https://jsonplaceholder.typicode.com/posts/"/>}/>
+              {/*<ClrFormItem name="banner"*/}
+              {/*             label="banner图片"*/}
+              {/*             labelWidth={this.labelWith}*/}
+              {/*render={*/}
+              {/*  ({field}: any) => <ClrUpload multiple={true} {...field} headers={{a: 'xxx'}}*/}
+              {/*                               limit={2} action="https://jsonplaceholder.typicode.com/posts/"/>}/>*/}
 
+
+              <ClrFormItem labelWidth={this.labelWith}
+                           label="用户名"
+                           name="username">
+                <ClrInput placeholder="请输入用户名"
+                          type="text"/>
               </ClrFormItem>
-              <ClrFormItem labelWidth={this.labelWith} label="用户名" name="username">
-                <Field name="username"
-                       render={({field}: any) => <ClrInput {...field} placeholder="请输入用户名" type="text"/>}/>
-              </ClrFormItem>
-              <ClrFormItem labelWidth={this.labelWith} label="密码" name="password">
-                <Field name="password"
-                       render={({field}: any) => <ClrInput {...field} placeholder="请输入密码" type="password"/>}/>
-              </ClrFormItem>
-              <ClrFormItem labelWidth={this.labelWith} label="超级英雄" name="isSuperMan">
-                <Field name="isSuperMan"
-                       render={({field}: any) => {
-                         return (
-                           <ClrCheckboxGroup {...field}>
-                             <ClrCheckbox value={"a"}>a</ClrCheckbox>
-                             <ClrCheckbox value={"b"}>b</ClrCheckbox>
-                             <ClrCheckbox value={"c"}>c</ClrCheckbox>
-                             <ClrCheckbox value={"d"}>d</ClrCheckbox>
-                           </ClrCheckboxGroup>
-                         );
-                       }}/>
-              </ClrFormItem>
-              <ClrFormItem labelWidth={this.labelWith} label="性别" name="sex">
-                <Field name="sex"
-                       render={({field}: any) => {
-                         return (
-                           <ClrRadioGroup {...field}>
-                             <ClrRadio value={"1"}>1</ClrRadio>
-                             <ClrRadio value={"2"}>2</ClrRadio>
-                             <ClrRadio value={"3"}>3</ClrRadio>
-                             <ClrRadio value={"4"}>4</ClrRadio>
-                           </ClrRadioGroup>
-                         );
-                       }}/>
-              </ClrFormItem>
-              <ClrFormItem labelWidth={this.labelWith} label="是否单身" name="single">
-                <Field name="single"
-                       render={({field}: any) => {
-                         return (
-                           <ClrSwitch {...field}/>
-                         );
-                       }}/>
-              </ClrFormItem>
+
               <ClrFormItem labelWidth={this.labelWith}>
-                <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
-                  立即登录
-                </ClrButton>
+              <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
+                立即登录
+              </ClrButton>
               </ClrFormItem>
             </ClrForm>
           }}
