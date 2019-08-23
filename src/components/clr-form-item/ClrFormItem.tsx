@@ -19,7 +19,7 @@ const ClrFormItem: React.FC<Props> = (props) => {
         <span className="clr-form-item-label"
               style={{width: labelWidth, justifyContent: labelAlign}}>{label ? (`${label}:`) : null} </span>
       <div className="clr-form-item-children">
-        {name ? (
+        {children && (name ? (
           <>
             <Field name={name}
                    render={({field}: any) => {
@@ -32,7 +32,7 @@ const ClrFormItem: React.FC<Props> = (props) => {
               <ErrorMessage name={name} component="span"/>
             </div>
           </>
-        ) : children}
+        ) : children)}
       </div>
     </div>
   );
