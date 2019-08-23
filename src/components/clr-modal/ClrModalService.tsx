@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from "react-dom";
 import ClrModal from "./ClrModal";
 
-export interface IModalOptions {
-  title?: string
+export interface IModalOpenOptions {
+  title?: string;
+  data?: any;
 }
 
-export const openModal = (Component: any, options: IModalOptions) => {
+const openModal = (Component: any, options: IModalOpenOptions) => {
   const container = document.createElement('div');
   document.body.append(container);
   const close = () => {
@@ -16,7 +17,30 @@ export const openModal = (Component: any, options: IModalOptions) => {
 
   ReactDOM.render((
     <ClrModal {...options} close={close}>
-      {(modalProps: IModalOptions) => <Component {...modalProps} />}
+      {(modalProps: IModalOpenOptions) => <Component {...modalProps} />}
     </ClrModal>
-  ), container)
+  ), container);
 };
+
+const alert = (message: string) => {
+  const container = document.createElement('div');
+  document.body.append(container);
+  const close = () => {
+    ReactDOM.unmountComponentAtNode(container);
+    container.remove();
+  };
+
+  ReactDOM.render((
+    <ClrModal close={close}>
+      {(modalProps: IModalOpenOptions) => {
+        return (
+          <span>{message}</span>
+        );
+      }}
+    </ClrModal>
+  ), container);
+};
+export default {
+  openModal,
+  alert,
+}

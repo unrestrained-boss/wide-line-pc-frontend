@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import './ClrModal.scss'
+import './ClrModal.scss';
+import cloneDeep from 'lodash/cloneDeep';
 
 interface Props {
   title?: string;
+  data?: any;
   close: () => void;
 }
-
 
 const ClrModal: React.FC<Props> = (props) => {
   const {title = ''} = props;
@@ -19,7 +20,9 @@ const ClrModal: React.FC<Props> = (props) => {
       props.close();
     }
   };
-
+  function getPreData<T>() {
+    return cloneDeep(props.data as T);
+  }
   return (<div onClick={(e) => handleContainerClicked(e)}
                className="clr-modal-container">
     <div className="clr-modal-wrapper">
@@ -34,6 +37,7 @@ const ClrModal: React.FC<Props> = (props) => {
           close: () => props.close(),
           setBackgroundDismiss,
           setShowClose,
+          getPreData,
         })}
       </div>
     </div>
@@ -41,3 +45,10 @@ const ClrModal: React.FC<Props> = (props) => {
 };
 
 export default ClrModal;
+
+export interface IModalInjectProps {
+  close: () => void;
+  setBackgroundDismiss: (s:boolean) => void;
+  setShowClose: (s:boolean) => void;
+  getPreData: <T>() => T;
+}

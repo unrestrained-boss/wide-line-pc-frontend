@@ -9,22 +9,13 @@ import ClrFormItem from "../../../components/clr-form-item/ClrFormItem";
 import ClrForm from "../../../components/clr-form/ClrForm";
 import ClrSwitch from "../../../components/clr-switch/ClrSwitch";
 import ClrUpload from "../../../components/clr-upload/ClrUpload";
+import {IModalInjectProps} from "../../../components/clr-modal/ClrModal";
 
-interface Props {
-  data?: IBanner;
-  close: () => void;
-  setBackgroundDismiss: (s:boolean) => void;
-  setShowClose: (s:boolean) => void;
+interface Props extends IModalInjectProps {
 }
 
 const labelWith = '100px';
-const initialValues: IBanner = {
-  name: '',
-  image: '',
-  link: '',
-  enable: true,
-  sort: 1,
-};
+
 const validationSchema = Yup.object().shape({
   image: Yup.array()
     .min(1, 'banner 需要 1 张')
@@ -43,7 +34,19 @@ const validationSchema = Yup.object().shape({
 
 });
 const BannerAddModal: React.FC<Props> = (props) => {
+  const preData = props.getPreData<IBanner>();
+  const isEditMode = preData !== undefined;
+  let initialValues: IBanner = {
+    name: '',
+    image: '',
+    link: '',
+    enable: true,
+    sort: 1,
+  };
 
+  if (isEditMode) {
+    initialValues = {...initialValues, ...preData, image: [preData.image as string]};
+  }
   const handleSubmit = (values: IBanner, {setSubmitting}: any) => {
     const body = {
       name: values.name,
@@ -102,7 +105,7 @@ const BannerAddModal: React.FC<Props> = (props) => {
 
             <ClrFormItem labelWidth={labelWith}>
               <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
-                立即添加
+                立即{isEditMode? '修改': '添加'}
               </ClrButton>
             </ClrFormItem>
           </ClrForm>

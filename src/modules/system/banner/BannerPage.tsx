@@ -3,7 +3,7 @@ import {getBannerList, IBanner, toggleBannerStatus} from "../../../services/syst
 import {ClrTableWithSpinner, ITableColumn, ITableData} from "../../../components/clr-table/ClrTable";
 import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
 import ClrButton from "../../../components/clr-button/ClrButton";
-import {openModal} from "../../../components/clr-modal/ClrModalService";
+import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import BannerAddModal from "./BannerAddModal";
 
@@ -81,11 +81,12 @@ class BannerPage extends PureComponent<Props, State> {
         return (
           <>
             <ClrButton onClick={() => {
-              // openModal((close: () => void) => <BannerAddModal close={close}
-              //                                                  data={row as IBanner}/>, {title: '编辑 Banner'});
+              ClrModalService.openModal(BannerAddModal, {title: '编辑 BANNER', data: row});
             }} type="primary">编辑</ClrButton>
             &nbsp;&nbsp;
-            <ClrButton onClick={e => console.log(row, index, data, e)} type="danger">删除</ClrButton>
+            <ClrButton onClick={e => {
+              ClrModalService.alert("H啊哈哈")
+            }} type="danger">删除</ClrButton>
           </>
         );
       }
@@ -108,7 +109,7 @@ class BannerPage extends PureComponent<Props, State> {
     })
   }
   handleAddBanner() {
-    openModal(BannerAddModal, {title: '新建 BANNER'})
+    ClrModalService.openModal(BannerAddModal, {title: '新建 BANNER'})
   }
   async handleToggleBannerStatus(row: IBanner, index: number, newValue: any) {
     let newData = [...this.state.data];
