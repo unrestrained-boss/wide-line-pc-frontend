@@ -2,6 +2,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 [![Build Status](https://travis-ci.org/unrestrained-boss/wide-line-pc-frontend.svg?branch=master)](https://travis-ci.org/unrestrained-boss/wide-line-pc-frontend)
 
+[![Coverage Status](https://coveralls.io/repos/github/unrestrained-boss/wide-line-pc-frontend/badge.svg?branch=master)](https://coveralls.io/github/unrestrained-boss/wide-line-pc-frontend?branch=master)
+
 ## Available Scripts
 
 In the project directory, you can run:
