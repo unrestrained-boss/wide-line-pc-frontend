@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import './ClrSidebar.scss'
 import {IMenu} from "../../pages/DashBoardPage";
 import {NavLink} from "react-router-dom";
