@@ -6,7 +6,7 @@ import {Route, RouteComponentProps, Switch} from "react-router";
 import AdministrationPage from "../modules/system/administration/AdministrationPage";
 import BannerPage from "../modules/system/banner/BannerPage";
 import NotFound from "./NotFound";
-import {dashBoardPath, history} from "../utils/utils";
+import {dashBoardPath, history} from "../utils/Constant";
 
 interface OwnProps extends RouteComponentProps {
 }

@@ -4,7 +4,7 @@ import {ErrorMessage, Field, Form, Formik} from "formik";
 import ClrInput from "../components/clr-input/ClrInput";
 import * as Yup from "yup";
 import ClrButton from "../components/clr-button/ClrButton";
-import {history} from "../utils/utils";
+import {history} from "../utils/Constant";
 
 export const LoginPage: React.FC = () => {
   const validationSchema = Yup.object().shape({

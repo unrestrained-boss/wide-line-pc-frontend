@@ -1,6 +1,6 @@
 import React from 'react';
 import {Redirect, Route, Router, Switch} from "react-router";
-import {dashBoardPath, history} from './utils/utils';
+import {dashBoardPath, history} from './utils/Constant';
 import {DashBoardPage} from "./pages/DashBoardPage";
 import {LoginPage} from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";

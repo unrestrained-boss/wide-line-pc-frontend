@@ -2,7 +2,7 @@ import React from 'react';
 import './ClrSidebar.scss'
 import {IMenu} from "../../pages/DashBoardPage";
 import {NavLink} from "react-router-dom";
-import {dashBoardPath} from "../../utils/utils";
+import {dashBoardPath} from "../../utils/Constant";
 
 interface Props {
   menus?: IMenu[];

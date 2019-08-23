@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {map} from "../../utils/react-children";
+import {map} from "../../utils/ReactChildren";
 
 import isUndefined from 'lodash/isUndefined';
 
