@@ -43,7 +43,7 @@ class ClrUpload extends PureComponent<Props, State> {
     tasks: []
   };
   static defaultProps = {
-    maximum: 0,
+    limit: 0,
     accept: '*/*',
     data: {},
     headers: {},

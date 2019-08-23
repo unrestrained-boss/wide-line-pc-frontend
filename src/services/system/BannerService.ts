@@ -33,9 +33,9 @@ export const toggleBannerStatus: (id: number, status: boolean) => Promise<void> 
   })
 };
 export interface IBanner {
-  id: number;
+  id?: number;
   name: string,
-  image: string,
+  image: string | string[],
   link: string,
   enable: boolean,
   sort: number

@@ -81,8 +81,8 @@ class BannerPage extends PureComponent<Props, State> {
         return (
           <>
             <ClrButton onClick={() => {
-              openModal((close: () => void) => <BannerAddModal close={close}
-                                                               data={row as IBanner}/>, {title: '编辑 Banner'});
+              // openModal((close: () => void) => <BannerAddModal close={close}
+              //                                                  data={row as IBanner}/>, {title: '编辑 Banner'});
             }} type="primary">编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton onClick={e => console.log(row, index, data, e)} type="danger">删除</ClrButton>
@@ -107,14 +107,16 @@ class BannerPage extends PureComponent<Props, State> {
       loading: false,
     })
   }
-
+  handleAddBanner() {
+    openModal(BannerAddModal, {title: '新建 BANNER'})
+  }
   async handleToggleBannerStatus(row: IBanner, index: number, newValue: any) {
     let newData = [...this.state.data];
     newData[index].__toggleStatusIng = true;
     this.setState({
       data: newData,
     });
-    await toggleBannerStatus(row.id, !row.enable);
+    await toggleBannerStatus(row.id!, !row.enable);
     newData = [...this.state.data];
     newData[index].enable = newValue;
     newData[index].__toggleStatusIng = false;
@@ -128,6 +130,9 @@ class BannerPage extends PureComponent<Props, State> {
   render() {
     return (
       <div ref={this.container} className={"frame-content"}>
+        <div style={{marginBottom: '20px'}}>
+          <ClrButton onClick={() => this.handleAddBanner()} type={"primary"}>+ 新建 Banner</ClrButton>
+        </div>
         <ClrTableWithSpinner spinner={this.state.loading}
                              showText
                              even

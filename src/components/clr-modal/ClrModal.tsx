@@ -1,34 +1,40 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './ClrModal.scss'
 
 interface Props {
-  Close?: () => void;
   title?: string;
+  close: () => void;
 }
 
 
 const ClrModal: React.FC<Props> = (props) => {
-
+  const {title = ''} = props;
+  const [backgroundDismiss, setBackgroundDismiss] = useState(true);
+  const [showClose, setShowClose] = useState(true);
   const handleContainerClicked = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!backgroundDismiss) {
+      return;
+    }
     if (e.currentTarget === e.target) {
-      close();
+      props.close();
     }
   };
 
-
-  const close = () => {
-    props.Close && props.Close();
-  };
-  const {title = ''} = props;
   return (<div onClick={(e) => handleContainerClicked(e)}
                className="clr-modal-container">
     <div className="clr-modal-wrapper">
       <div className="clr-modal-header">
         <span className="title">{title}</span>
-        <i onClick={() => close()}>x</i>
+        {showClose ? (
+          <i onClick={() => props.close()}>x</i>
+        ): null}
       </div>
       <div>
-        {props.children}
+        {props.children && (props.children as any)({
+          close: () => props.close(),
+          setBackgroundDismiss,
+          setShowClose,
+        })}
       </div>
     </div>
   </div>);
