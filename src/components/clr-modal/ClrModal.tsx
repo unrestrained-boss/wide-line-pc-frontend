@@ -25,7 +25,7 @@ const ClrModal: React.FC<Props> = (props) => {
   }
 
   return (<div onClick={(e) => handleContainerClicked(e)}
-               className="clr-modal-container">
+               className="clr-modal-container" aria-hidden="true">
     <div className="clr-modal-wrapper">
       <div className="clr-modal-header">
         <span className="title">{title}</span>

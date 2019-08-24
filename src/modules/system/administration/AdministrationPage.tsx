@@ -6,6 +6,7 @@ import AdministrationService from "../../../services/system/AdministrationServic
 import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import BannerAddModal from "../banner/BannerAddModal";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
+import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 
 interface Props extends RouteComponentProps {
 }
@@ -41,6 +42,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
     },
   ];
   function handleAddAdministration() {
+    ClrMessageService.success('sddsds')
   }
 
   return (

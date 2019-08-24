@@ -1,0 +1,47 @@
+.clr-message-wrapper {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  z-index: 1002;
+  transform: translateX(-50%);
+
+  &.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.bottom {
+    top: initial;
+    bottom: 10%;
+  }
+
+  .clr-message-body {
+    background-color: #EDF2FC;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #6f747f;
+    padding: 10px 20px;
+    border-radius: 3px;
+    color: #575757;
+
+    &.error {
+      background-color: #f5dddb;
+      border-color: #f8b5b4;
+    }
+
+    &.warning {
+      background-color: #fef3b4;
+      border-color: #fdd008;
+    }
+
+    &.success {
+      background-color: #dff0d0;
+      border-color: #61b715;
+    }
+    &.info {
+      background-color: #e0f0f6;
+      border-color: #45afd9;
+    }
+  }
+}

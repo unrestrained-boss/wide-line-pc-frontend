@@ -6,6 +6,7 @@ import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import BannerAddModal from "./BannerAddModal";
 import BannerService, {IBanner} from "../../../services/system/BannerService";
+import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 
 interface Props {
 }
@@ -79,6 +80,7 @@ const BannerPage: React.FC<Props> = (props) => {
                   setLoading();
                   setTimeout(() => {
                     console.log('sok');
+                    ClrMessageService.error('sdsd');
                     failBack();
                   }, 3000)
                 },
