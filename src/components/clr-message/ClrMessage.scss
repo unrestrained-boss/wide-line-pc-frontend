@@ -7,6 +7,7 @@
   pointer-events: none;
   z-index: 1002;
   .clr-message-body {
+    margin-top: 10px;
     background-color: #EDF2FC;
     border-width: 1px;
     border-style: solid;
@@ -17,7 +18,11 @@
     color: #575757;
     animation-name: bounceIn;
     animation-duration: 0.75s;
-
+    &.out {
+      animation-duration: 0.75s;
+      animation-name: bounceOut;
+      animation-fill-mode: forwards;
+    }
     &.error {
       background-color: #f5dddb;
       border-color: #f8b5b4;
@@ -74,5 +79,22 @@
   to {
     opacity: 1;
     transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes bounceOut {
+  20% {
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+
+  50%,
+  55% {
+    opacity: 1;
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
   }
 }

@@ -17,8 +17,14 @@ const showMessage = (Component: any, options: IMessageOpenOptions = {}) => {
   const wrapper = document.createElement('div');
   container.append(wrapper);
   const close = () => {
-    ReactDOM.unmountComponentAtNode(wrapper);
-    wrapper.remove();
+    const el = wrapper.children[0] as HTMLDivElement;
+    el.classList.add('out');
+    el.addEventListener('animationend', () => {
+      setTimeout(() => {
+        ReactDOM.unmountComponentAtNode(wrapper);
+        wrapper.remove();
+      }, 0);
+    });
   };
   // const classNames = ['clr-message-wrapper'];
   // options!.position === 'center' && classNames.push('center');
@@ -75,5 +81,4 @@ export default {
   show,
 };
 
-type TMessagePosition = 'top' | 'center' | 'bottom';
 type TMessageType = 'default' | 'success' | 'warning' | 'error' | 'info';
