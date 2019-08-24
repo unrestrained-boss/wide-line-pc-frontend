@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {createRef, RefObject} from 'react';
 import {RouteComponentProps} from "react-router";
-import ClrTable, {ITableColumn} from "../../../components/clr-table/ClrTable";
+import {ClrTableWithSpinner, ITableColumn} from "../../../components/clr-table/ClrTable";
 import ClrButton from "../../../components/clr-button/ClrButton";
-import AdministrationService, {IAdministration} from "../../../services/system/AdministrationService";
+import AdministrationService from "../../../services/system/AdministrationService";
 import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import BannerAddModal from "../banner/BannerAddModal";
+import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 
 interface Props extends RouteComponentProps {
 }
 
 
 const AdministrationPage: React.FC<Props> = (props) => {
-  const [data, setData] = useState<IAdministration[]>([]);
+  const {total, data, isLoading, isError, page, setPage} = AdministrationService.useAdministrationList();
+  const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
   const columns: ITableColumn[] = [
     // { title: 'ID', dataIndex: 'id', width: '60px' },
     { title: '账号', dataIndex: 'username', width: '160px', align: 'center' },
@@ -39,21 +41,21 @@ const AdministrationPage: React.FC<Props> = (props) => {
     },
   ];
   function handleAddAdministration() {
-
   }
-  useEffect(() => {
-    async function fetch() {
-      const data = await AdministrationService.getAdministrationList(1);
-      setData(data.data);
-    }
-    fetch();
-  }, []);
+
   return (
-    <div className={"frame-content"}>
+    <div className={"frame-content"} ref={container}>
       <div style={{marginBottom: '20px'}}>
         <ClrButton onClick={handleAddAdministration} type={"primary"}>+ 添加管理员</ClrButton>
       </div>
-      <ClrTable columns={columns} data={data}/>
+      <div style={{textAlign: 'center'}}>
+        {isError && <span>出错了, 请稍后再试!</span>}
+      </div>
+      <ClrTableWithSpinner spinner={isLoading} showText columns={columns} data={data}/>
+      <ClrPagination disabled={isLoading} total={total} page={page} pageSize={20} onChange={page => {
+        container.current!.scrollTop = 0;
+        setPage(page);
+      }}/>
     </div>
   );
 };

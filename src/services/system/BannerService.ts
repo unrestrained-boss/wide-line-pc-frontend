@@ -1,8 +1,10 @@
+import BaseService from "../BaseService";
+
 type TList = (page: number, pageSize?: number) => Promise<{
   total: number;
   data: IBanner[];
 }>;
- const getBannerList: TList = (page: number, pageSize: number = 20) => {
+const getBannerList: TList = (page: number, pageSize: number = 20) => {
   console.log('getBannerList', page, pageSize);
   return new Promise((resolve) => {
     const result: IBanner[] = new Array(pageSize).fill(1).map((item, index) => {
@@ -25,13 +27,17 @@ type TList = (page: number, pageSize?: number) => Promise<{
   });
 };
 
- const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) =>  {
+const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) => {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       resolve();
     }, 1000);
   })
 };
+
+const useBannerList = () => BaseService.useServiceBaseList<IBanner>(getBannerList);
+
+
 export interface IBanner {
   id?: number;
   name: string,
@@ -40,8 +46,10 @@ export interface IBanner {
   enable: boolean,
   sort: number
 }
+
 const BannerService = {
   getBannerList,
   toggleBannerStatus,
+  useBannerList,
 };
 export default BannerService;

@@ -1,3 +1,5 @@
+import BaseService from "../BaseService";
+
 type TList = (page: number, pageSize?: number) => Promise<{
   total: number;
   data: IAdministration[];
@@ -21,9 +23,11 @@ const getAdministrationList: TList = (page: number, pageSize: number = 20) => {
         total: 381,
         data: result
       });
-    }, 1000);
+    }, 100);
   });
 };
+
+const useAdministrationList =() => BaseService.useServiceBaseList<IAdministration>(getAdministrationList);
 
 
 export interface IAdministration {
@@ -37,5 +41,6 @@ export interface IAdministration {
 }
 const AdministrationService = {
   getAdministrationList,
+  useAdministrationList,
 };
 export default AdministrationService;

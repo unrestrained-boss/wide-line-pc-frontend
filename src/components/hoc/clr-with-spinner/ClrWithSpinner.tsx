@@ -20,11 +20,11 @@ export const withSpinner = <P extends object>(
     };
 
     render() {
-      const {showText, spinnerText, spinnerSize} = this.props;
+      const {spinner, showText, spinnerText, spinnerSize} = this.props;
       return (
         <div className="clr-with-spinner-wrapper">
           <WrappedComponent {...this.props} />
-          {!this.props.spinner ? null : <div className="inner">
+          {!spinner ? null : <div className="inner">
             <ClrSpinner size={spinnerSize}/>
             {showText ? <span>&nbsp;&nbsp;&nbsp;{spinnerText}</span> : null}
           </div>}
