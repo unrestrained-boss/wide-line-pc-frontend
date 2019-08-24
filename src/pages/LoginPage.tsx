@@ -26,7 +26,7 @@ export const LoginPage: React.FC = () => {
     const [data, err] = await UserService.loginUser(values);
     setSubmitting(false);
     if (err) {
-      ClrMessageService.warning(err.message);
+      err.showMessage();
       return;
     }
     UserService.setUserToken(data.token);

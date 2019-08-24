@@ -6,7 +6,11 @@
   background-color: transparent;
   pointer-events: none;
   z-index: 1002;
+  word-break: break-all;
   .clr-message-body {
+    pointer-events: all;
+    max-height: 600px;
+    overflow-y: auto;
     margin-top: 10px;
     background-color: #EDF2FC;
     border-width: 1px;
