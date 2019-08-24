@@ -1,40 +1,42 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import './ClrMessage.scss'
+import './ClrMessage.scss';
 
 interface IMessageQuickOptions {
-  position?: TMessagePosition;
+  time?: number;
 }
 
 interface IMessageOpenOptions extends IMessageQuickOptions {
   type?: TMessageType;
 }
 
+const container = document.createElement('div');
+container.className = 'clr-message-container';
+document.body.append(container);
 const showMessage = (Component: any, options: IMessageOpenOptions = {}) => {
-  const container = document.createElement('div');
-  document.body.append(container);
+  const wrapper = document.createElement('div');
+  container.append(wrapper);
   const close = () => {
-    ReactDOM.unmountComponentAtNode(container);
-    container.remove();
+    ReactDOM.unmountComponentAtNode(wrapper);
+    wrapper.remove();
   };
-  const classNames = ['clr-message-wrapper'];
-  options!.position === 'center' && classNames.push('center');
-  options!.position === 'bottom' && classNames.push('bottom');
+  // const classNames = ['clr-message-wrapper'];
+  // options!.position === 'center' && classNames.push('center');
+  // options!.position === 'bottom' && classNames.push('bottom');
   const bodyClassNames = ['clr-message-body'];
   options!.type === 'success' && bodyClassNames.push('success');
   options!.type === 'warning' && bodyClassNames.push('warning');
   options!.type === 'error' && bodyClassNames.push('error');
   options!.type === 'info' && bodyClassNames.push('info');
+
   ReactDOM.render((
-    <div className={classNames.join(' ')}>
-      <div className={bodyClassNames.join(' ')}>
-        {Component}
-      </div>
+    <div className={bodyClassNames.join(' ')}>
+      {Component}
     </div>
-  ), container);
+  ), wrapper);
   setTimeout(() => {
     close();
-  }, 5000);
+  }, 3000);
 };
 const success = (Component: any, options?: IMessageQuickOptions) => {
   showMessage(Component, {

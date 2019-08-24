@@ -42,7 +42,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
     },
   ];
   function handleAddAdministration() {
-    ClrMessageService.success('sddsds')
+    ClrMessageService.success('sddsds' + Date.now(), )
   }
 
   return (
