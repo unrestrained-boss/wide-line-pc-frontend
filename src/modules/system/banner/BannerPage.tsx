@@ -82,7 +82,6 @@ const BannerPage: React.FC<Props> = (props) => {
                     failBack();
                   }, 3000)
                 },
-                title: '删除提示'
               });
             }} type="danger">删除</ClrButton>
           </>

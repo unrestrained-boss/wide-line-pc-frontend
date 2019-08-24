@@ -34,7 +34,10 @@
     "eject": "react-scripts eject",
     "precommit-msg": "echo 'Pre-commit checks.........' && exit 0"
   },
-  "pre-commit": ["precommit-msg", "test:coverage"],
+  "pre-commit": [
+    "precommit-msg",
+    "test:coverage"
+  ],
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -56,6 +59,7 @@
     "@types/yup": "^0.26.23",
     "coveralls": "^3.0.6",
     "env-cmd": "^9.0.3",
-    "node-sass": "^4.12.0"
+    "node-sass": "^4.12.0",
+    "pre-commit": "^1.2.2"
   }
 }
