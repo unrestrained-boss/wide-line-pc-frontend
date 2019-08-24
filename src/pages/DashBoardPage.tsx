@@ -1,12 +1,12 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Suspense, lazy} from 'react';
 import ClrHeader from "../components/clr-header/ClrHeader";
 import ClrSidebar from "../components/clr-sidebar/ClrSidebar";
 import './DashBoardPage.scss'
 import {Route, RouteComponentProps, Switch} from "react-router";
-import AdministrationPage from "../modules/system/administration/AdministrationPage";
-import BannerPage from "../modules/system/banner/BannerPage";
 import NotFound from "./NotFound";
 import {dashBoardPath, history} from "../utils/Constant";
+
+const loadComponentWithModulesPrefix = (path: string) => lazy(() => import(`../modules/${path}`));
 
 interface OwnProps extends RouteComponentProps {
 }
@@ -78,11 +78,17 @@ export class DashBoardPage extends PureComponent<Props, State> {
         <section className="content">
           <ClrSidebar menus={this.subMenus}/>
           <section className="router-outlet">
-            <Switch>
-              <Route exact path={`${dashBoardPath}/system`} component={BannerPage}/>
-              <Route exact path={`${dashBoardPath}/system/administration`} component={AdministrationPage}/>
-              <Route component={NotFound}/>
-            </Switch>
+            <Suspense fallback={<></>}>
+              <Switch>
+                <Route exact
+                       path={`${dashBoardPath}/system`}
+                       component={loadComponentWithModulesPrefix('system/banner/BannerPage')}/>
+                <Route exact
+                       path={`${dashBoardPath}/system/administration`}
+                       component={loadComponentWithModulesPrefix('system/administration/AdministrationPage')}/>
+                <Route component={NotFound}/>
+              </Switch>
+            </Suspense>
           </section>
         </section>
       </main>
