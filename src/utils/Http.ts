@@ -38,7 +38,7 @@ function _createError(error: Error): ResponseError {
 instance.interceptors.request.use(config => {
   const token = UserService.getUserToken();
   if (token) {
-    config.headers["token"] = UserService.getUserToken();
+    config.headers["Token"] = UserService.getUserToken();
   }
   if (config.method === 'get') {
     config.headers["Content-Type"] = 'application/x-www-form-urlencoded';
