@@ -22,8 +22,14 @@ export const LoginPage: React.FC = () => {
       .required('密码必填'),
   });
   async function handleSubmit(values: any, {setSubmitting}: any) {
-    await UserService.loginUser(values);
+    // @ts-ignore
+    const [data, err] = await UserService.loginUser(values);
     setSubmitting(false);
+    if (err) {
+      ClrMessageService.warning(err.message);
+      return;
+    }
+    UserService.setUserToken(data.token);
     history.push('/');
     ClrMessageService.success('登录成功!');
   }
@@ -34,6 +40,8 @@ export const LoginPage: React.FC = () => {
               validationSchema={validationSchema}>
         {({isSubmitting}) => {
           return <ClrForm>
+            <h3 style={{textAlign: 'center'}}>欢迎登录</h3>
+
             <ClrFormItem label="用户名"
                          name="username">
               <ClrInput placeholder="请输入用户名" type="text"/>

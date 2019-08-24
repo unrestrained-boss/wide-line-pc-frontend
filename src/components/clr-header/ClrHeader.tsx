@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import './ClrHeader.scss'
 import {IMenu} from "../../pages/DashBoardPage";
 import isUndefined from 'lodash/isUndefined';
+import UserService from "../../services/UserService";
+import {history} from "../../utils/Constant";
+import ClrModalService from "../clr-modal/ClrModalService";
 
 interface Props {
   menus?: IMenu[];
@@ -49,7 +52,15 @@ const ClrHeader: React.FC<Props> = (props) => {
           <ul className="profile-popup-wrap">
             <li className="profile-item">账户信息</li>
             <li className="profile-item">修改密码</li>
-            <li className="profile-item">退出登录</li>
+            <li onClick={() => {
+              ClrModalService.confirm('确认退出吗?', {
+                onOk: ({ close }) => {
+                  UserService.logoutUser();
+                  history.replace('/login');
+                  close();
+                }
+              });
+            }} className="profile-item">退出登录</li>
           </ul>
         </div>
       </div>

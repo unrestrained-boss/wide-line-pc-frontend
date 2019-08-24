@@ -42,7 +42,7 @@ const showMessage = (Component: any, options: IMessageOpenOptions = {}) => {
   ), wrapper);
   setTimeout(() => {
     close();
-  }, 3000);
+  }, options.time || 3000);
 };
 const success = (Component: any, options?: IMessageQuickOptions) => {
   showMessage(Component, {
