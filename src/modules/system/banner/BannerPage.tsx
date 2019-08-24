@@ -71,7 +71,19 @@ const BannerPage: React.FC<Props> = (props) => {
             }} type="primary">编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton onClick={e => {
-              ClrModalService.alert("H啊哈哈")
+              ClrModalService.confirm(`
+              确实要删除吗?
+              
+              `, {
+                onOk({ close, setLoading, failBack }) {
+                  setLoading();
+                  setTimeout(() => {
+                    console.log('sok');
+                    failBack();
+                  }, 3000)
+                },
+                title: '删除提示'
+              });
             }} type="danger">删除</ClrButton>
           </>
         );
@@ -101,7 +113,7 @@ const BannerPage: React.FC<Props> = (props) => {
         <div style={{textAlign: 'center'}}>
           {isError && <span>出错了, 请稍后再试!</span>}
         </div>
-        <ClrTableWithSpinner spinner={isLoading}
+        <ClrTableWithSpinner position={"flex-start"} spinner={isLoading}
                              showText
                              even
                              size="normal"

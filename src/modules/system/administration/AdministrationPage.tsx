@@ -33,7 +33,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
             }} type="primary">编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton onClick={e => {
-              ClrModalService.alert("H啊哈哈")
+              ClrModalService.alert("H啊哈哈", {})
             }} type="danger">删除</ClrButton>
           </>
         );
@@ -51,7 +51,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
       <div style={{textAlign: 'center'}}>
         {isError && <span>出错了, 请稍后再试!</span>}
       </div>
-      <ClrTableWithSpinner spinner={isLoading} showText columns={columns} data={data}/>
+      <ClrTableWithSpinner position={"flex-start"} spinner={isLoading} showText columns={columns} data={data}/>
       <ClrPagination disabled={isLoading} total={total} page={page} pageSize={20} onChange={page => {
         container.current!.scrollTop = 0;
         setPage(page);

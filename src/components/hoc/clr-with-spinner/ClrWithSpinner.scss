@@ -10,9 +10,9 @@ $primaryActiveColor: #2478B8;
     background-color: rgba(255, 255, 255, .7);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 100px;
-    box-sizing: border-box;
+    //align-items: center;
+    //padding-top: 100px;
+    //box-sizing: border-box;
     >span {
       color: $primaryActiveColor;
     }

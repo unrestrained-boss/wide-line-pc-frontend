@@ -6,6 +6,7 @@
   padding: 0;
   border-right: 1px solid #ccc;
   color: #575757;
+
   .sidebar-item {
     height: 45px;
     line-height: 45px;
@@ -14,19 +15,26 @@
     font-size: 14px;
     cursor: pointer;
     transition: color .3s, background-color .3s;;
-    >a {
+
+    > a {
       display: block;
       padding: 0 20px;
       box-sizing: border-box;
       width: 100%;
       height: 100%;
       text-decoration: none;
-      &.active {
-        background-color: #d8e3e9;
-        color: #000;
+
+      &:link:not(.active),
+      &:visited:not(.active),
+      &:hover:not(.active),
+      &:active:not(.active) {
+        color: #575757;
       }
-      &:hover:not(.active) {
+
+      &:hover:not(.active),
+      &.active {
         background-color: #ededed;
+        color: #000;
       }
     }
   }

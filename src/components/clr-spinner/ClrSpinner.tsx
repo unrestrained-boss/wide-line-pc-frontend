@@ -43,4 +43,3 @@ export default ClrSpinner;
 
 
 export type TSpinnerSize = 'normal' | 'lager' | 'small';
-
