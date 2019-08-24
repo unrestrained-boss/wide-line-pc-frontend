@@ -1,17 +1,17 @@
 import Axios, {AxiosResponse} from 'axios'
 import UserService from "../services/UserService";
 import {history} from './Constant';
-import qs from 'qs';
 import ClrMessageService from "../components/clr-message/ClrMessageService";
 
-const baseURL = 'http://woddp.yxilin.com';
+// const baseURL = 'http://woddp.yxilin.com';
+const baseURL = 'http://localhost:8000';
 const instance = Axios.create({
   baseURL,
   timeout: 10000,
-  transformRequest: [function (data) {
-    data = qs.stringify(data);
-    return data;
-  }],
+  // transformRequest: [function (data) {
+  //   data = qs.stringify(data);
+  //   return data;
+  // }],
 });
 
 export interface BeforeResponse {
@@ -38,11 +38,11 @@ function _createError(error: Error): ResponseError {
 instance.interceptors.request.use(config => {
   const token = UserService.getUserToken();
   if (token) {
-    config.headers["Token"] = UserService.getUserToken();
+    config.headers["Authorization"] = UserService.getUserToken();
   }
-  if (config.method === 'get') {
-    config.headers["Content-Type"] = 'application/x-www-form-urlencoded';
-  }
+  // if (config.method === 'get') {
+  //   config.headers["Content-Type"] = 'application/x-www-form-urlencoded';
+  // }
   return config;
 });
 instance.interceptors.response.use((response: AxiosResponse<BeforeResponse | string>): any => {

@@ -16,7 +16,6 @@
     "formik": "^1.5.8",
     "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
-    "qs": "^6.8.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router": "^5.0.1",
@@ -58,7 +57,6 @@
   "devDependencies": {
     "@types/enzyme": "^3.10.3",
     "@types/lodash": "^4.14.137",
-    "@types/qs": "^6.5.3",
     "@types/yup": "^0.26.23",
     "coveralls": "^3.0.6",
     "env-cmd": "^9.0.3",
