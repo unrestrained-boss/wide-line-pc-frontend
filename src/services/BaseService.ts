@@ -1,9 +1,15 @@
 import {useEffect, useState} from "react";
+import {AxiosResponse} from "axios";
+import {ResponseError} from "../utils/Http";
 
-const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Promise<{
-  total: number,
-  data: T[],
-}>) => {
+const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Promise<[
+  {
+    total: number,
+    data: T[],
+  } | null,
+  ResponseError | null,
+  AxiosResponse
+  ]>) => {
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(1);
   const [data, setData] = useState<T[]>([]);
@@ -13,11 +19,16 @@ const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Pro
     const fetchData = async () => {
       setIsError(false);
       setIsLoading(true);
-      const result = await handler(page);
-      setTotal(result.total);
-      setData(result.data);
-      // setIsError(false);
+      const [data, err] = await handler(page);
       setIsLoading(false);
+      if (err) {
+        setIsError(true);
+        return;
+      }
+      if (data) {
+        setTotal(data.total);
+        setData(data.data);
+      }
     };
     fetchData();
   }, [handler, page]);

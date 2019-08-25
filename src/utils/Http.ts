@@ -8,10 +8,6 @@ const baseURL = 'http://localhost:8000';
 const instance = Axios.create({
   baseURL,
   timeout: 10000,
-  // transformRequest: [function (data) {
-  //   data = qs.stringify(data);
-  //   return data;
-  // }],
 });
 
 export interface BeforeResponse {
@@ -20,7 +16,7 @@ export interface BeforeResponse {
   msg: string;
 }
 
-interface ResponseError extends Error {
+export interface ResponseError extends Error {
   showMessage: () => void;
 }
 
@@ -38,11 +34,8 @@ function _createError(error: Error): ResponseError {
 instance.interceptors.request.use(config => {
   const token = UserService.getUserToken();
   if (token) {
-    config.headers["Authorization"] = UserService.getUserToken();
+    config.headers["X-Token"] = UserService.getUserToken();
   }
-  // if (config.method === 'get') {
-  //   config.headers["Content-Type"] = 'application/x-www-form-urlencoded';
-  // }
   return config;
 });
 instance.interceptors.response.use((response: AxiosResponse<BeforeResponse | string>): any => {

@@ -18,10 +18,10 @@ const AdministrationPage: React.FC<Props> = (props) => {
   const columns: ITableColumn[] = [
     // { title: 'ID', dataIndex: 'id', width: '60px' },
     { title: '账号', dataIndex: 'username', width: '160px', align: 'center' },
-    { title: '备注', dataIndex: 'remarks', width: '200px' },
-    { title: '姓名', dataIndex: 'name', width: '120px' },
-    { title: '电话号码', dataIndex: 'phone', width: '200px'},
-    { title: '角色权限', dataIndex: 'permits',  },
+    { title: '昵称', dataIndex: 'nickname', width: '200px' },
+    { title: '头像', dataIndex: 'avatar', width: '120px' },
+    { title: '电话号码', dataIndex: 'mobile', width: '200px'},
+    { title: '状态', dataIndex: 'status',  },
     {
       title: '操作',
       align: 'center',
