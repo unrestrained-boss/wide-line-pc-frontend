@@ -95,7 +95,7 @@ function deleteServiceBase(path: string): (ids: number[]) => Promise<[
   return (ids: number[]) => {
     return Http.get(path, {
       params: {
-        ids: ids.join(', '),
+        ids: ids.join(','),
       }
     });
   }

@@ -30,10 +30,7 @@ const RolePage: React.FC<Props> = (props) => {
             }} type="primary">编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton onClick={e => {
-              ClrModalService.confirm(`
-              确实要删除吗?
-              
-              `, {
+              ClrModalService.confirm('确实要删除吗?', {
                 onOk({ close, setLoading, failBack }) {
                   setLoading();
                   setTimeout(() => {
