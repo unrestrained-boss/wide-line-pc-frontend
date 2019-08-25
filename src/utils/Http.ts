@@ -4,7 +4,7 @@ import {history} from './Constant';
 import ClrMessageService from "../components/clr-message/ClrMessageService";
 
 // const baseURL = 'http://woddp.yxilin.com';
-const baseURL = 'http://localhost:8000';
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 const instance = Axios.create({
   baseURL,
   timeout: 10000,
