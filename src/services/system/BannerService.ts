@@ -11,7 +11,9 @@ type TList = (page: number, pageSize?: number) => Promise<[
   AxiosResponse
   ]>;
 const getBannerList: TList = (page: number, pageSize: number = 20) => {
-  return Http.get('/');
+  return Http.get('/banner/index', {
+    params: {page}
+  });
 };
 
 const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) => {

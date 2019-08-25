@@ -16,7 +16,7 @@ interface IBannerWithStatus extends IBanner {
 }
 
 const BannerPage: React.FC<Props> = (props) => {
-  const {total, data, setData, isLoading, isError, page, setPage} = BannerService.useBannerList();
+  const {total, data, setData, isLoading, isError, page, setPage, refresh} = BannerService.useBannerList();
   const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
   const columns: ITableColumn[] = [
     {title: '名称', dataIndex: 'name', align: 'center', width: '100px'},
@@ -111,8 +111,10 @@ const BannerPage: React.FC<Props> = (props) => {
         <div style={{marginBottom: '20px'}}>
           <ClrButton onClick={() => handleAddBanner()} type={"primary"}>+ 新建 Banner</ClrButton>
         </div>
-        <div style={{textAlign: 'center'}}>
-          {isError && <span>出错了, 请稍后再试!</span>}
+        <div style={{textAlign: 'center', marginBottom: '20px'}}>
+          {isError && (
+            <span>出错了, 请尝试&nbsp;&nbsp;&nbsp;<ClrButton size={"small"} outline type={"danger"} onClick={() => refresh()}>点击重试</ClrButton></span>
+          )}
         </div>
         <ClrTableWithSpinner position={"flex-start"} spinner={isLoading}
                              showText

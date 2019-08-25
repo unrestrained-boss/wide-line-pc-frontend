@@ -10,16 +10,23 @@ const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Pro
   ResponseError | null,
   AxiosResponse
   ]>) => {
+  const [count, setCount] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(1);
   const [data, setData] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+
+
   useEffect(() => {
+    let mounted = true;
     const fetchData = async () => {
       setIsError(false);
       setIsLoading(true);
       const [data, err] = await handler(page);
+      if (!mounted) {
+        return;
+      }
       setIsLoading(false);
       if (err) {
         setIsError(true);
@@ -31,7 +38,10 @@ const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Pro
       }
     };
     fetchData();
-  }, [handler, page]);
+    return () => {
+      mounted = false;
+    };
+  }, [handler, page, count]);
   return {
     total,
     data,
@@ -40,6 +50,9 @@ const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Pro
     isError,
     page,
     setPage,
+    refresh() {
+      setCount(count + 1 );
+    }
   };
 };
 

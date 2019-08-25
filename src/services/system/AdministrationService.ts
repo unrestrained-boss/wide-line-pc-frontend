@@ -16,6 +16,9 @@ const getAdministrationList: TList = (page: number, pageSize: number = 20) => {
 
 const useAdministrationList = () => BaseService.useServiceBaseList<IAdministration>(getAdministrationList);
 
+const addAdministration = (body: IAdministration & {password: string, repassword: string}) => {
+  return Http.post('/user/add', body);
+};
 
 export interface IAdministration {
   id?: number;
@@ -29,5 +32,6 @@ export interface IAdministration {
 const AdministrationService = {
   getAdministrationList,
   useAdministrationList,
+  addAdministration,
 };
 export default AdministrationService;
