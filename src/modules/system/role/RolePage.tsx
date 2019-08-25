@@ -12,7 +12,7 @@ interface Props extends RouterProps {
 
 }
 const RolePage: React.FC<Props> = (props) => {
-  const {total, data, isLoading, isError, page, setPage} = RoleService.useRoleList();
+  const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
   const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
   const columns: ITableColumn[] = [
     {title: '名称', dataIndex: 'name', align: 'center', width: '200px'},
