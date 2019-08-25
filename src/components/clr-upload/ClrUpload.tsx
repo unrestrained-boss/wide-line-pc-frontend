@@ -3,16 +3,19 @@ import uniqueId from 'lodash/uniqueId'
 import './ClrUpload.scss'
 
 interface OwnProps {
+  action: string;
   value?: any[],
   limit?: number;
   accept?: string;
   name?: string;
+  fileKey?: string;
+  urlPrefix?: string;
   multiple?: boolean;
-  withCredentials?: boolean,
-  data?: { [s: string]: any },
-  headers?: { [s: string]: string },
-  action: string;
-  onChange?: (s: { target: { name: string, value: any } }) => void
+  withCredentials?: boolean;
+  data?: { [s: string]: any };
+  headers?: { [s: string]: string };
+  onChange?: (s: { target: { name: string, value: any } }) => void;
+  checkResponse?: (value: { [s: string]: any } | string, done: (s: any) => void, error: () => void) => void;
 }
 
 type Props = OwnProps;
@@ -47,12 +50,37 @@ class ClrUpload extends PureComponent<Props, State> {
     accept: '*/*',
     data: {},
     headers: {},
-    name: 'file',
+    fileKey: 'file',
     multiple: false,
+    urlPrefix: '',
     withCredentials: false,
   };
   file = createRef<HTMLInputElement>();
   xhrMap: { [s: string]: XMLHttpRequest } = {};
+
+  computedValueToTasks() {
+    if (Array.isArray(this.props.value)) {
+      const tasks = this.props.value.map(item => {
+        return {
+          url: this.props.urlPrefix + item as string,
+          percentage: 100,
+          response: item as string,
+          state: EUploadState.complete,
+          __uniqueId: uniqueId(),
+        };
+      });
+      this.setState({tasks: tasks})
+    }
+  }
+
+  UNSAFE_componentWillMount(): void {
+    this.computedValueToTasks();
+  }
+
+  //
+  // UNSAFE_componentWillReceiveProps(nextProps: Readonly<OwnProps>, nextContext: any): void {
+  //   console.log(nextProps)
+  // }
 
   setStateAsync<K extends keyof Readonly<{ tasks: IUploadTask[] }>>(state: ((prevState: Readonly<Readonly<{ tasks: IUploadTask[] }>>, props: Readonly<OwnProps>) => (Pick<Readonly<{ tasks: IUploadTask[] }>, K> | Readonly<{ tasks: IUploadTask[] }> | null)) | Pick<Readonly<{ tasks: IUploadTask[] }>, K> | Readonly<{ tasks: IUploadTask[] }> | null): Promise<void> {
     return new Promise((resolve) => {
@@ -91,13 +119,39 @@ class ClrUpload extends PureComponent<Props, State> {
       tasks,
     });
     this._makeRequest(id, file);
+    this._makeThumbnail(id, file);
+  }
 
+  _makeThumbnail(id: string, file: File) {
+    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+      this._setTaskUrl(id, require('./no-thumbnail.svg'));
+      return;
+    }
+    const fd = new FileReader();
+    fd.onload = () => {
+      this._setTaskUrl(id, fd.result as string);
+    };
+    fd.onerror = () => {
+      this._setTaskUrl(id, undefined);
+    };
+    fd.readAsDataURL(file);
+  }
+
+  _setTaskUrl(id: string, url: string | undefined) {
+    const index = this.state.tasks.findIndex(task => task.__uniqueId === id);
+    if (index !== -1) {
+      const tasks = [...this.state.tasks];
+      tasks[index].url = url;
+      this.setState({
+        tasks
+      });
+    }
   }
 
   _makeRequest(id: string, file: File) {
     const xhr = new XMLHttpRequest();
     const fd = new FormData();
-    fd.append(this.props.name!, file);
+    fd.append(this.props.fileKey!, file);
     Object.keys(this.props.data!).forEach(key => {
       fd.append(key, this.props.data![key]);
     });
@@ -125,6 +179,27 @@ class ClrUpload extends PureComponent<Props, State> {
     };
     xhr.onload = () => {
       if (xhr.readyState === 4) {
+        // 如果有自定义处理函数
+        if (this.props.checkResponse) {
+          this.props.checkResponse(
+            this._getResponse(xhr.response),
+            (res) => {
+              delete this.xhrMap[id];
+              this._setTaskDetailWithId(id, task => {
+                task.state = EUploadState.complete;
+                task.percentage = 100;
+                task.response = res;
+              });
+              this._emitOnChange();
+            },
+            () => {
+              this._setTaskDetailWithId(id, task => {
+                task.state = EUploadState.error;
+                task.percentage = 0;
+              });
+            });
+          return;
+        }
         delete this.xhrMap[id];
         this._setTaskDetailWithId(id, task => {
           task.state = EUploadState.complete;
@@ -181,7 +256,7 @@ class ClrUpload extends PureComponent<Props, State> {
 
   // 预览
   handlePreview(task: IUploadTask) {
-    console.log(task);
+    window.open(task.url, '_blank')
   }
 
   // 删除
@@ -217,29 +292,50 @@ class ClrUpload extends PureComponent<Props, State> {
     return (
       <ul className="clr-upload-wrapper">
         {this.state.tasks.map(task => {
-          const previewButton = <button onClick={() => this.handlePreview(task)} type="button"
-                                        key="preview">预览</button>;
-          const cancelButton = <button onClick={() => this.handleCancel(task.__uniqueId)} type="button"
-                                       key="cancel">取消</button>;
-          const deleteButton = <button onClick={() => this.handleDeleteTask(task.__uniqueId)} type="button"
-                                       key="delete">删除</button>;
-          const retryButton = <button onClick={() => this.handleRetry(task)} type="button" key="retry">重试</button>;
+          const previewButton = <span className={"action-button"} onClick={() => this.handlePreview(task)}
+                                      key="preview">预览</span>;
+          const cancelButton = <span className={"action-button"} onClick={() => this.handleCancel(task.__uniqueId)}
+                                     key="cancel">取消</span>;
+          const deleteButton = <span className={"action-button"} onClick={() => this.handleDeleteTask(task.__uniqueId)}
+                                     key="delete">删除</span>;
+          const retryButton = <span className={"action-button"} onClick={() => this.handleRetry(task)}
+                                    key="retry">重试</span>;
           const buttons = [previewButton];
           if (task.state === EUploadState.uploading) {
             buttons.push(cancelButton);
           } else if (task.state === EUploadState.error) {
-            buttons.push(retryButton);
+            buttons.push(retryButton, deleteButton);
           } else if (task.state === EUploadState.complete) {
             buttons.push(deleteButton);
           }
+          let liClassName = '';
+          switch (task.state) {
+            case EUploadState.complete:
+              liClassName = 'complete';
+              break;
+            case EUploadState.error:
+              liClassName = 'error';
+              break;
+            case EUploadState.uploading:
+              liClassName = 'uploading';
+              break;
+            default:
+              break;
+          }
+          const thumbnailUrl = task.url || null;
           return (
-            <li key={task.__uniqueId}>
-              <div>
-
+            <li className={liClassName} key={task.__uniqueId}>
+              <div
+                style={{backgroundImage: `url(${thumbnailUrl})`}}
+                className={"preview-area"}>
+                <div className={liClassName + " status-bar"}>
+                  {TUploadStateText[task.state]}&nbsp;
+                  {task.state === EUploadState.uploading ? `(${task.percentage}%)` : null}
+                </div>
               </div>
               <div className="action-mask">
                 <span className="state-text">
-                  {TUploadStateText[task.state]}
+                  {TUploadStateText[task.state]}&nbsp;
                   {task.state === EUploadState.uploading ? `(${task.percentage}%)` : null}
                 </span>
                 <div style={{height: '10px'}}/>

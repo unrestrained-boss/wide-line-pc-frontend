@@ -2,6 +2,12 @@ import React, {ReactNode} from 'react';
 import './ClrTable.scss'
 import {TextAlignProperty} from "csstype";
 import {withSpinner} from "../hoc/clr-with-spinner/ClrWithSpinner";
+import isNull from 'lodash/isNull';
+import isUndefined from 'lodash/isUndefined';
+
+function isSet(value: any) {
+  return !isNull(value) && !isUndefined(value);
+}
 
 interface Props {
   columns: ITableColumn[];
@@ -47,9 +53,10 @@ const ClrTable: React.FC<Props> = (props) => {
       {data.map((item, index) => {
         return (
           <tr key={index}>{columns.map(col => {
+            const content = col.render ? col.render(item, index, data) : item[col.dataIndex as string];
             return (
               <td key={col.title}
-                  style={{textAlign: col.align || 'left'}}>{col.render ? col.render(item, index, data) : item[col.dataIndex as string]}</td>
+                  style={{textAlign: col.align || 'left'}}>{!isSet(content) ? '--' : content}</td>
             );
           })}</tr>
         );

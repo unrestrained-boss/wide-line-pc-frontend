@@ -7,6 +7,7 @@ import isUndefined from 'lodash/isUndefined';
 export interface IModalOpenOptions {
   title?: string;
   data?: any;
+  onComplete?: () => void;
 }
 
 export interface IModalAlertOpenOptions {
@@ -95,7 +96,7 @@ const alert = (message: string, options?: IModalAlertOpenOptions) => {
         }
 
         return (
-          <div className={"clr-modal-inner-body"}>
+          <>
             <div className={"clr-modal-inner-content"}>
               <p>{message}</p>
             </div>
@@ -103,7 +104,7 @@ const alert = (message: string, options?: IModalAlertOpenOptions) => {
               <ClrButton loading={loading} type={"primary"}
                          onClick={handleOkClick}>确定</ClrButton>
             </footer>
-          </div>
+          </>
         );
       }}
     </ClrModal>
@@ -171,7 +172,7 @@ const confirm = (message: string, options?: IModalConfirmOpenOptions) => {
           }
         }
         return (
-          <div className={"clr-modal-inner-body"}>
+          <>
             <div className={"clr-modal-inner-content"}>
               <p>{message}</p>
             </div>
@@ -184,7 +185,7 @@ const confirm = (message: string, options?: IModalConfirmOpenOptions) => {
               <ClrButton loading={loading} type={"primary"}
                          onClick={handleOkClick}>确定</ClrButton>
             </footer>
-          </div>
+          </>
         );
       }}
     </ClrModal>

@@ -6,6 +6,7 @@ interface Props {
   title?: string;
   data?: any;
   close: () => void;
+  onComplete?: () => void;
 }
 const ClrModal: React.FC<Props> = (props) => {
   const {title = ''} = props;
@@ -23,7 +24,13 @@ const ClrModal: React.FC<Props> = (props) => {
   function getPreData<T>() {
     return cloneDeep(props.data as T);
   }
-
+  const injectProps: IModalInjectProps = {
+    close: () => props.close(),
+    setBackgroundDismiss,
+    setShowClose,
+    getPreData,
+    onComplete: props.onComplete,
+  };
   return (<div onClick={(e) => handleContainerClicked(e)}
                className="clr-modal-container" aria-hidden="true">
     <div className="clr-modal-wrapper">
@@ -33,12 +40,9 @@ const ClrModal: React.FC<Props> = (props) => {
           <i onClick={() => props.close()}>x</i>
         ) : null}
       </div>
-      {props.children && (props.children as any)({
-        close: () => props.close(),
-        setBackgroundDismiss,
-        setShowClose,
-        getPreData,
-      })}
+      <div className="clr-modal-inner-body">
+        {props.children && (props.children as any)(injectProps)}
+      </div>
     </div>
   </div>);
 };
@@ -50,4 +54,5 @@ export interface IModalInjectProps {
   setBackgroundDismiss: (s: boolean) => void;
   setShowClose: (s: boolean) => void;
   getPreData: <T>() => T;
+  onComplete?: () => void;
 }

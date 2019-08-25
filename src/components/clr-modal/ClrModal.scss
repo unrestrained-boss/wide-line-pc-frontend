@@ -11,11 +11,8 @@
   z-index: 1001;
   .clr-modal-wrapper {
     background-color: #fff;
-    min-width: 200px;
-    max-height: 100%;
     border-radius: 5px;
     box-shadow: 0 1px 2px 2px rgba(0,0,0,.2);
-
   }
   .clr-modal-header {
     display: flex;
@@ -36,12 +33,14 @@
   .clr-modal-inner-body {
     font-size: 14px;
     color: #575757;
-    max-width: 600px;
+    max-width: 800px;
     max-height: 800px;
-    width: 300px;
+    overflow-y: auto;
+    min-width: 350px;
     display: flex;
     flex-direction: column;
-
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
   .clr-modal-inner-content {
     flex: 1;

@@ -1,15 +1,19 @@
-import {useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
-import {ResponseError} from "../utils/Http";
+import Http, {ResponseError} from "../utils/Http";
 
-const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Promise<[
-  {
-    total: number,
-    data: T[],
-  } | null,
-  ResponseError | null,
-  AxiosResponse
-  ]>) => {
+function useServiceListBase<T>(path: string,  pageSize = 20): {
+  total: number;
+  data: T[],
+  setData: Dispatch<SetStateAction<T[]>>;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isError: boolean;
+  setIsError: Dispatch<SetStateAction<boolean>>;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+  refresh: () => void;
+} {
   const [count, setCount] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(1);
@@ -23,7 +27,9 @@ const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Pro
     const fetchData = async () => {
       setIsError(false);
       setIsLoading(true);
-      const [data, err] = await handler(page);
+      const [data, err] = await Http.get(path, {
+        params: {page, pageSize}
+      });
       if (!mounted) {
         return;
       }
@@ -41,21 +47,63 @@ const useServiceBaseList = <T>(handler: (page: number, pageSize?: number) => Pro
     return () => {
       mounted = false;
     };
-  }, [handler, page, count]);
+  }, [page, count, path, pageSize]);
   return {
     total,
     data,
     setData,
     isLoading,
+    setIsLoading,
     isError,
+    setIsError,
     page,
     setPage,
     refresh() {
-      setCount(count + 1 );
+      setCount(count + 1);
     }
   };
-};
+}
+
+function addServiceBase<T>(path: string): (body: T) => Promise<[
+  any,
+  ResponseError | null,
+  AxiosResponse
+  ]> {
+  return (body: T) => {
+    return Http.post(path, body);
+  }
+}
+
+function updateServiceBase<T>(path: string): (id: number, body: T) => Promise<[
+  any,
+  ResponseError | null,
+  AxiosResponse
+  ]> {
+  return (id: number, body: T) => {
+    return Http.post(path, {
+      id,
+      ...body,
+    });
+  }
+}
+
+function deleteServiceBase(path: string): (ids: number[]) => Promise<[
+  any,
+  ResponseError | null,
+  AxiosResponse
+  ]> {
+  return (ids: number[]) => {
+    return Http.get(path, {
+      params: {
+        ids: ids.join(', '),
+      }
+    });
+  }
+}
 
 export default {
-  useServiceBaseList
+  useServiceListBase,
+  addServiceBase,
+  updateServiceBase,
+  deleteServiceBase,
 }

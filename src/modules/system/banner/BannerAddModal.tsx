@@ -1,5 +1,4 @@
 import React from 'react';
-import './BannerAddModal.scss'
 import {IBanner} from "../../../services/system/BannerService";
 import {Formik} from "formik";
 import ClrInput from "../../../components/clr-input/ClrInput";
@@ -66,53 +65,51 @@ const BannerAddModal: React.FC<Props> = (props) => {
     }, 3000)
   };
   return (
-    <div className="banner-add-modal">
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}>
-        {({isSubmitting}) => {
-          return <ClrForm>
-            <ClrFormItem labelWidth={labelWith}
-                         label="banner"
-                         name="image">
-              <ClrUpload limit={1} action={"https://jsonplaceholder.typicode.com/posts/"}/>
-            </ClrFormItem>
-            <ClrFormItem labelWidth={labelWith}
-                         label="名称"
-                         name="name">
-              <ClrInput placeholder="请输入名称"
-                        type="text"/>
-            </ClrFormItem>
-            <ClrFormItem labelWidth={labelWith}
-                         label="链接"
-                         name="link">
-              <ClrInput placeholder="请输入链接"
-                        type="text"/>
-            </ClrFormItem>
-            <ClrFormItem labelWidth={labelWith}
-                         label="是否启用"
-                         name="enable">
-              <ClrSwitch/>
-            </ClrFormItem>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}>
+      {({isSubmitting}) => {
+        return <ClrForm>
+          <ClrFormItem labelWidth={labelWith}
+                       label="banner"
+                       name="image">
+            <ClrUpload limit={1} action={"https://jsonplaceholder.typicode.com/posts/"}/>
+          </ClrFormItem>
+          <ClrFormItem labelWidth={labelWith}
+                       label="名称"
+                       name="name">
+            <ClrInput placeholder="请输入名称"
+                      type="text"/>
+          </ClrFormItem>
+          <ClrFormItem labelWidth={labelWith}
+                       label="链接"
+                       name="link">
+            <ClrInput placeholder="请输入链接"
+                      type="text"/>
+          </ClrFormItem>
+          <ClrFormItem labelWidth={labelWith}
+                       label="是否启用"
+                       name="enable">
+            <ClrSwitch/>
+          </ClrFormItem>
 
-            <ClrFormItem labelWidth={labelWith}
-                         label="排序"
-                         name="sort">
-              <ClrInput placeholder="请输入排序"
-                        type="text"/>
-            </ClrFormItem>
+          <ClrFormItem labelWidth={labelWith}
+                       label="排序"
+                       name="sort">
+            <ClrInput placeholder="请输入排序"
+                      type="text"/>
+          </ClrFormItem>
 
-            <ClrFormItem labelWidth={labelWith}>
-              <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
-                立即{isEditMode? '修改': '添加'}
-              </ClrButton>
-            </ClrFormItem>
-          </ClrForm>
-        }}
+          <ClrFormItem labelWidth={labelWith}>
+            <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
+              立即{isEditMode ? '修改' : '添加'}
+            </ClrButton>
+          </ClrFormItem>
+        </ClrForm>
+      }}
 
-      </Formik>
-    </div>
+    </Formik>
   );
 };
 

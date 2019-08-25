@@ -9,21 +9,24 @@ import ClrButton from "../../../components/clr-button/ClrButton";
 import {Formik} from "formik";
 import React from "react";
 import AdministrationService, {IAdministration} from "../../../services/system/AdministrationService";
+import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 
 interface Props extends IModalInjectProps {
 }
 
 const AdministrationAddModal: React.FC<Props> = (props) => {
-
+  const preData = props.getPreData<IAdministration>();
+  const isEditMode = preData !== undefined;
   const labelWith = '100px';
-  let initialValues: IAdministration = {
+  let initialValues: IAdministration & { password?: string, repassword?: string } = {
     username: '',
     nickname: '',
     avatar: '',
+    email: '',
     mobile: '',
     status: 1,
   };
-  const validationSchema = Yup.object().shape({
+  const validationRule = {
     avatar: Yup.array()
       .min(1, '头像 需要 1 张')
       .required('头像必传'),
@@ -35,11 +38,11 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
       .min(2, '昵称至少 2 位')
       .max(32, '昵称最多 32 位')
       .required('昵称必填'),
+    email: Yup.string()
+      .email('邮箱格式错误')
+      .required('邮箱必填'),
     mobile: Yup.string()
       .length(11, '联系电话需要 11 位')
-      // .test('phone', '联系电话格式不正确', value => {
-      //   return value === '11111111111';
-      // })
       .required('联系电话必填'),
     password: Yup.string()
       .min(4, '密码至少 4 位')
@@ -48,23 +51,43 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
     repassword: Yup.string()
       .min(4, '确认密码至少 4 位')
       .max(32, '确认密码最多 32 位')
+      .oneOf([Yup.ref('password'), null], '两次密码输入不一致')
       .required('确认密码必填'),
 
-  });
+  };
 
-  async function handleSubmit(values: IAdministration & {password: string, repassword: string}, {setSubmitting}: any) {
+  if (isEditMode) {
+    let avatar = preData.avatar as string;
+    avatar = '/uploads/' + avatar.split('/uploads/')[1];
+    initialValues = {...initialValues, ...preData, avatar: [avatar]};
+    delete validationRule.password;
+    delete validationRule.repassword;
+  } else {
+    initialValues.password = '';
+    initialValues.repassword = '';
+  }
+  const validationSchema = Yup.object().shape(validationRule);
+   function handleSubmit(values: IAdministration & { password?: string, repassword?: string }, {setSubmitting}: any) {
+     props.setBackgroundDismiss(false);
+     props.setShowClose(false);
+     setSubmitting(true);
+    if (isEditMode) {
+      handleEditSubmit(values, setSubmitting);
+    } else {
+      handleAddSubmit(values, setSubmitting);
+    }
+  }
+  async function handleAddSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
     const body = {
       username: values.username,
       nickname: values.nickname,
+      email: values.email,
       avatar: values.avatar![0],
       mobile: values.mobile,
       status: values.status,
-      password: values.password,
-      repassword: values.repassword,
+      password: values.password!,
+      repassword: values.repassword!,
     };
-    props.setBackgroundDismiss(false);
-    props.setShowClose(false);
-    setSubmitting(true);
     // @ts-ignore
     const [, err] = await AdministrationService.addAdministration(body);
     props.setBackgroundDismiss(true);
@@ -75,11 +98,34 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
       return;
     }
     props.close();
+    props.onComplete && props.onComplete();
+    ClrMessageService.success('添加成功!');
   }
-
+  async function handleEditSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
+    const body = {
+      username: values.username,
+      nickname: values.nickname,
+      email: values.email,
+      avatar: values.avatar![0],
+      mobile: values.mobile,
+      status: values.status,
+    };
+    // @ts-ignore
+    const [, err] = await AdministrationService.updateAdministration(preData.id, body);
+    props.setBackgroundDismiss(true);
+    props.setShowClose(true);
+    setSubmitting(false);
+    if (err) {
+      err.showMessage();
+      return;
+    }
+    props.close();
+    props.onComplete && props.onComplete();
+    ClrMessageService.success('编辑成功!');
+  }
   return (
     <Formik
-      initialValues={{...initialValues, password: '', repassword: ''}}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}>
       {({isSubmitting}) => {
@@ -87,7 +133,22 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
           <ClrFormItem labelWidth={labelWith}
                        label="头像"
                        name="avatar">
-            <ClrUpload limit={1} action={"https://jsonplaceholder.typicode.com/posts/"}/>
+            <ClrUpload limit={1}
+                       key={"file"}
+                       data={{type: 'user'}}
+                       checkResponse={(value, done, error) => {
+                         if (typeof value === 'string') {
+                           error();
+                           return;
+                         }
+                         if (value.code !== 200) {
+                           error();
+                           return;
+                         }
+                         done(value.data[0]);
+                       }}
+                       urlPrefix={process.env.REACT_APP_API_BASE_URL}
+                       action={process.env.REACT_APP_API_BASE_URL + "/upload/files"}/>
           </ClrFormItem>
           <ClrFormItem labelWidth={labelWith}
                        label="用户名"
@@ -102,40 +163,42 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
                       type="text"/>
           </ClrFormItem>
           <ClrFormItem labelWidth={labelWith}
+                       label="邮箱"
+                       name="email">
+            <ClrInput placeholder="请输入邮箱"
+                      type="email"/>
+          </ClrFormItem>
+          <ClrFormItem labelWidth={labelWith}
                        label="电话"
                        name="mobile">
             <ClrInput placeholder="请输入电话"
                       type="text"/>
           </ClrFormItem>
-          <ClrFormItem labelWidth={labelWith}
-                       label="密码"
-                       name="password">
-            <ClrInput placeholder="请输入密码"
-                      type="password"/>
-          </ClrFormItem>
-          <ClrFormItem labelWidth={labelWith}
-                       label="确认密码"
-                       name="repassword">
-            <ClrInput placeholder="请输入确认密码"
-                      type="password"/>
-          </ClrFormItem>
+          {!isEditMode && (
+            <>
+              <ClrFormItem labelWidth={labelWith}
+                           label="密码"
+                           name="password">
+                <ClrInput placeholder="请输入密码"
+                          type="password"/>
+              </ClrFormItem>
+              <ClrFormItem labelWidth={labelWith}
+                           label="确认密码"
+                           name="repassword">
+                <ClrInput placeholder="请输入确认密码"
+                          type="password"/>
+              </ClrFormItem>
+            </>
+          )}
           <ClrFormItem labelWidth={labelWith}
                        label="是否启用"
                        name="status">
-            <ClrSwitch activeValue={1} inactiveValue={2}/>
+            <ClrSwitch activeValue={1} inactiveValue={0}/>
           </ClrFormItem>
-
-          {/*<ClrFormItem labelWidth={labelWith}*/}
-          {/*             label="排序"*/}
-          {/*             name="sort">*/}
-          {/*  <ClrInput placeholder="请输入排序"*/}
-          {/*            type="text"/>*/}
-          {/*</ClrFormItem>*/}
 
           <ClrFormItem labelWidth={labelWith}>
             <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
-              {/*立即{isEditMode? '修改': '添加'}*/}
-              xxx
+              立即{isEditMode? '修改': '添加'}
             </ClrButton>
           </ClrFormItem>
         </ClrForm>

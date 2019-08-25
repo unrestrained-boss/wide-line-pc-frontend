@@ -29,7 +29,7 @@ export class DashBoardPage extends PureComponent<Props, State> {
         children: [
           {name: 'banner管理', path: '/system'},
           {name: '管理员管理', path: '/system/administration'},
-          {name: '角色管理', path: '/system/rule'},
+          {name: '角色管理', path: '/system/role'},
           {name: '物流公司管理', path: '/system/logistics'}, {name: '日志管理', path: '/system/log'}]
       },
       {name: '用户管理', module: 'user', icon: '', children: [{name: '用户管理', path: '/user'}]},
@@ -86,6 +86,9 @@ export class DashBoardPage extends PureComponent<Props, State> {
                 <Route exact
                        path={`${dashBoardPath}/system/administration`}
                        component={loadComponentWithModulesPrefix('system/administration/AdministrationPage')}/>
+                <Route exact
+                       path={`${dashBoardPath}/system/role`}
+                       component={loadComponentWithModulesPrefix('system/role/RolePage')}/>
                 <Route component={NotFound}/>
               </Switch>
             </Suspense>
