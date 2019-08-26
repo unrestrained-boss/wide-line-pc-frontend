@@ -7,6 +7,7 @@ import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import BannerAddModal from "./BannerAddModal";
 import BannerService, {IBanner} from "../../../services/system/BannerService";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
+import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
 
 interface Props {
 }
@@ -111,11 +112,7 @@ const BannerPage: React.FC<Props> = (props) => {
         <div style={{marginBottom: '20px'}}>
           <ClrButton onClick={() => handleAddBanner()} type={"primary"}>+ 新建 Banner</ClrButton>
         </div>
-        <div style={{textAlign: 'center', marginBottom: '20px'}}>
-          {isError && (
-            <span>出错了, 请尝试&nbsp;&nbsp;&nbsp;<ClrButton size={"small"} outline type={"danger"} onClick={() => refresh()}>点击重试</ClrButton></span>
-          )}
-        </div>
+        <ClrErrorTip show={isError} onClick={refresh}/>
         <ClrTableWithSpinner position={"flex-start"} spinner={isLoading}
                              showText
                              even

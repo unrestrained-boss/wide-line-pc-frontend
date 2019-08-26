@@ -1,16 +1,17 @@
 import React, {createRef, RefObject} from "react";
 import {RouterProps} from "react-router";
-import RoleService from "../../../services/system/RoleService";
+import RoleService, {IRole} from "../../../services/system/RoleService";
 import {ClrTableWithSpinner, ITableColumn} from "../../../components/clr-table/ClrTable";
 import ClrButton from "../../../components/clr-button/ClrButton";
 import ClrModalService from "../../../components/clr-modal/ClrModalService";
-import BannerAddModal from "../banner/BannerAddModal";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
+import RoleAddModal from "./RoleAddModal";
 
 interface Props extends RouterProps {
 
 }
+
 const RolePage: React.FC<Props> = (props) => {
   const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
   const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
@@ -26,12 +27,12 @@ const RolePage: React.FC<Props> = (props) => {
         return (
           <>
             <ClrButton onClick={() => {
-              ClrModalService.openModal(BannerAddModal, {title: '编辑 BANNER', data: row});
+              handleEditRole(row as IRole, index);
             }} type="primary">编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton onClick={e => {
               ClrModalService.confirm('确实要删除吗?', {
-                onOk({ close, setLoading, failBack }) {
+                onOk({close, setLoading, failBack}) {
                   setLoading();
                   setTimeout(() => {
                     console.log('sok');
@@ -46,19 +47,38 @@ const RolePage: React.FC<Props> = (props) => {
       }
     },
   ];
-  function handleAddBanner() {
 
+  function handleAddRole() {
+    ClrModalService.openModal(RoleAddModal, {
+      title: '新建角色',
+      onComplete() {
+        refresh();
+      }
+    });
   }
+
+  function handleEditRole(row: IRole, index: number) {
+
+    ClrModalService.openModal(RoleAddModal, {
+      title: '编辑角色',
+      data: row,
+      onComplete() {
+        refresh();
+      }
+    });
+  }
+
   return (
     <div ref={container} className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
-        <ClrButton onClick={() => handleAddBanner()} type={"primary"}>+ 新建角色</ClrButton>
+        <ClrButton onClick={() => handleAddRole()} type={"primary"}>+ 新建角色</ClrButton>
       </div>
-      <div style={{textAlign: 'center', marginBottom: '20px'}}>
-        {isError && (
-          <span>出错了, 请尝试&nbsp;&nbsp;&nbsp;<ClrButton size={"small"} outline type={"danger"} onClick={() => refresh()}>点击重试</ClrButton></span>
-        )}
-      </div>
+      {isError && (
+        <div className={"list-error-tip"}>
+          Sorry, 发生了一点小错误, 请稍后再来或者
+          <button onClick={() => refresh()} className="error-retry-button">点击重试</button>
+        </div>
+      )}
       <ClrTableWithSpinner position={"flex-start"} spinner={isLoading}
                            showText
                            even

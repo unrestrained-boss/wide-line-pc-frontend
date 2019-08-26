@@ -8,6 +8,7 @@ import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import AdministrationAddModal from "./AdministrationAddModal";
 import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
+import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
 
 interface Props extends RouteComponentProps {
 }
@@ -126,9 +127,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
       <div style={{marginBottom: '20px'}}>
         <ClrButton onClick={handleAddAdministration} type={"primary"}>+ 添加管理员</ClrButton>
       </div>
-      <div style={{textAlign: 'center'}}>
-        {isError && <span>出错了, 请稍后再试!</span>}
-      </div>
+      <ClrErrorTip show={isError} onClick={refresh}/>
       <ClrTableWithSpinner position={"flex-start"} spinner={isLoading} showText columns={columns} data={data || []}/>
       <ClrPagination disabled={isLoading} total={total} page={page} pageSize={20} onChange={page => {
         container.current!.scrollTop = 0;

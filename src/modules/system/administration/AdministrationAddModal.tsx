@@ -31,6 +31,9 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
       .min(1, '头像 需要 1 张')
       .required('头像必传'),
     username: Yup.string()
+      .test('is-username', '用户名只能包含数字和字母', value => {
+        return /^[a-z0-9A-Z]*$/.test(value);
+      })
       .min(4, '用户名至少 4 位')
       .max(32, '用户名最多 32 位')
       .required('用户名必填'),
@@ -42,6 +45,9 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
       .email('邮箱格式错误')
       .required('邮箱必填'),
     mobile: Yup.string()
+      .test('is-phone', '联系电话格式不正确', value => {
+        return /^1\d{10}$/.test(value);
+      })
       .length(11, '联系电话需要 11 位')
       .required('联系电话必填'),
     password: Yup.string()
@@ -67,16 +73,18 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
     initialValues.repassword = '';
   }
   const validationSchema = Yup.object().shape(validationRule);
-   function handleSubmit(values: IAdministration & { password?: string, repassword?: string }, {setSubmitting}: any) {
-     props.setBackgroundDismiss(false);
-     props.setShowClose(false);
-     setSubmitting(true);
+
+  function handleSubmit(values: IAdministration & { password?: string, repassword?: string }, {setSubmitting}: any) {
+    props.setBackgroundDismiss(false);
+    props.setShowClose(false);
+    setSubmitting(true);
     if (isEditMode) {
       handleEditSubmit(values, setSubmitting);
     } else {
       handleAddSubmit(values, setSubmitting);
     }
   }
+
   async function handleAddSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
     const body = {
       username: values.username,
@@ -101,6 +109,7 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
     props.onComplete && props.onComplete();
     ClrMessageService.success('添加成功!');
   }
+
   async function handleEditSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
     const body = {
       username: values.username,
@@ -123,6 +132,7 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
     props.onComplete && props.onComplete();
     ClrMessageService.success('编辑成功!');
   }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -153,40 +163,40 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
           <ClrFormItem labelWidth={labelWith}
                        label="用户名"
                        name="username">
-            <ClrInput placeholder="请输入用户名"
-                      type="text"/>
+            <ClrInput
+              type="text"/>
           </ClrFormItem>
           <ClrFormItem labelWidth={labelWith}
                        label="昵称"
                        name="nickname">
-            <ClrInput placeholder="请输入昵称"
-                      type="text"/>
+            <ClrInput
+              type="text"/>
           </ClrFormItem>
           <ClrFormItem labelWidth={labelWith}
                        label="邮箱"
                        name="email">
-            <ClrInput placeholder="请输入邮箱"
-                      type="email"/>
+            <ClrInput
+              type="email"/>
           </ClrFormItem>
           <ClrFormItem labelWidth={labelWith}
-                       label="电话"
+                       label="联系电话"
                        name="mobile">
-            <ClrInput placeholder="请输入电话"
-                      type="text"/>
+            <ClrInput
+              type="text"/>
           </ClrFormItem>
           {!isEditMode && (
             <>
               <ClrFormItem labelWidth={labelWith}
                            label="密码"
                            name="password">
-                <ClrInput placeholder="请输入密码"
-                          type="password"/>
+                <ClrInput
+                  type="password"/>
               </ClrFormItem>
               <ClrFormItem labelWidth={labelWith}
                            label="确认密码"
                            name="repassword">
-                <ClrInput placeholder="请输入确认密码"
-                          type="password"/>
+                <ClrInput
+                  type="password"/>
               </ClrFormItem>
             </>
           )}
@@ -198,7 +208,7 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
 
           <ClrFormItem labelWidth={labelWith}>
             <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
-              立即{isEditMode? '修改': '添加'}
+              立即{isEditMode ? '修改' : '添加'}
             </ClrButton>
           </ClrFormItem>
         </ClrForm>

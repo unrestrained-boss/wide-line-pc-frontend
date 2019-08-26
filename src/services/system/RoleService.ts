@@ -8,7 +8,7 @@ const updateRole = BaseService.updateServiceBase<IRole>('/roles/edit');
 
 const deleteRole = BaseService.deleteServiceBase('/roles/delete');
 
-const toggleRoleStatus = BaseService.updateServiceBase<{status: boolean}>('/roles/edit');
+const toggleRoleStatus = BaseService.updateServiceBase<{ status: boolean }>('/roles/edit');
 
 const RoleService = {
   useRoleList,
@@ -20,8 +20,9 @@ const RoleService = {
 export default RoleService;
 
 export interface IRole {
-  id: number;
+  id?: number;
   name: string;
   desc: string;
   status: number;
+  role_menus: any[];
 }

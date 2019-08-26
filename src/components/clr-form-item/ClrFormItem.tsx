@@ -1,6 +1,7 @@
 import React from 'react';
 import {ErrorMessage, Field} from "formik";
 import {JustifyContentProperty} from "csstype";
+import './ClrFormItem.scss';
 
 interface Props {
   name?: string;
@@ -24,7 +25,8 @@ const ClrFormItem: React.FC<Props> = (props) => {
             <Field name={name}
                    render={({field}: any) => {
                      return React.cloneElement(children as any, {
-                       ...field
+                       ...field,
+                       placeholder: '请输入' + props.label,
                      });
                    }}/>
 
