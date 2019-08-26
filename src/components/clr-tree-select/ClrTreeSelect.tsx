@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 // @ts-ignore
-import TreeSelect, {SHOW_PARENT} from 'rc-tree-select';
+import TreeSelect, {SHOW_ALL} from 'rc-tree-select';
 import './ClrTreeSelect.scss';
 
 interface Props {
@@ -33,7 +33,7 @@ const ClrTreeSelect: React.FC<Props> = (props) => {
   }
 
   return (
-    <TreeSelect className={"clr-tree-select"} dropdownStyle={{maxHeight: 200, overflow: 'auto'}}
+    <TreeSelect className={"clr-tree-select"} dropdownStyle={{maxHeight: 300, overflow: 'auto'}}
                 placeholder={"请选择菜单权限"}
                 notFoundContent={"暂无数据"}
                 multiple
@@ -41,7 +41,7 @@ const ClrTreeSelect: React.FC<Props> = (props) => {
                 maxTagCount={2}
                 treeCheckable
                 value={_value}
-                showCheckedStrategy={SHOW_PARENT}
+                showCheckedStrategy={SHOW_ALL}
                 treeDefaultExpandAll={false}
                 onChange={handleChange}
                 treeData={[

@@ -2,6 +2,63 @@ import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import Http, {ResponseError} from "../utils/Http";
 
+
+function useServiceListWithoutPagingBase<T>(path: string): {
+  data: T[],
+  setData: Dispatch<SetStateAction<T[]>>;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isError: boolean;
+  setIsError: Dispatch<SetStateAction<boolean>>;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+  refresh: () => void;
+} {
+  const [count, setCount] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [data, setData] = useState<T[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchData = async () => {
+      setIsError(false);
+      setIsLoading(true);
+      const [data, err] = await Http.get(path);
+      if (!mounted) {
+        return;
+      }
+      setIsLoading(false);
+      if (err) {
+        setIsError(true);
+        return;
+      }
+      if (data) {
+        setData(data);
+      }
+    };
+    fetchData();
+    return () => {
+      mounted = false;
+    };
+  }, [page, count, path]);
+  return {
+    data,
+    setData,
+    isLoading,
+    setIsLoading,
+    isError,
+    setIsError,
+    page,
+    setPage,
+    refresh() {
+      setCount(count + 1);
+    }
+  };
+}
+
 function useServiceListBase<T>(path: string,  pageSize = 20): {
   total: number;
   data: T[],
@@ -102,6 +159,7 @@ function deleteServiceBase(path: string): (ids: number[]) => Promise<[
 }
 
 export default {
+  useServiceListWithoutPagingBase,
   useServiceListBase,
   addServiceBase,
   updateServiceBase,

@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode, useEffect, useState} from 'react';
 import './ClrTable.scss'
 import {TextAlignProperty} from "csstype";
 import {withSpinner} from "../hoc/clr-with-spinner/ClrWithSpinner";
@@ -19,8 +19,9 @@ interface Props {
   size?: TTableSize;
 }
 
-const ClrTable: React.FC<Props> = (props) => {
-
+const ClrTable: React.FC<Props> = props => {
+  const [rowIndex, setRowIndex] = useState(-1);
+  const [colIndex, setColIndex] = useState(-1);
   const {columns, data, even, line, row, nob, size} = props;
   const classNames = ['clr-table'];
   even && classNames.push('clr-table-even');
@@ -29,47 +30,87 @@ const ClrTable: React.FC<Props> = (props) => {
   nob && classNames.push('clr-table-nob');
   size === 'lager' && classNames.push('clr-table-lager');
   size === 'small' && classNames.push('clr-table-small');
+  useEffect(() => {
+    setRowIndex(-1);
+    setColIndex(-1);
+  }, [props.data, props.columns]);
 
-  return (
-    <table className={classNames.join(' ')}>
-      <colgroup>
-        {columns.map(col => {
-          return (
-            <col key={col.title} style={{width: col.width}}/>
-          );
-        })}
-      </colgroup>
-      <thead>
-      <tr>
-        {columns.map(col => {
-          return (
-            <th key={col.title} style={{textAlign: col.align || 'left'}}>{col.title}</th>
-          );
-        })}
-      </tr>
-      </thead>
+  function handleKeyDown(keyCode: number) {
+    let newRowIndex = rowIndex;
+    let newColIndex = colIndex;
+    switch (keyCode) {
+      case 37: // left
+        newColIndex--;
+        break;
+      case 38: // top
+        newRowIndex--;
+        break;
+      case 39: // right
+        newColIndex++;
+        break;
+      case 40: // bottom
+        newRowIndex++;
+        break;
+      default:
+        break;
+    }
+    if (newRowIndex < 0) {
+      newRowIndex = 0;
+    } else if (newRowIndex > data.length - 1) {
+      newRowIndex = data.length - 1;
+    }
+    if (newColIndex < 0) {
+      newColIndex = 0;
+    } else if (newColIndex > columns.length - 1) {
+      newColIndex = columns.length - 1;
+    }
+    if (!columns[newColIndex].selectable) {
+      return;
+    }
+    setRowIndex(newRowIndex);
+    setColIndex(newColIndex);
+  }
 
-      <tbody>
-      {data.map((item, index) => {
-        return (
-          <tr key={index}>{columns.map(col => {
-            const content = col.render ? col.render(item, index, data) : item[col.dataIndex as string];
-            return (
-              <td key={col.title}
-                  style={{textAlign: col.align || 'left'}}>{!isSet(content) ? '--' : content}</td>
-            );
-          })}</tr>
-        );
+  return <table style={{outline: 'none'}} tabIndex={0} onKeyDown={(e) => handleKeyDown(e.keyCode)}
+                className={classNames.join(' ')}>
+    <colgroup>
+      {columns.map(col => {
+        return <col key={col.title} style={{width: col.width}}/>;
       })}
-      </tbody>
-    </table>
-  );
+    </colgroup>
+    <thead>
+    <tr>
+      {columns.map(col => {
+        return <th key={col.title} style={{textAlign: col.align || 'left'}}>{col.title}</th>;
+      })}
+    </tr>
+    </thead>
+
+    <tbody>
+    {data.map((item, index) => {
+      return <tr key={index}>{columns.map((col, idx) => {
+        const content = col.render ? col.render(item, index, data) : item[col.dataIndex as string];
+        const isSelected = index === rowIndex && idx === colIndex;
+        return <td onClick={() => {
+          setRowIndex(index);
+          setColIndex(idx);
+
+        }} key={col.title}
+                   style={{textAlign: col.align || 'left'}}>
+          {!isSet(content) ? '--' : content}
+          {(isSelected && col.selectable) && <div className={"cursor"}/>}
+        </td>;
+      })}</tr>;
+    })}
+    </tbody>
+  </table>;
 };
 
 export default ClrTable;
 export const ClrTableWithSpinner = withSpinner(ClrTable);
 
 export interface ITableColumn {
+  selectable?: boolean,
   title: string;
   dataIndex?: string;
   align?: TextAlignProperty;

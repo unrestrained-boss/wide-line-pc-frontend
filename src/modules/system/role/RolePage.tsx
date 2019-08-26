@@ -7,18 +7,34 @@ import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import RoleAddModal from "./RoleAddModal";
+import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
 
 interface Props extends RouterProps {
 
 }
 
+interface IRoleWithStatus extends IRole {
+  __toggleStatusIng?: boolean;
+}
+
 const RolePage: React.FC<Props> = (props) => {
-  const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
+  const {total, data, setData, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
   const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
   const columns: ITableColumn[] = [
     {title: '名称', dataIndex: 'name', align: 'center', width: '200px'},
     {title: '描述', dataIndex: 'desc', align: 'center', width: '400px'},
-    {title: '状态', dataIndex: 'status', align: 'center',},
+    {
+      title: '状态', dataIndex: 'status', align: 'left', render: (row, index) => {
+        return (
+          <ClrSwitchWithSpinner spinner={!!row.__toggleStatusIng}
+                                inactiveValue={0}
+                                activeValue={1}
+                                onChange={(e) => {
+                                  handleToggleRoleStatus(row.id, index, e.target.value);
+                                }} value={row.status}/>
+        );
+      },
+    },
     {
       title: '操作',
       align: 'center',
@@ -28,25 +44,56 @@ const RolePage: React.FC<Props> = (props) => {
           <>
             <ClrButton onClick={() => {
               handleEditRole(row as IRole, index);
-            }} type="primary">编辑</ClrButton>
+            }}
+                       type="primary"
+                       size={"small"}>编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton onClick={e => {
               ClrModalService.confirm('确实要删除吗?', {
-                onOk({close, setLoading, failBack}) {
+                async onOk({close, setLoading, failBack}) {
                   setLoading();
-                  setTimeout(() => {
-                    console.log('sok');
-                    ClrMessageService.error('sdsd');
+                  // @ts-ignore
+                  const [, err] = await RoleService.deleteRole([row.id]);
+                  if (err) {
                     failBack();
-                  }, 3000)
+                    err.showMessage();
+                    return;
+                  }
+                  close();
+                  refresh();
+                  ClrMessageService.success('删除成功!');
                 },
               });
-            }} type="danger">删除</ClrButton>
+            }}
+                       type="danger"
+                       size={"small"}>删除</ClrButton>
           </>
         );
       }
     },
   ];
+
+  async function handleToggleRoleStatus(id: number, index: number, newValue: any) {
+    let newData = [...data] as IRoleWithStatus[];
+    const oldValue = newData[index].status;
+    newData[index].__toggleStatusIng = true;
+    newData[index].status = newValue;
+    setData(newData);
+    const [, err] = await RoleService.toggleRoleStatus(id, {
+      status: newValue,
+    });
+    newData = [...data] as IRoleWithStatus[];
+    newData[index].__toggleStatusIng = false;
+
+    if (err) {
+      err.showMessage();
+      newData[index].status = oldValue;
+      setData(newData);
+      return;
+    }
+    newData = [...data];
+    setData(newData);
+  }
 
   function handleAddRole() {
     ClrModalService.openModal(RoleAddModal, {

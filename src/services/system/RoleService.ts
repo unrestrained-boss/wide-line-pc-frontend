@@ -24,5 +24,5 @@ export interface IRole {
   name: string;
   desc: string;
   status: number;
-  role_menus: any[];
+  role_router: string | any[];
 }

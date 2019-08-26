@@ -22,17 +22,23 @@ const AdministrationPage: React.FC<Props> = (props) => {
   const {total, data, setData, isLoading, isError, page, setPage, refresh} = AdministrationService.useAdministrationList();
   const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
   const columns: ITableColumn[] = [
-    {title: '账号', dataIndex: 'username', width: '160px', align: 'center'},
-    {title: '昵称', dataIndex: 'nickname', width: '200px'},
     {
-      title: '头像', dataIndex: 'avatar', width: '120px', align: 'center', render: (row) => {
-        return (
-          <img src={row.avatar} style={{height: '40px', width: '40px', verticalAlign: 'middle', borderRadius: '50%'}}
-               alt=""/>
-        );
-      }
+      title: '账号', dataIndex: 'username', width: '160px', align: 'left'
     },
-    {title: '电话号码', dataIndex: 'mobile', width: '200px'},
+    {
+      title: '头像&昵称', dataIndex: 'nickname', width: '200px', render: (row) => {
+        return (
+          <>
+            <img src={row.avatar} style={{height: '30px', width: '30px', verticalAlign: 'middle', borderRadius: '5px'}}
+                 alt=""/>&nbsp;&nbsp;
+            <span>{row.nickname}</span>
+          </>
+        );
+      },
+    },
+
+    {title: '电话号码', dataIndex: 'mobile', width: '120px'},
+    {title: '邮箱', dataIndex: 'email', width: '300px'},
     {
       title: '状态', dataIndex: 'status', render: (row, index) => {
         return (
@@ -122,13 +128,32 @@ const AdministrationPage: React.FC<Props> = (props) => {
     });
   }
 
+  //
+  // function handleDelete({row}: any) {
+  //   ClrModalService.confirm("确实要删除吗?", {
+  //     async onOk({close, failBack, setLoading}) {
+  //       setLoading();
+  //       // @ts-ignore
+  //       const [, err] = await AdministrationService.deleteAdministration([row.id]);
+  //       if (err) {
+  //         failBack();
+  //         err.showMessage();
+  //         return;
+  //       }
+  //       close();
+  //       refresh();
+  //       ClrMessageService.success('删除成功!');
+  //     }
+  //   })
+  // }
   return (
     <div className={"frame-content"} ref={container}>
       <div style={{marginBottom: '20px'}}>
         <ClrButton onClick={handleAddAdministration} type={"primary"}>+ 添加管理员</ClrButton>
       </div>
       <ClrErrorTip show={isError} onClick={refresh}/>
-      <ClrTableWithSpinner position={"flex-start"} spinner={isLoading} showText columns={columns} data={data || []}/>
+      <ClrTableWithSpinner position={"flex-start"} spinner={isLoading} even showText columns={columns} data={data || []}/>
+
       <ClrPagination disabled={isLoading} total={total} page={page} pageSize={20} onChange={page => {
         container.current!.scrollTop = 0;
         setPage(page);
