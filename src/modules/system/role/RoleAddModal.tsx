@@ -10,7 +10,9 @@ import React from "react";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 import RoleService, {IRole} from "../../../services/system/RoleService";
 import ClrTreeSelect from "../../../components/clr-tree-select/ClrTreeSelect";
-
+import MenuService from "../../../services/system/MenuService";
+import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
+import ClrSpinner from "../../../components/clr-spinner/ClrSpinner";
 
 interface Props extends IModalInjectProps {
 }
@@ -38,7 +40,7 @@ const RoleAddModal: React.FC<Props> = (props) => {
   if (isEditMode) {
     initialValues = {...initialValues, ...preData};
     initialValues.role_router = preData.role_router ? (preData.role_router as string).split(',') : [];
-    console.log(initialValues)
+    // console.log(initialValues)
   }
   const validationSchema = Yup.object().shape(validationRule);
 
@@ -95,6 +97,8 @@ const RoleAddModal: React.FC<Props> = (props) => {
     ClrMessageService.success('编辑成功!');
   }
 
+  const {data, isLoading, isError, refresh} = MenuService.useMenuList();
+
   return (
     <Formik
       initialValues={initialValues}
@@ -102,7 +106,10 @@ const RoleAddModal: React.FC<Props> = (props) => {
       validationSchema={validationSchema}>
       {({isSubmitting}) => {
         return <ClrForm>
-
+          <div style={{textAlign: 'center', marginBottom: '10px'}}>
+            <ClrErrorTip size={"small"} show={isError} onClick={() => {refresh();}}/>
+            <ClrSpinner size={"small"} spinner={isLoading} />
+          </div>
           <ClrFormItem labelWidth={labelWith}
                        label="名称"
                        name="name">
@@ -116,19 +123,23 @@ const RoleAddModal: React.FC<Props> = (props) => {
               type="text"/>
           </ClrFormItem>
           <ClrFormItem labelWidth={labelWith}
+
                        label="菜单权限"
                        name="role_router">
-            <ClrTreeSelect/>
+            <ClrTreeSelect labelProp={"name"} valueProp={"id"} treeData={data}/>
           </ClrFormItem>
 
           <ClrFormItem labelWidth={labelWith}
                        label="是否启用"
                        name="status">
             <ClrSwitch activeValue={1} inactiveValue={0}/>
-          </ClrFormItem >
+          </ClrFormItem>
 
           <ClrFormItem labelWidth={labelWith}>
-            <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
+            <ClrButton
+              nativeType="submit"
+              type="primary"
+              loading={isLoading || isSubmitting}>
               立即{isEditMode ? '修改' : '添加'}
             </ClrButton>
           </ClrFormItem>

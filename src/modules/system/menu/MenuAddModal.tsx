@@ -9,7 +9,7 @@ import {Formik} from "formik";
 import React from "react";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
 import RoleService from "../../../services/system/RoleService";
-import ClrTreeSelect from "../../../components/clr-tree-select/ClrTreeSelect";
+// import ClrTreeSelect from "../../../components/clr-tree-select/ClrTreeSelect";
 import {IMenu} from "../../../services/system/MenuService";
 
 
@@ -128,17 +128,17 @@ const MenuAddModal: React.FC<Props> = (props) => {
               type="text"/>
           </ClrFormItem>
 
-          <ClrFormItem labelWidth={labelWith}
-                       label="地址"
-                       name="url">
-            <ClrTreeSelect/>
-          </ClrFormItem>
+          {/*<ClrFormItem labelWidth={labelWith}*/}
+          {/*             label="地址"*/}
+          {/*             name="url">*/}
+          {/*  <ClrTreeSelect/>*/}
+          {/*</ClrFormItem>*/}
 
-          <ClrFormItem labelWidth={labelWith}
-                       label="上级菜单"
-                       name="sort">
-            <ClrTreeSelect/>
-          </ClrFormItem>
+          {/*<ClrFormItem labelWidth={labelWith}*/}
+          {/*             label="上级菜单"*/}
+          {/*             name="sort">*/}
+          {/*  <ClrTreeSelect/>*/}
+          {/*</ClrFormItem>*/}
 
           <ClrFormItem labelWidth={labelWith}
                        label="状态"

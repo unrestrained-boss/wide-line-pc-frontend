@@ -4,7 +4,14 @@
   box-sizing: border-box;
   background-color: #c72100;
   color: #fff;
-
+  font-size: 14px;
+  &.small {
+    padding: 3px 5px;
+    font-size: 12px;
+    .retry-button {
+      padding: 3px 5px;
+    }
+  }
   &.tip-enter-active {
     animation-name: bounceIn;
     animation-duration: 500ms;
