@@ -8,6 +8,7 @@ import ClrMessageService from "../../../components/clr-message/ClrMessageService
 import ClrPagination from "../../../components/clr-pagination/ClrPagination";
 import RoleAddModal from "./RoleAddModal";
 import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
+import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
 
 interface Props extends RouterProps {
 
@@ -120,12 +121,7 @@ const RolePage: React.FC<Props> = (props) => {
       <div style={{marginBottom: '20px'}}>
         <ClrButton onClick={() => handleAddRole()} type={"primary"}>+ 新建角色</ClrButton>
       </div>
-      {isError && (
-        <div className={"list-error-tip"}>
-          Sorry, 发生了一点小错误, 请稍后再来或者
-          <button onClick={() => refresh()} className="error-retry-button">点击重试</button>
-        </div>
-      )}
+      <ClrErrorTip show={isError} onClick={refresh}/>
       <ClrTableWithSpinner position={"flex-start"} spinner={isLoading}
                            showText
                            even

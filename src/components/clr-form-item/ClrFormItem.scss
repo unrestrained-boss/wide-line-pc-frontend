@@ -10,6 +10,9 @@
   .clr-form-item-children {
     flex: 1;
     position: relative;
+    input {
+      width: 100%;
+    }
   }
 
   .clr-form-label {

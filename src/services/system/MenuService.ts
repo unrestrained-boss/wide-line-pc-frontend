@@ -2,6 +2,8 @@ import BaseService from "../BaseService";
 
 const useMenuList = () => BaseService.useServiceListWithoutPagingBase<IMenu>('/menus/index');
 
+const useMenuUrlList = () => BaseService.useServiceListWithoutPagingBase<IMenu>('/menus/urls');
+
 const addMenu = BaseService.addServiceBase<IMenu>('/menus/add');
 
 const updateMenu = BaseService.updateServiceBase<IMenu>('/menus/edit');
@@ -12,6 +14,7 @@ const toggleMenuStatus = BaseService.updateServiceBase<{ status: boolean }>('/me
 
 const MenuService = {
   useMenuList,
+  useMenuUrlList,
   addMenu,
   updateMenu,
   deleteMenu,
@@ -24,6 +27,7 @@ export interface IMenu {
   id?: number;
   name: string;
   as?: string;
+  pid?: number;
   url: string;
   icon: string;
   status: number;

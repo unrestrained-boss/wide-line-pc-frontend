@@ -8,9 +8,11 @@ import ClrButton from "../../../components/clr-button/ClrButton";
 import {Formik} from "formik";
 import React from "react";
 import ClrMessageService from "../../../components/clr-message/ClrMessageService";
-import RoleService from "../../../services/system/RoleService";
-// import ClrTreeSelect from "../../../components/clr-tree-select/ClrTreeSelect";
-import {IMenu} from "../../../services/system/MenuService";
+import MenuService, {IMenu} from "../../../services/system/MenuService";
+import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
+import ClrSpinner from "../../../components/clr-spinner/ClrSpinner";
+import ClrSelect from "../../../components/clr-select/ClrSelect";
+import ClrTreeSelect from "../../../components/clr-tree-select/ClrTreeSelect";
 
 
 interface Props extends IModalInjectProps {
@@ -20,6 +22,7 @@ const MenuAddModal: React.FC<Props> = (props) => {
   const preData = props.getPreData<IMenu>();
   const isEditMode = preData !== undefined;
   const labelWith = '100px';
+  const disabledValues: any[] = [];
   let initialValues: IMenu = {
     name: '',
     icon: '',
@@ -33,14 +36,12 @@ const MenuAddModal: React.FC<Props> = (props) => {
       .min(2, '名称至少 2 位')
       .max(32, '名称最多 32 位')
       .required('名称必填'),
-    // desc: Yup.string()
-    //   .min(2, '描述至少 2 位')
-    //   .max(32, '描述最多 32 位')
-    //   .required('描述必填'),
+    url: Yup.string()
+      .required('地址必填'),
   };
   if (isEditMode) {
+    disabledValues.push(preData.id);
     initialValues = {...initialValues, ...preData};
-    console.log(initialValues)
   }
   const validationSchema = Yup.object().shape(validationRule);
 
@@ -48,24 +49,25 @@ const MenuAddModal: React.FC<Props> = (props) => {
     props.setBackgroundDismiss(false);
     props.setShowClose(false);
     setSubmitting(true);
-    if (isEditMode) {
-      handleEditSubmit(values, setSubmitting);
-    } else {
-      handleAddSubmit(values, setSubmitting);
-    }
-  }
-
-  async function handleAddSubmit(values: IMenu, setSubmitting: any) {
     const body = {
       name: values.name,
       icon: values.icon,
       as: values.as,
       url: values.url,
+      pid: values.pid,
       sort: values.sort,
       status: values.status,
     };
+    if (isEditMode) {
+      handleEditSubmit(body, setSubmitting);
+    } else {
+      handleAddSubmit(body, setSubmitting);
+    }
+  }
+
+  async function handleAddSubmit(values: IMenu, setSubmitting: any) {
     // @ts-ignore
-    const [, err] = await RoleService.addRole(body);
+    const [, err] = await MenuService.addMenu(values);
     props.setBackgroundDismiss(true);
     props.setShowClose(true);
     setSubmitting(false);
@@ -79,16 +81,8 @@ const MenuAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleEditSubmit(values: IMenu, setSubmitting: any) {
-    const body = {
-      name: values.name,
-      icon: values.icon,
-      as: values.as,
-      url: values.url,
-      sort: values.sort,
-      status: values.status,
-    };
     // @ts-ignore
-    const [, err] = await RoleService.updateRole(preData.id, body);
+    const [, err] = await MenuService.updateMenu(preData.id, values);
     props.setBackgroundDismiss(true);
     props.setShowClose(true);
     setSubmitting(false);
@@ -101,6 +95,8 @@ const MenuAddModal: React.FC<Props> = (props) => {
     ClrMessageService.success('编辑成功!');
   }
 
+  const {data, isLoading, isError, refresh} = MenuService.useMenuUrlList();
+  const {data: menuData, isLoading: isMenuLoading, isError: isMenuError, refresh: menuRefresh} = MenuService.useMenuList();
   return (
     <Formik
       initialValues={initialValues}
@@ -108,7 +104,13 @@ const MenuAddModal: React.FC<Props> = (props) => {
       validationSchema={validationSchema}>
       {({isSubmitting}) => {
         return <ClrForm>
-
+          <div style={{textAlign: 'center', marginBottom: '10px'}}>
+            <ClrErrorTip size={"small"} show={isError || isMenuError} onClick={() => {
+              refresh();
+              menuRefresh();
+            }}/>
+            <ClrSpinner size={"small"} spinner={isLoading || isMenuLoading}/>
+          </div>
           <ClrFormItem labelWidth={labelWith}
                        label="名称"
                        name="name">
@@ -128,23 +130,23 @@ const MenuAddModal: React.FC<Props> = (props) => {
               type="text"/>
           </ClrFormItem>
 
-          {/*<ClrFormItem labelWidth={labelWith}*/}
-          {/*             label="地址"*/}
-          {/*             name="url">*/}
-          {/*  <ClrTreeSelect/>*/}
-          {/*</ClrFormItem>*/}
+          <ClrFormItem labelWidth={labelWith}
+                       label="地址"
+                       name="url">
+            <ClrSelect placeholder={"请选择地址"} data={data} labelProp={"uri"} valueProp={"uri"}/>
+          </ClrFormItem>
 
-          {/*<ClrFormItem labelWidth={labelWith}*/}
-          {/*             label="上级菜单"*/}
-          {/*             name="sort">*/}
-          {/*  <ClrTreeSelect/>*/}
-          {/*</ClrFormItem>*/}
+          <ClrFormItem labelWidth={labelWith}
+                       label="上级菜单"
+                       name="pid">
+            <ClrTreeSelect rootNode={{title: '根', value: 0}} disabledValues={disabledValues} treeData={menuData} labelProp={"name"} valueProp={"id"}/>
+          </ClrFormItem>
 
           <ClrFormItem labelWidth={labelWith}
                        label="状态"
                        name="status">
             <ClrSwitch activeValue={1} inactiveValue={0}/>
-          </ClrFormItem >
+          </ClrFormItem>
 
           <ClrFormItem labelWidth={labelWith}>
             <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>

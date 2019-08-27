@@ -48,22 +48,22 @@ const RoleAddModal: React.FC<Props> = (props) => {
     props.setBackgroundDismiss(false);
     props.setShowClose(false);
     setSubmitting(true);
-    if (isEditMode) {
-      handleEditSubmit(values, setSubmitting);
-    } else {
-      handleAddSubmit(values, setSubmitting);
-    }
-  }
-
-  async function handleAddSubmit(values: IRole, setSubmitting: any) {
     const body = {
       name: values.name,
       desc: values.desc,
       role_router: (values.role_router as any[]).join(','),
       status: values.status,
     };
+    if (isEditMode) {
+      handleEditSubmit(body, setSubmitting);
+    } else {
+      handleAddSubmit(body, setSubmitting);
+    }
+  }
+
+  async function handleAddSubmit(values: IRole, setSubmitting: any) {
     // @ts-ignore
-    const [, err] = await RoleService.addRole(body);
+    const [, err] = await RoleService.addRole(values);
     props.setBackgroundDismiss(true);
     props.setShowClose(true);
     setSubmitting(false);
@@ -77,14 +77,8 @@ const RoleAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleEditSubmit(values: IRole, setSubmitting: any) {
-    const body = {
-      name: values.name,
-      desc: values.desc,
-      role_router: (values.role_router as any[]).join(','),
-      status: values.status,
-    };
     // @ts-ignore
-    const [, err] = await RoleService.updateRole(preData.id, body);
+    const [, err] = await RoleService.updateRole(preData.id, values);
     props.setBackgroundDismiss(true);
     props.setShowClose(true);
     setSubmitting(false);
@@ -107,8 +101,10 @@ const RoleAddModal: React.FC<Props> = (props) => {
       {({isSubmitting}) => {
         return <ClrForm>
           <div style={{textAlign: 'center', marginBottom: '10px'}}>
-            <ClrErrorTip size={"small"} show={isError} onClick={() => {refresh();}}/>
-            <ClrSpinner size={"small"} spinner={isLoading} />
+            <ClrErrorTip size={"small"} show={isError} onClick={() => {
+              refresh();
+            }}/>
+            <ClrSpinner size={"small"} spinner={isLoading}/>
           </div>
           <ClrFormItem labelWidth={labelWith}
                        label="名称"
@@ -126,7 +122,7 @@ const RoleAddModal: React.FC<Props> = (props) => {
 
                        label="菜单权限"
                        name="role_router">
-            <ClrTreeSelect labelProp={"name"} valueProp={"id"} treeData={data}/>
+            <ClrTreeSelect treeCheckable multiple labelProp={"name"} valueProp={"id"} treeData={data}/>
           </ClrFormItem>
 
           <ClrFormItem labelWidth={labelWith}

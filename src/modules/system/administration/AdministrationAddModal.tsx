@@ -78,26 +78,26 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
     props.setBackgroundDismiss(false);
     props.setShowClose(false);
     setSubmitting(true);
-    if (isEditMode) {
-      handleEditSubmit(values, setSubmitting);
-    } else {
-      handleAddSubmit(values, setSubmitting);
-    }
-  }
-
-  async function handleAddSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
-    const body = {
+    const body: IAdministration & { password?: string, repassword?: string } = {
       username: values.username,
       nickname: values.nickname,
       email: values.email,
       avatar: values.avatar![0],
       mobile: values.mobile,
       status: values.status,
-      password: values.password!,
-      repassword: values.repassword!,
     };
+    if (isEditMode) {
+      handleEditSubmit(body, setSubmitting);
+    } else {
+      body.password = values.password!;
+      body.repassword = values.repassword!;
+      handleAddSubmit(body, setSubmitting);
+    }
+  }
+
+  async function handleAddSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
     // @ts-ignore
-    const [, err] = await AdministrationService.addAdministration(body);
+    const [, err] = await AdministrationService.addAdministration(values);
     props.setBackgroundDismiss(true);
     props.setShowClose(true);
     setSubmitting(false);
@@ -110,17 +110,9 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
     ClrMessageService.success('添加成功!');
   }
 
-  async function handleEditSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
-    const body = {
-      username: values.username,
-      nickname: values.nickname,
-      email: values.email,
-      avatar: values.avatar![0],
-      mobile: values.mobile,
-      status: values.status,
-    };
+  async function handleEditSubmit(values: IAdministration, setSubmitting: any) {
     // @ts-ignore
-    const [, err] = await AdministrationService.updateAdministration(preData.id, body);
+    const [, err] = await AdministrationService.updateAdministration(preData.id, values);
     props.setBackgroundDismiss(true);
     props.setShowClose(true);
     setSubmitting(false);

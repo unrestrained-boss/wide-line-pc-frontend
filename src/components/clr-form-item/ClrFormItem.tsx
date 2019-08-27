@@ -26,7 +26,7 @@ const ClrFormItem: React.FC<Props> = (props) => {
                    render={({field}: any) => {
                      return React.cloneElement(children as any, {
                        ...field,
-                       placeholder: '请输入' + props.label,
+                       // placeholder: field.placeholder ? field.placeholder : '请输入' + props.label,
                      });
                    }}/>
 

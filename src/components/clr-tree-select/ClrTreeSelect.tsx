@@ -3,10 +3,19 @@ import React, {useEffect, useState} from "react";
 import TreeSelect, {SHOW_ALL} from 'rc-tree-select';
 import './ClrTreeSelect.scss';
 
+interface IRootNode {
+  title: string;
+  value: any;
+}
 interface Props {
   name?: string;
   value?: any[];
+  disabledValues?: any[];
   treeData: any[];
+  treeCheckable?: boolean;
+  rootNode?: IRootNode;
+  multiple?: boolean;
+  placeholder?: string;
   labelProp?: string;
   valueProp?: any;
   childrenProp?: string;
@@ -18,36 +27,39 @@ interface Props {
   }) => void;
 }
 
-function transformLabelAndValue(data: any[],
-                                labelProp: string,
-                                valueProp: string,
-                                childrenProp: string): any[] {
-  return data.map(item => {
-    let children = [];
-    if (item[childrenProp]) {
-      // @ts-ignore
-      children = transformLabelAndValue(item[childrenProp], labelProp, valueProp, childrenProp);
-    }
-    return {
-      title: item[labelProp],
-      value: item[valueProp],
-      children,
-    };
-  });
-}
 
 const ClrTreeSelect: React.FC<Props> = (props) => {
   const [_value, _setValue] = useState<any[]>([]);
   const [_treeData, _setTreeData] = useState<any[]>([]);
-  const {treeData, labelProp = 'title', valueProp = 'value', childrenProp = 'children'} = props;
+  const {treeCheckable = false, multiple = false, placeholder = ''} = props;
   useEffect(() => {
-    if (Array.isArray(props.value)) {
-      _setValue(props.value!);
-    }
+    _setValue(props.value!);
   }, [props.value]);
   useEffect(() => {
-    _setTreeData(transformLabelAndValue(treeData, labelProp, valueProp, childrenProp));
-  }, [childrenProp, labelProp, treeData, valueProp]);
+    const {rootNode, disabledValues = [], labelProp = 'title', valueProp = 'value', childrenProp = 'children'} = props;
+
+    function transformLabelAndValue(data: any[],): any[] {
+      return data.map(item => {
+        let children = [];
+        if (item[childrenProp]) {
+          children = transformLabelAndValue(item[childrenProp]);
+        }
+        return {
+          title: item[labelProp],
+          value: item[valueProp],
+          disabled: disabledValues.indexOf(item[valueProp]) !== -1,
+          children,
+        };
+      });
+    }
+
+    let trees = transformLabelAndValue(props.treeData);
+    if (rootNode) {
+      trees = [{title: rootNode.title, value: rootNode.value, children: trees,}];
+    }
+    _setTreeData(trees);
+  }, [props]);
+
 
   function handleChange(args: any[]) {
     _setValue(args);
@@ -61,12 +73,12 @@ const ClrTreeSelect: React.FC<Props> = (props) => {
 
   return (
     <TreeSelect className={"clr-tree-select"} dropdownStyle={{maxHeight: 300, overflow: 'auto'}}
-                placeholder={"请选择菜单权限"}
+                placeholder={placeholder}
                 notFoundContent={"暂无数据"}
-                multiple
+                multiple={multiple}
                 treeLine
                 maxTagCount={2}
-                treeCheckable
+                treeCheckable={treeCheckable}
                 value={_value}
                 showCheckedStrategy={SHOW_ALL}
                 treeDefaultExpandAll={false}

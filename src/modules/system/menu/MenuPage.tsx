@@ -1,9 +1,8 @@
 import React from "react";
-import 'react-sortable-tree/style.css';
 import ClrTreeTable from "../../../components/clr-table/ClrTreeTable";
 import {ITableColumn} from "../../../components/clr-table/ClrTable";
 import ClrButton from "../../../components/clr-button/ClrButton";
-import MenuService from "../../../services/system/MenuService";
+import MenuService, {IMenu} from "../../../services/system/MenuService";
 import ClrModalService from "../../../components/clr-modal/ClrModalService";
 import MenuAddModal from "./MenuAddModal";
 
@@ -25,7 +24,9 @@ const MenuPage: React.FC<Props> = (props) => {
       render: (row, index, data) => {
         return (
           <>
-            <ClrButton size={"small"} type={"primary"}>编辑</ClrButton>
+            <ClrButton onClick={() => {
+              handleEditMenu(row as IMenu, index);
+            }} size={"small"} type={"primary"}>编辑</ClrButton>
             &nbsp;&nbsp;
             <ClrButton size={"small"} type={"danger"}>删除</ClrButton>
           </>
@@ -44,8 +45,20 @@ const MenuPage: React.FC<Props> = (props) => {
       }
     })
   }
+  function handleEditMenu(row: IMenu, index: number) {
+
+    ClrModalService.openModal(MenuAddModal, {
+      title: '编辑菜单',
+      data: row,
+      onComplete() {
+        refresh();
+      }
+    });
+  }
+
   return (
     <div className={"frame-content"}>
+
       <div style={{marginBottom: '20px'}}>
         <ClrButton onClick={handleAddMenu} type={"primary"}>+ 添加菜单</ClrButton>
       </div>
