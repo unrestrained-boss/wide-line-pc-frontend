@@ -3,6 +3,7 @@ import './ClrTable.scss'
 import {TextAlignProperty} from "csstype";
 import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
+import {withSpinner} from "../hoc/clr-with-spinner/ClrWithSpinner";
 
 function isSet(value: any) {
   return !isNull(value) && !isUndefined(value);
@@ -117,6 +118,7 @@ export interface ITreeTableData {
 
   children?: ITreeTableData[];
 }
+export const ClrTreeTableWithSpinner = withSpinner(ClrTreeTable);
 
 export type TTreeTableSize = 'normal' | 'small' | 'lager';
 
