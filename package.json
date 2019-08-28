@@ -26,7 +26,8 @@
     "react-test-renderer": "^16.9.0",
     "react-transition-group": "^4.2.2",
     "typescript": "3.5.3",
-    "yup": "^0.27.0"
+    "yup": "^0.27.0",
+    "zent": "^6.6.5"
   },
   "scripts": {
     "start": "env-cmd -f .env.dev react-scripts start",
@@ -64,6 +65,7 @@
     "@types/react-sortable-tree": "^0.3.8",
     "@types/react-transition-group": "^4.2.2",
     "@types/yup": "^0.26.23",
+    "babel-plugin-zent": "^1.2.2",
     "coveralls": "^3.0.6",
     "env-cmd": "^9.0.3",
     "node-sass": "^4.12.0",

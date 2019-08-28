@@ -29,6 +29,7 @@ const MenuAddModal: React.FC<Props> = (props) => {
     as: '',
     url: '',
     sort: 1,
+    pid: 0,
     status: 1,
   };
   const validationRule = {

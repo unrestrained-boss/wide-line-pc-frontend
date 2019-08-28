@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 // @ts-ignore
 import TreeSelect, {SHOW_ALL} from 'rc-tree-select';
 import './ClrTreeSelect.scss';
@@ -7,6 +7,7 @@ interface IRootNode {
   title: string;
   value: any;
 }
+
 interface Props {
   name?: string;
   value?: any[];
@@ -30,14 +31,12 @@ interface Props {
 
 const ClrTreeSelect: React.FC<Props> = (props) => {
   const [_value, _setValue] = useState<any[]>([]);
-  const [_treeData, _setTreeData] = useState<any[]>([]);
   const {treeCheckable = false, multiple = false, placeholder = ''} = props;
   useEffect(() => {
     _setValue(props.value!);
-  }, [props.value]);
-  useEffect(() => {
-    const {rootNode, disabledValues = [], labelProp = 'title', valueProp = 'value', childrenProp = 'children'} = props;
-
+  }, [_value, props.value]);
+  const {disabledValues = [], labelProp = 'title', valueProp = 'value', childrenProp = 'children'} = props;
+  const _treeData = useMemo(() => {
     function transformLabelAndValue(data: any[],): any[] {
       return data.map(item => {
         let children = [];
@@ -54,22 +53,24 @@ const ClrTreeSelect: React.FC<Props> = (props) => {
     }
 
     let trees = transformLabelAndValue(props.treeData);
-    if (rootNode) {
-      trees = [{title: rootNode.title, value: rootNode.value, children: trees,}];
+    if (props.rootNode) {
+      trees = [{title: props.rootNode.title, value: props.rootNode.value, children: trees,}];
     }
-    _setTreeData(trees);
-  }, [props]);
-
+    return trees;
+  }, [props.treeData, props.rootNode, childrenProp, labelProp, valueProp, disabledValues]);
 
   function handleChange(args: any[]) {
     _setValue(args);
-    props.onChange && props.onChange({
-      target: {
-        name: props.name,
-        value: args,
-      }
-    })
+    if (props.onChange) {
+      props.onChange({
+        target: {
+          name: props.name,
+          value: args,
+        }
+      });
+    }
   }
+
 
   return (
     <TreeSelect className={"clr-tree-select"} dropdownStyle={{maxHeight: 300, overflow: 'auto'}}
@@ -80,6 +81,7 @@ const ClrTreeSelect: React.FC<Props> = (props) => {
                 maxTagCount={2}
                 treeCheckable={treeCheckable}
                 value={_value}
+                treeNodeFilterProp={"title"}
                 showCheckedStrategy={SHOW_ALL}
                 treeDefaultExpandAll={false}
                 onChange={handleChange}
