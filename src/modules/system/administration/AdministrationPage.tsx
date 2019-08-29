@@ -60,6 +60,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
                           setLoading();
                           const [, err] = await AdministrationService.deleteAdministration([row.id!]);
                           if (err) {
+                            err.showMessage();
                             failBack();
                             return;
                           }

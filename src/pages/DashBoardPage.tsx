@@ -18,7 +18,8 @@ const menus: IMenu[] = [
     path: '/system',
     icon: '',
     children: [
-      {name: 'banner管理', path: '/system'},
+      {name: 'banner分类管理', path: '/system'},
+      {name: 'banner管理', path: '/system/banner-item'},
       {name: '管理员管理', path: '/system/administration'},
       {name: '角色管理', path: '/system/role'},
       {name: '菜单管理', path: '/system/menu'},

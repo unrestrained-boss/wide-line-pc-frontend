@@ -1,26 +1,27 @@
 import BaseService from "../BaseService";
 
-const toggleBannerStatus: (id: number, status: boolean) => Promise<void> = (id: number, status: boolean) => {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 1000);
-  })
+const useBannerList = () => BaseService.useServiceListBase<IBanner>('/banner/index');
+
+const addBanner = BaseService.addServiceBase<IBanner>('/banner/add');
+
+const updateBanner = BaseService.updateServiceBase<IBanner>('/banner/edit');
+
+const deleteBanner = BaseService.deleteServiceBase('/banner/delete');
+
+const toggleBannerStatus = BaseService.updateServiceBase<{ status: boolean }>('/banner/edit');
+
+const BannerService = {
+  useBannerList,
+  addBanner,
+  updateBanner,
+  deleteBanner,
+  toggleBannerStatus,
 };
 
-const useBannerList = () => BaseService.useServiceListBase<IBanner>('/banner/index');
+export default BannerService;
 
 export interface IBanner {
   id?: number;
-  name: string,
-  image: string | string[],
-  link: string,
-  enable: boolean,
-  sort: number
+  name: string;
+  status: number;
 }
-
-const BannerService = {
-  toggleBannerStatus,
-  useBannerList,
-};
-export default BannerService;

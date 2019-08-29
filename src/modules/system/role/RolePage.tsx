@@ -47,6 +47,7 @@ const RolePage: React.FC<Props> = (props) => {
                           setLoading();
                           const [, err] = await RoleService.deleteRole([row.id!]);
                           if (err) {
+                            err.showMessage();
                             failBack();
                             return;
                           }
