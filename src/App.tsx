@@ -4,7 +4,7 @@ import {dashBoardPath, history} from './utils/Constant';
 import DashBoardPage from "./pages/DashBoardPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
-import zhCN from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
 import {ConfigProvider} from "antd";
 
 const App: React.FC = () => {
