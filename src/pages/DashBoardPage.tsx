@@ -47,6 +47,29 @@ const menus: IMenu[] = [
     children: [{name: '产品管理', path: '/product'}, {name: '分类管理', path: '/product/classification'}]
   },
 ];
+const routes = [
+  {
+    path: 'system',
+    component: loadComponentWithModulesPrefix('system/banner/BannerPage'),
+  },
+  {
+    path: 'system/banner-item',
+    component: loadComponentWithModulesPrefix('system/banner-item/BannerItemPage'),
+  },
+  {
+    path: 'system/administration',
+    component: loadComponentWithModulesPrefix('system/administration/AdministrationPage'),
+  },
+  {
+    path: 'system/role',
+    component: loadComponentWithModulesPrefix('system/role/RolePage'),
+  },
+  {
+    path: 'system/menu',
+    component: loadComponentWithModulesPrefix('system/menu/MenuPage'),
+  }
+];
+
 const DashBoardPage: React.FC<Props> = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
@@ -67,23 +90,15 @@ const DashBoardPage: React.FC<Props> = (props) => {
           </Button>
         </Layout.Header>
         <Layout.Content className={"router-outlet"}>
-          <Suspense fallback={<></>}>
+          <Suspense fallback={<div>Loading...</div>}>
             <Switch>
-              <Route exact
-                     path={`${dashBoardPath}/system`}
-                     component={loadComponentWithModulesPrefix('system/banner/BannerPage')}/>
-              <Route exact
-                     path={`${dashBoardPath}/system/banner-item`}
-                     component={loadComponentWithModulesPrefix('system/banner-item/BannerItemPage')}/>
-              <Route exact
-                     path={`${dashBoardPath}/system/administration`}
-                     component={loadComponentWithModulesPrefix('system/administration/AdministrationPage')}/>
-              <Route exact
-                     path={`${dashBoardPath}/system/role`}
-                     component={loadComponentWithModulesPrefix('system/role/RolePage')}/>
-              <Route exact
-                     path={`${dashBoardPath}/system/menu`}
-                     component={loadComponentWithModulesPrefix('system/menu/MenuPage')}/>
+              {routes.map(route => {
+                return (
+                  <Route key={route.path} exact
+                         path={`${dashBoardPath}/${route.path}`}
+                         component={route.component}/>
+                );
+              })}
               <Route component={NotFound}/>
             </Switch>
           </Suspense>

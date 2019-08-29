@@ -13,8 +13,8 @@ const App: React.FC = () => {
     <ConfigProvider locale={zhCN}>
       <Router history={history}>
         <Switch>
-          <Route path={dashBoardPath} component={DashBoardPage}/>
           <Redirect exact path="/" to={dashBoardPath}/>
+          <Route path={dashBoardPath} component={DashBoardPage}/>
           <Route exact path="/login" component={LoginPage}/>
           <Route component={NotFound}/>
         </Switch>
