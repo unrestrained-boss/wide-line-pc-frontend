@@ -2,7 +2,10 @@ import BaseService from "../BaseService";
 
 const useMenuList = () => BaseService.useServiceListWithoutPagingBase<IMenu>('/menus/index');
 
-const useMenuUrlList = () => BaseService.useServiceListWithoutPagingBase<IMenu>('/menus/urls');
+const useMenuUrlList = () => BaseService.useServiceListWithoutPagingBase<{
+  uri: string;
+  method: string;
+}>('/menus/urls');
 
 const addMenu = BaseService.addServiceBase<IMenu>('/menus/add');
 
