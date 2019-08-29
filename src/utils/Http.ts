@@ -2,6 +2,7 @@ import Axios, {AxiosResponse} from 'axios'
 import UserService from "../services/UserService";
 // import {history} from './Constant';
 import {message} from "antd";
+import WLModal from "../components/wl-modal/WLModal";
 // import ClrMessageService from "../components/clr-message/ClrMessageService";
 // import ClrModalService from "../components/clr-modal/ClrModalService";
 
@@ -44,23 +45,36 @@ instance.interceptors.response.use((response: AxiosResponse<BeforeResponse | str
   let err: ResponseError | null = null;
   if (typeof data === 'string') {
     err = _createError(new Error(data));
+  } else if (data.code === 600) {
+    WLModal.alert('登录信息已过期, 请重新登录', {
+      defaultCanDismiss: false,
+      defaultClosable: false,
+      onOk() {
+        UserService.logoutUser();
+        // 跳到登录页
+        // history.replace('/login');
+        window.location.href = process.env.REACT_APP_BASE_URL as string;
+      }
+    });
+    err = _createError(new Error(data.msg));
   } else if (data.code !== 200) {
     err = _createError(new Error(data.msg));
   }
   return [typeof data === 'string' ? data : data.data, err, response];
 }, error => {
-  if (error.response && error.response.status === 401) {
-    // ClrModalService.alert('登录信息已过期, 请重新登录', {
-    //   backgroundDismiss: false,
-    //   showClose: false,
-    //   onOk() {
-    //     UserService.logoutUser();
-    //     // 跳到登录页
-    //     history.replace('/login');
-    //     window.location.reload();
-    //   }
-    // })
-  }
+  // console.log(error, 111)
+  // if (error.response && error.response.data.code === 600) {
+  //   WLModal.alert('登录信息已过期, 请重新登录', {
+  //     backgroundDismiss: false,
+  //     showClose: false,
+  //     onOk() {
+  //       // UserService.logoutUser();
+  //       // 跳到登录页
+  //       // history.replace('/login');
+  //       // window.location.reload();
+  //     }
+  //   })
+  // }
   return [null, _createError(error), error.response]
 });
 // 纯 http 不带拦截器

@@ -77,7 +77,7 @@ const MenuPage: React.FC<Props> = (props) => {
 
   return (
     <div className={"frame-content"}>
-      <div style={{marginBottom: '20px', textAlign: 'right'}}>
+      <div style={{marginBottom: '20px'}}>
         <Button onClick={handleAddMenu} type={"primary"}>
           <Icon type={"plus"}/>
           添加菜单

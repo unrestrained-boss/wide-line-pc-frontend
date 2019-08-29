@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import React, {useState} from "react";
-import {Modal} from "antd";
+import {Button, Modal} from "antd";
 import './WLModal.scss';
 import zhCN from 'antd/es/locale/zh_CN';
 import {ConfigProvider} from "antd";
@@ -12,17 +12,17 @@ export interface IWLModalOpenOptions {
   data?: any;
   onComplete?: () => void;
 }
-
-export interface IWLConfirmModalOpenOptions {
+export interface IWLAlertModalOpenOptions {
   title?: string;
   onOk?: (s: {
     close: () => void,
     setLoading: () => void;
     failBack: () => void;
   }) => void;
-  // onClose?: () => void;
-  backgroundDismiss?: boolean;
-  showClose?: boolean;
+  defaultCanDismiss?: boolean;
+  defaultClosable?: boolean;
+}
+export interface IWLConfirmModalOpenOptions extends IWLAlertModalOpenOptions {
   onCancel?: () => void;
 }
 
@@ -79,8 +79,10 @@ function openModal(Component: any, options: IWLModalOpenOptions = {}) {
   ReactDOM.render(<WrapModal/>, container);
 }
 
-function confirm(Component: any, options: IWLConfirmModalOpenOptions = {}) {
+
+function alert(Component: any, options: IWLAlertModalOpenOptions = {}) {
   const container = document.createElement('div');
+  const {defaultClosable = true, defaultCanDismiss = true} = options;
   const clearDom = () => {
     ReactDOM.unmountComponentAtNode(container);
     container.remove();
@@ -89,9 +91,72 @@ function confirm(Component: any, options: IWLConfirmModalOpenOptions = {}) {
   function WrapModal() {
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(true);
-    const [canClosable, setCanClosable] = useState(true);
-    const [canDismiss, setCanDismiss] = useState(true);
+    const [canClosable, setCanClosable] = useState(defaultClosable);
+    const [canDismiss, setCanDismiss] = useState(defaultCanDismiss);
 
+    function handleOk() {
+      if (options!.onOk) {
+        options!.onOk({
+          close: () => setVisible(false),
+          setLoading: () => {
+            setCanClosable(false);
+            setCanDismiss(false);
+            setLoading(true);
+          },
+          failBack: () => {
+            setCanClosable(true);
+            setCanDismiss(true);
+            setLoading(false);
+          }
+        });
+      } else {
+        setVisible(false);
+      }
+    }
+    //
+    // function handleCancel() {
+    //   setVisible(false);
+    // }
+
+    return (
+      <ConfigProvider locale={zhCN}>
+        <Modal title={options.title || <span>提示</span>}
+               destroyOnClose
+               afterClose={() => {
+                 clearDom();
+               }}
+               footer={[
+                 <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                   确定
+                 </Button>
+               ]}
+               closable={canClosable}
+               maskClosable={canDismiss}
+               keyboard={canDismiss}
+               visible={visible}
+               centered>
+          {Component}
+        </Modal>
+      </ConfigProvider>
+    );
+  }
+
+  ReactDOM.render(<WrapModal/>, container);
+}
+
+function confirm(Component: any, options: IWLConfirmModalOpenOptions = {}) {
+  const container = document.createElement('div');
+  const {defaultClosable = true, defaultCanDismiss = true} = options;
+  const clearDom = () => {
+    ReactDOM.unmountComponentAtNode(container);
+    container.remove();
+  };
+
+  function WrapModal() {
+    const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const [canClosable, setCanClosable] = useState(defaultClosable);
+    const [canDismiss, setCanDismiss] = useState(defaultCanDismiss);
     function handleOk() {
       if (options!.onOk) {
         options!.onOk({
@@ -144,6 +209,7 @@ function confirm(Component: any, options: IWLConfirmModalOpenOptions = {}) {
 const WLModal = {
   openModal,
   confirm,
+  alert,
 };
 
 export default WLModal;

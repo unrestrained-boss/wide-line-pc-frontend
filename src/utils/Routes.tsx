@@ -124,8 +124,8 @@ function dd(routes: IRoute[], pid: number): IMenu[] {
   return results.sort((a, b) => a.sort! - b.sort!);
 }
 
-export let menus: IMenu[];
-export let routes: IRoute[];
+export let menus: IMenu[] = [];
+export let routes: IRoute[] = [];
 
 export async function init() {
   if (!UserService.getUserToken()) {
