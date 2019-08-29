@@ -1,17 +1,27 @@
 import React from 'react';
-import BannerService, {IBanner} from "../../../services/system/BannerService";
 import {Button, Icon, message, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
 import WLModal from "../../../components/wl-modal/WLModal";
-import BannerAddModal from "./BannerAddModal";
+import BannerItemAddModal from "./BannerItemAddModal";
+import BannerItemService, {IBannerItem} from "../../../services/system/BannerItemService";
 
 interface Props {
 
 }
 
-const BannerPage: React.FC<Props> = (props) => {
-  const columns: ColumnProps<IBanner>[] = [
-    {title: '名称', dataIndex: 'name', width: 200, align: 'left',},
+const BannerItemPage: React.FC<Props> = (props) => {
+  const columns: ColumnProps<IBannerItem>[] = [
+    {title: '类型', dataIndex: 'type', width: 200, align: 'left',},
+    {
+      title: 'banner', dataIndex: 'img', width: 240, align: 'center', render: (text) => {
+        return (
+          <img style={{height: '80px', width: '200px'}}
+               src={text}
+               alt=""/>
+        );
+      }
+    },
+    {title: '链接地址', dataIndex: 'value', width: 200, align: 'left',},
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -28,8 +38,8 @@ const BannerPage: React.FC<Props> = (props) => {
             <Button size={"small"}
                     type={"primary"}
                     onClick={() => {
-                      WLModal.openModal(BannerAddModal, {
-                        title: '编辑分类',
+                      WLModal.openModal(BannerItemAddModal, {
+                        title: '编辑banner',
                         data: row,
                         defaultCanDismiss: false,
                         onComplete() {
@@ -44,7 +54,7 @@ const BannerPage: React.FC<Props> = (props) => {
                       WLModal.confirm("确实要删除吗?", {
                         async onOk({setLoading, close, failBack}) {
                           setLoading();
-                          const [, err] = await BannerService.deleteBanner([row.id!]);
+                          const [, err] = await BannerItemService.deleteBannerItem([row.id!]);
                           if (err) {
                             err.showMessage();
                             failBack();
@@ -61,11 +71,11 @@ const BannerPage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {data, isLoading, refresh} = BannerService.useBannerList();
+  const {data, isLoading, refresh} = BannerItemService.useBannerItemList();
 
   function handleAddBanner() {
-    WLModal.openModal(BannerAddModal, {
-      title: '添加分类',
+    WLModal.openModal(BannerItemAddModal, {
+      title: '添加banner',
       defaultCanDismiss: false,
       onComplete() {
         refresh();
@@ -78,7 +88,7 @@ const BannerPage: React.FC<Props> = (props) => {
       <div style={{marginBottom: '20px', textAlign: 'right'}}>
         <Button onClick={handleAddBanner} type={"primary"}>
           <Icon type={"plus"}/>
-          添加 banner 分类
+          添加 banner
         </Button>
       </div>
       <Table size={"small"}
@@ -98,4 +108,4 @@ const BannerPage: React.FC<Props> = (props) => {
   );
 };
 
-export default BannerPage;
+export default BannerItemPage;

@@ -73,6 +73,9 @@ const DashBoardPage: React.FC<Props> = (props) => {
                      path={`${dashBoardPath}/system`}
                      component={loadComponentWithModulesPrefix('system/banner/BannerPage')}/>
               <Route exact
+                     path={`${dashBoardPath}/system/banner-item`}
+                     component={loadComponentWithModulesPrefix('system/banner-item/BannerItemPage')}/>
+              <Route exact
                      path={`${dashBoardPath}/system/administration`}
                      component={loadComponentWithModulesPrefix('system/administration/AdministrationPage')}/>
               <Route exact
