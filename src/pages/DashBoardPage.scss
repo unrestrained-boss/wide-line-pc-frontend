@@ -1,26 +1,13 @@
-.dashboard-container {
-  height: 100%;
-  width: 100%;
-  background-color: #FAFAFA;
-  display: flex;
-  flex-direction: column;
-
-  .content {
-    flex: 1;
-    height: 0;
-    display: flex;
-
-    .router-outlet {
-      flex: 1;
-      width: 0;
-      overflow: hidden;
-      .frame-content {
-        height: 100%;
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-      }
-    }
+.router-outlet {
+  flex: 1;
+  height: 0;
+  overflow: hidden;
+  .frame-content {
+    background-color: #fff;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
   }
 }

@@ -23,7 +23,7 @@ export interface IAdministration {
   id?: number;
   username: string;
   nickname: string;
-  avatar?: string | string[];
+  avatar?: string | null;
   email: string;
   mobile: string;
   status: number;

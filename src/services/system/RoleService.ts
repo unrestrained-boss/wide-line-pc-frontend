@@ -2,6 +2,8 @@ import BaseService from "../BaseService";
 
 const useRoleList = () => BaseService.useServiceListBase<IRole>('/roles/index');
 
+const roleList = BaseService.listServiceBase<IRole>('/roles/index');
+
 const addRole = BaseService.addServiceBase<IRole>('/roles/add');
 
 const updateRole = BaseService.updateServiceBase<IRole>('/roles/edit');
@@ -12,6 +14,7 @@ const toggleRoleStatus = BaseService.updateServiceBase<{ status: boolean }>('/ro
 
 const RoleService = {
   useRoleList,
+  roleList,
   addRole,
   updateRole,
   deleteRole,

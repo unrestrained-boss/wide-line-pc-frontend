@@ -1,0 +1,30 @@
+:root {
+  .wl-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    transition: width .3s;
+    .wl-sidebar-header {
+      width: 100%;
+      height: 60px;
+      line-height: 60px;
+      background-color: #002538;
+      text-align: right;
+    }
+
+    .wl-sidebar-content {
+      flex: 1;
+      height: 0;
+      overflow: auto;
+      border-right: 1px solid #dddddd;
+      box-sizing: border-box;
+    }
+  }
+
+  .ant-menu-inline,
+  .ant-menu-vertical,
+  .ant-menu-vertical-left {
+    border-right: none;
+  }
+}
+

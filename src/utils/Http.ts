@@ -1,8 +1,9 @@
 import Axios, {AxiosResponse} from 'axios'
 import UserService from "../services/UserService";
-import {history} from './Constant';
-import ClrMessageService from "../components/clr-message/ClrMessageService";
-import ClrModalService from "../components/clr-modal/ClrModalService";
+// import {history} from './Constant';
+import {message} from "antd";
+// import ClrMessageService from "../components/clr-message/ClrMessageService";
+// import ClrModalService from "../components/clr-modal/ClrModalService";
 
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 const instance = Axios.create({
@@ -23,7 +24,7 @@ export interface ResponseError extends Error {
 function _createError(error: Error): ResponseError {
   return {
     showMessage: () => {
-      ClrMessageService.warning(error.message);
+      message.warning(error.message);
     },
     message: error.message,
     stack: error.stack,
@@ -49,16 +50,16 @@ instance.interceptors.response.use((response: AxiosResponse<BeforeResponse | str
   return [typeof data === 'string' ? data : data.data, err, response];
 }, error => {
   if (error.response && error.response.status === 401) {
-    ClrModalService.alert('登录信息已过期, 请重新登录', {
-      backgroundDismiss: false,
-      showClose: false,
-      onOk() {
-        UserService.logoutUser();
-        // 跳到登录页
-        history.replace('/login');
-        window.location.reload();
-      }
-    })
+    // ClrModalService.alert('登录信息已过期, 请重新登录', {
+    //   backgroundDismiss: false,
+    //   showClose: false,
+    //   onOk() {
+    //     UserService.logoutUser();
+    //     // 跳到登录页
+    //     history.replace('/login');
+    //     window.location.reload();
+    //   }
+    // })
   }
   return [null, _createError(error), error.response]
 });

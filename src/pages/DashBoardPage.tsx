@@ -1,112 +1,98 @@
-import React, {PureComponent, Suspense, lazy} from 'react';
-import ClrHeader from "../components/clr-header/ClrHeader";
-import ClrSidebar from "../components/clr-sidebar/ClrSidebar";
-import './DashBoardPage.scss'
-import {Route, RouteComponentProps, Switch} from "react-router";
+import React, {lazy, Suspense, useState} from 'react';
+import {Layout, Icon, Button} from 'antd';
+import WLSidebar from "../components/wl-sidebar/WLSidebar";
+import {Route, Switch} from "react-router";
+import {dashBoardPath} from "../utils/Constant";
 import NotFound from "./NotFound";
-import {dashBoardPath, history} from "../utils/Constant";
+import './DashBoardPage.scss';
+
+interface Props {
+
+}
 
 const loadComponentWithModulesPrefix = (path: string) => lazy(() => import(`../modules/${path}`));
 
-interface OwnProps extends RouteComponentProps {
-}
-
-type Props = OwnProps;
-
-type State = Readonly<{
-  currentIndex: number;
-  menus: IMenu[]
-}>;
-
-export class DashBoardPage extends PureComponent<Props, State> {
-  readonly state: State = {
-    currentIndex: -1,
-    menus: [
-      {
-        name: '系统管理',
-        module: 'system',
-        icon: '',
-        children: [
-          {name: 'banner管理', path: '/system'},
-          {name: '管理员管理', path: '/system/administration'},
-          {name: '角色管理', path: '/system/role'},
-          {name: '菜单管理', path: '/system/menu'},
-          {name: '日志管理', path: '/system/log'}]
-      },
-      {name: '用户管理', module: 'user', icon: '', children: [{name: '用户管理', path: '/user'}]},
-      {
-        name: '订单管理',
-        module: 'order',
-        icon: '',
-        children: [{name: '订单管理', path: '/order'}, {name: '奖励管理', path: '/order/reward'}]
-      },
-      {
-        name: '产品管理',
-        module: 'product',
-        icon: '',
-        children: [{name: '产品管理', path: '/product'}, {name: '分类管理', path: '/product/classification'}]
-      },
-    ]
-  };
-
-  UNSAFE_componentWillMount(): void {
-    history.listen(({pathname}) => this.handlePathChanged(pathname));
-    this.handlePathChanged(history.location.pathname);
-  }
-
-  handlePathChanged(path: string) {
-    const moduleName = path.split('/')[2];
-    this.setState({currentIndex: this.state.menus.findIndex((item) => item.module === moduleName)});
-  }
-
-  get subMenus(): IMenu[] {
-    if (this.state.currentIndex === -1) {
-      return [];
-    }
-    return this.state.menus[this.state.currentIndex].children!;
-  }
-
-  handleMenuIndexChanged(index: number) {
-    this.setState({currentIndex: index});
-  }
-
-  render() {
-    return (
-      <main className="dashboard-container">
-        <ClrHeader currentIndex={this.state.currentIndex}
-                   onMenuChanged={index => this.handleMenuIndexChanged(index)}
-                   menus={this.state.menus}/>
-        <section className="content">
-          <ClrSidebar menus={this.subMenus}/>
-          <section className="router-outlet">
-            <Suspense fallback={<></>}>
-              <Switch>
-                <Route exact
-                       path={`${dashBoardPath}/system`}
-                       component={loadComponentWithModulesPrefix('system/banner/BannerPage')}/>
-                <Route exact
-                       path={`${dashBoardPath}/system/administration`}
-                       component={loadComponentWithModulesPrefix('system/administration/AdministrationPage')}/>
-                <Route exact
-                       path={`${dashBoardPath}/system/role`}
-                       component={loadComponentWithModulesPrefix('system/role/RolePage')}/>
-                <Route exact
-                       path={`${dashBoardPath}/system/menu`}
-                       component={loadComponentWithModulesPrefix('system/menu/MenuPage')}/>
-                <Route component={NotFound}/>
-              </Switch>
-            </Suspense>
-          </section>
-        </section>
-      </main>
-    );
-  }
-}
+const menus: IMenu[] = [
+  {
+    name: '系统管理',
+    path: '/system',
+    icon: '',
+    children: [
+      {name: 'banner管理', path: '/system'},
+      {name: '管理员管理', path: '/system/administration'},
+      {name: '角色管理', path: '/system/role'},
+      {name: '菜单管理', path: '/system/menu'},
+      {name: '日志管理', path: '/system/log'}]
+  },
+  {
+    name: '用户管理', path: '/user', icon: '', children: [{
+      name: '用户管理', path: '/user',
+      children: [
+        {name: '用户管理1', path: '/user1'},
+        {name: '用户管理2', path: '/user2'},
+      ]
+    }]
+  },
+  {
+    name: '订单管理',
+    path: '/order',
+    icon: '',
+    children: [{name: '订单管理', path: '/order'}, {name: '奖励管理', path: '/order/reward'}]
+  },
+  {
+    name: '产品管理',
+    path: '/product',
+    icon: '',
+    children: [{name: '产品管理', path: '/product'}, {name: '分类管理', path: '/product/classification'}]
+  },
+];
+const DashBoardPage: React.FC<Props> = (props) => {
+  const [collapsed, setCollapsed] = useState(false);
+  return (
+    <Layout style={{height: '100%'}}>
+      <Layout.Sider trigger={null} collapsed={collapsed}>
+        <div style={{textAlign: 'center', color: '#fff', height: '64px', lineHeight: '64px'}}>后台管理</div>
+        <WLSidebar menus={menus}/>
+      </Layout.Sider>
+      <Layout>
+        <Layout.Header>
+          <Button onClick={() => {
+            setCollapsed(!collapsed);
+          }}>
+            <Icon
+              className="trigger"
+              type={collapsed ? 'menu-unfold' : 'menu-fold'}
+            />
+          </Button>
+        </Layout.Header>
+        <Layout.Content className={"router-outlet"}>
+          <Suspense fallback={<></>}>
+            <Switch>
+              <Route exact
+                     path={`${dashBoardPath}/system`}
+                     component={loadComponentWithModulesPrefix('system/banner/BannerPage')}/>
+              <Route exact
+                     path={`${dashBoardPath}/system/administration`}
+                     component={loadComponentWithModulesPrefix('system/administration/AdministrationPage')}/>
+              <Route exact
+                     path={`${dashBoardPath}/system/role`}
+                     component={loadComponentWithModulesPrefix('system/role/RolePage')}/>
+              <Route exact
+                     path={`${dashBoardPath}/system/menu`}
+                     component={loadComponentWithModulesPrefix('system/menu/MenuPage')}/>
+              <Route component={NotFound}/>
+            </Switch>
+          </Suspense>
+        </Layout.Content>
+      </Layout>
+    </Layout>
+  );
+};
+export default DashBoardPage;
 
 export interface IMenu {
   name: string;
   icon?: string;
-  module?: string;
   path?: string;
   children?: IMenu[];
 }

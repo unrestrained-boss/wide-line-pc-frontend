@@ -1,214 +1,196 @@
-import {IModalInjectProps} from "../../../components/clr-modal/ClrModal";
-import * as Yup from "yup";
-import ClrForm from "../../../components/clr-form/ClrForm";
-import ClrFormItem from "../../../components/clr-form-item/ClrFormItem";
-import ClrUpload from "../../../components/clr-upload/ClrUpload";
-import ClrInput from "../../../components/clr-input/ClrInput";
-import ClrSwitch from "../../../components/clr-switch/ClrSwitch";
-import ClrButton from "../../../components/clr-button/ClrButton";
-import {Formik} from "formik";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import AdministrationService, {IAdministration} from "../../../services/system/AdministrationService";
-import ClrMessageService from "../../../components/clr-message/ClrMessageService";
+import {Button, Form, Input, Switch, Spin, message, Upload, Icon} from "antd";
+import {FormComponentProps} from "antd/lib/form";
+import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
+import UserService from "../../../services/UserService";
+import {
+  uploadCustomRequest,
+  uploadGetValueFromEvent,
+  uploadPreData,
+  uploadResultSerialization
+} from "../../../utils/Upload";
 
-interface Props extends IModalInjectProps {
+interface Props extends FormComponentProps<IAdministration & { avatar: any[] }>, IWLModalInjectProps {
 }
 
+const formItemLayout = {
+  labelCol: {span: 4},
+  wrapperCol: {span: 20},
+};
 const AdministrationAddModal: React.FC<Props> = (props) => {
   const preData = props.getPreData<IAdministration>();
   const isEditMode = preData !== undefined;
-  const labelWith = '100px';
-  let initialValues: IAdministration & { password?: string, repassword?: string } = {
-    username: '',
-    nickname: '',
-    avatar: '',
-    email: '',
-    mobile: '',
-    status: 1,
-  };
-  const validationRule = {
-    avatar: Yup.array()
-      .min(1, '头像 需要 1 张')
-      .required('头像必传'),
-    username: Yup.string()
-      .test('is-username', '用户名只能包含数字和字母', value => {
-        return /^[a-z0-9A-Z]*$/.test(value);
-      })
-      .min(4, '用户名至少 4 位')
-      .max(32, '用户名最多 32 位')
-      .required('用户名必填'),
-    nickname: Yup.string()
-      .min(2, '昵称至少 2 位')
-      .max(32, '昵称最多 32 位')
-      .required('昵称必填'),
-    email: Yup.string()
-      .email('邮箱格式错误')
-      .required('邮箱必填'),
-    mobile: Yup.string()
-      .test('is-phone', '联系电话格式不正确', value => {
-        return /^1\d{10}$/.test(value);
-      })
-      .length(11, '联系电话需要 11 位')
-      .required('联系电话必填'),
-    password: Yup.string()
-      .min(4, '密码至少 4 位')
-      .max(32, '密码最多 32 位')
-      .required('密码必填'),
-    repassword: Yup.string()
-      .min(4, '确认密码至少 4 位')
-      .max(32, '确认密码最多 32 位')
-      .oneOf([Yup.ref('password'), null], '两次密码输入不一致')
-      .required('确认密码必填'),
+  const [submitting, setSubmitting] = useState(false);
+  const {getFieldDecorator, validateFieldsAndScroll, getFieldValue, setFieldsValue} = props.form;
 
-  };
-
-  if (isEditMode) {
-    let avatar = preData.avatar as string;
-    avatar = '/uploads/' + avatar.split('/uploads/')[1];
-    initialValues = {...initialValues, ...preData, avatar: [avatar]};
-    delete validationRule.password;
-    delete validationRule.repassword;
-  } else {
-    initialValues.password = '';
-    initialValues.repassword = '';
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    validateFieldsAndScroll((error, values) => {
+      if (error) {
+        return;
+      }
+      handleDoSubmit(values);
+    });
   }
-  const validationSchema = Yup.object().shape(validationRule);
 
-  function handleSubmit(values: IAdministration & { password?: string, repassword?: string }, {setSubmitting}: any) {
-    props.setBackgroundDismiss(false);
-    props.setShowClose(false);
+  function handleDoSubmit(values: IAdministration & { password?: string, repassword?: string, avatar: any[] }) {
+    props.setCanClosable(false);
     setSubmitting(true);
-    const body: IAdministration & { password?: string, repassword?: string } = {
+    const files = uploadResultSerialization(values.avatar, process.env.REACT_APP_API_BASE_URL);
+    const body: IAdministration = {
       username: values.username,
       nickname: values.nickname,
       email: values.email,
-      avatar: values.avatar![0],
+      avatar: files.length > 0 ? files[0] : null,
       mobile: values.mobile,
-      status: values.status,
+      status: values.status ? 1 : 0,
     };
     if (isEditMode) {
-      handleEditSubmit(body, setSubmitting);
+      handleEditSubmit(body);
     } else {
-      body.password = values.password!;
-      body.repassword = values.repassword!;
-      handleAddSubmit(body, setSubmitting);
+      const addBody: IAdministration & { password: string, repassword: string } = {
+        ...body,
+        password: values.password!,
+        repassword: values.repassword!,
+      };
+      handleAddSubmit(addBody);
     }
   }
 
-  async function handleAddSubmit(values: IAdministration & { password?: string, repassword?: string }, setSubmitting: any) {
-    // @ts-ignore
+  async function handleAddSubmit(values: IAdministration & { password: string, repassword: string }) {
     const [, err] = await AdministrationService.addAdministration(values);
-    props.setBackgroundDismiss(true);
-    props.setShowClose(true);
+    props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
       err.showMessage();
       return;
     }
     props.close();
-    props.onComplete && props.onComplete();
-    ClrMessageService.success('添加成功!');
+    props.onComplete!();
+    message.success('添加成功!');
   }
 
-  async function handleEditSubmit(values: IAdministration, setSubmitting: any) {
-    // @ts-ignore
-    const [, err] = await AdministrationService.updateAdministration(preData.id, values);
-    props.setBackgroundDismiss(true);
-    props.setShowClose(true);
+  async function handleEditSubmit(values: IAdministration) {
+    const [, err] = await AdministrationService.updateAdministration(preData.id!, values);
+    props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
       err.showMessage();
       return;
     }
     props.close();
-    props.onComplete && props.onComplete();
-    ClrMessageService.success('编辑成功!');
+    props.onComplete!();
+    message.success('编辑成功!');
   }
 
+  useEffect(() => {
+    if (isEditMode) {
+      setFieldsValue({
+        avatar: preData.avatar ? uploadPreData([preData.avatar]) : [],
+        username: preData.username,
+        nickname: preData.nickname,
+        mobile: preData.mobile,
+        email: preData.email,
+        status: preData.status === 1,
+      });
+    }
+    // eslint-disable-next-line
+  }, []);
+  const avatar = getFieldValue('avatar') || [];
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      validationSchema={validationSchema}>
-      {({isSubmitting}) => {
-        return <ClrForm>
-          <ClrFormItem labelWidth={labelWith}
-                       label="头像"
-                       name="avatar">
-            <ClrUpload limit={1}
-                       key={"file"}
-                       data={{type: 'user'}}
-                       checkResponse={(value, done, error) => {
-                         if (typeof value === 'string') {
-                           error();
-                           return;
-                         }
-                         if (value.code !== 200) {
-                           error();
-                           return;
-                         }
-                         done(value.data[0]);
-                       }}
-                       urlPrefix={process.env.REACT_APP_API_BASE_URL}
-                       action={process.env.REACT_APP_API_BASE_URL + "/upload/files"}/>
-          </ClrFormItem>
-          <ClrFormItem labelWidth={labelWith}
-                       label="用户名"
-                       name="username">
-            <ClrInput
-              type="text"/>
-          </ClrFormItem>
-          <ClrFormItem labelWidth={labelWith}
-                       label="昵称"
-                       name="nickname">
-            <ClrInput
-              type="text"/>
-          </ClrFormItem>
-          <ClrFormItem labelWidth={labelWith}
-                       label="邮箱"
-                       name="email">
-            <ClrInput
-              type="email"/>
-          </ClrFormItem>
-          <ClrFormItem labelWidth={labelWith}
-                       label="联系电话"
-                       name="mobile">
-            <ClrInput
-              type="text"/>
-          </ClrFormItem>
-          {!isEditMode && (
-            <>
-              <ClrFormItem labelWidth={labelWith}
-                           label="密码"
-                           name="password">
-                <ClrInput
-                  type="password"/>
-              </ClrFormItem>
-              <ClrFormItem labelWidth={labelWith}
-                           label="确认密码"
-                           name="repassword">
-                <ClrInput
-                  type="password"/>
-              </ClrFormItem>
-            </>
-          )}
-          <ClrFormItem labelWidth={labelWith}
-                       label="是否启用"
-                       name="status">
-            <ClrSwitch activeValue={1} inactiveValue={0}/>
-          </ClrFormItem>
+    <Spin spinning={submitting}>
+      <Form layout={"horizontal"} onSubmit={e => handleSubmit(e)}>
+        <Form.Item label={"头像"} {...formItemLayout} extra="上传 jpg/png 文件">
+          {getFieldDecorator('avatar', {
+            rules: [
+              // {validator: (rule, value: any[], cb) => {
+              //     if(value.length === 0) {
+              //       cb(new Error('请上传头像'));
+              //     }
+              //     cb();
+              //   }},
+              {
+                validator: (rule, value: any[], cb) => {
+                  for (let item of value) {
+                    if (item.status === 'error') {
+                      cb(new Error('图片上传失败, 请重试'));
+                    }
+                  }
+                  cb();
+                }
+              },
+            ],
+            initialValue: [],
+            valuePropName: 'fileList',
+            getValueFromEvent: uploadGetValueFromEvent,
+          })(<Upload
+            data={{type: 'user'}}
+            headers={{'X-Token': UserService.getUserToken()!}}
+            customRequest={uploadCustomRequest}
+            action={`${process.env.REACT_APP_API_BASE_URL}/upload/files`}
+            listType="picture-card">
+            {avatar.length === 0 && (
+              <>
+                <Icon type="plus"/>
+                <div className="ant-upload-text">选择文件</div>
+              </>
+            )}
+          </Upload>)}
+        </Form.Item>
+        <Form.Item label={"用户名"} {...formItemLayout}>
+          {getFieldDecorator('username', {
+            rules: [{required: true, message: '请输入用户名'}],
+          })(<Input autoFocus placeholder={"请输入用户名"}/>)}
+        </Form.Item>
+        <Form.Item label={"昵称"} {...formItemLayout}>
+          {getFieldDecorator('nickname', {
+            rules: [{required: true, message: '请输入昵称'}],
+          })(<Input placeholder={"请输入昵称"}/>)}
+        </Form.Item>
+        {!isEditMode && (
+          <>
+            <Form.Item label={"密码"} {...formItemLayout}>
+              {getFieldDecorator('password', {
+                rules: [{required: true, message: '请输入密码'}],
+              })(<Input type={"password"} placeholder={"请输入密码"}/>)}
+            </Form.Item>
+            <Form.Item label={"确认密码"} {...formItemLayout}>
+              {getFieldDecorator('repassword', {
+                rules: [{required: true, message: '请输入确认密码'}],
+              })(<Input type={"password"} placeholder={"请输入确认密码"}/>)}
+            </Form.Item>
+          </>
+        )}
+        <Form.Item label={"手机号码"} {...formItemLayout}>
+          {getFieldDecorator('mobile', {
+            rules: [{required: true, message: '请输入手机号码'}],
+          })(<Input placeholder={"请输入手机号码"}/>)}
+        </Form.Item>
+        <Form.Item label={"邮箱"} {...formItemLayout}>
+          {getFieldDecorator('email', {
+            rules: [{required: true, message: '请输入邮箱'}],
+          })(<Input placeholder={"请输入邮箱"}/>)}
+        </Form.Item>
 
-          <ClrFormItem labelWidth={labelWith}>
-            <ClrButton nativeType="submit" type="primary" disabled={isSubmitting}>
-              立即{isEditMode ? '修改' : '添加'}
-            </ClrButton>
-          </ClrFormItem>
-        </ClrForm>
-      }}
-
-    </Formik>
+        <Form.Item label={"状态"} {...formItemLayout}>
+          {getFieldDecorator('status', {
+            rules: [],
+            valuePropName: 'checked',
+            initialValue: true,
+          })(<Switch checkedChildren={"启用"} unCheckedChildren={"禁用"}/>)}
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary"
+                  block
+                  htmlType="submit">
+            提交
+          </Button>
+        </Form.Item>
+      </Form>
+    </Spin>
   );
 
 };
 
-export default AdministrationAddModal;
+export default Form.create()(AdministrationAddModal);

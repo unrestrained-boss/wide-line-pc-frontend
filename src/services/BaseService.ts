@@ -121,6 +121,17 @@ function useServiceListBase<T>(path: string,  pageSize = 20): {
   };
 }
 
+function listServiceBase<T>(path: string): (page: number, pageSize?: number) => Promise<[
+  {total: number, data: T[]},
+  ResponseError | null,
+  AxiosResponse
+  ]> {
+  return (page: number, pageSize = 20) => {
+    return Http.get(path, {
+      params: { page, pageSize }
+    });
+  }
+}
 function addServiceBase<T>(path: string): (body: T) => Promise<[
   any,
   ResponseError | null,
@@ -161,6 +172,7 @@ function deleteServiceBase(path: string): (ids: number[]) => Promise<[
 export default {
   useServiceListWithoutPagingBase,
   useServiceListBase,
+  listServiceBase,
   addServiceBase,
   updateServiceBase,
   deleteServiceBase,

@@ -1,165 +1,135 @@
-import React, {createRef, RefObject} from 'react';
-import {RouteComponentProps} from "react-router";
-import {ClrTableWithSpinner, ITableColumn} from "../../../components/clr-table/ClrTable";
-import ClrButton from "../../../components/clr-button/ClrButton";
+import React from 'react';
+import {Table, Button, Icon, Pagination, Alert, Tag, message} from 'antd';
+import {ColumnProps} from "antd/lib/table";
 import AdministrationService, {IAdministration} from "../../../services/system/AdministrationService";
-import ClrModalService from "../../../components/clr-modal/ClrModalService";
-import ClrPagination from "../../../components/clr-pagination/ClrPagination";
+import WLModal from "../../../components/wl-modal/WLModal";
 import AdministrationAddModal from "./AdministrationAddModal";
-import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
-import ClrMessageService from "../../../components/clr-message/ClrMessageService";
-import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
 
-interface Props extends RouteComponentProps {
+interface Props {
+
 }
-
-interface IAdministrationWithStatus extends IAdministration {
-  __toggleStatusIng?: boolean;
-}
-
 
 const AdministrationPage: React.FC<Props> = (props) => {
-  const {total, data, setData, isLoading, isError, page, setPage, refresh} = AdministrationService.useAdministrationList();
-  const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
-  const columns: ITableColumn[] = [
+  const columns: ColumnProps<IAdministration>[] = [
+    {title: '账号', dataIndex: 'username', width: 160, align: 'left',},
     {
-      title: '账号', dataIndex: 'username', width: '160px', align: 'left'
-    },
-    {
-      title: '头像&昵称', dataIndex: 'nickname', width: '200px', render: (row) => {
+      title: '头像&昵称', dataIndex: 'nickname', width: 200, align: 'left', render: (_, row) => {
         return (
           <>
-            <img src={row.avatar} style={{height: '30px', width: '30px', verticalAlign: 'middle', borderRadius: '5px'}}
+            <img src={row.avatar as string}
+                 style={{height: '30px', width: '30px', verticalAlign: 'middle', borderRadius: '5px'}}
                  alt=""/>&nbsp;&nbsp;
             <span>{row.nickname}</span>
           </>
         );
-      },
+      }
     },
-
-    {title: '电话号码', dataIndex: 'mobile', width: '120px'},
-    {title: '邮箱', dataIndex: 'email', width: '300px'},
+    {title: '电话号码', dataIndex: 'mobile', width: 140},
+    {title: '邮箱', dataIndex: 'email', width: 300},
     {
-      title: '状态', dataIndex: 'status', render: (row, index) => {
+      title: '状态', dataIndex: 'status', render: (text) => {
         return (
-          <ClrSwitchWithSpinner spinner={!!row.__toggleStatusIng}
-                                inactiveValue={0}
-                                activeValue={1}
-                                onChange={(e) => {
-                                  handleToggleAdministrationStatus(row.id, index, e.target.value);
-                                }} value={row.status}/>
+          <Tag color={text === 1 ? 'blue' : 'red'}>
+            {text === 1 ? '启用' : '禁用'}
+          </Tag>
         );
-      },
+      }
     },
     {
-      title: '操作',
-      align: 'center',
-      width: '160px',
-      render: (row, index, data) => {
+      title: '操作', align: 'center', width: 120, render: (_, row) => {
         return (
           <>
-            <ClrButton onClick={() => handleEditAdministration(row as IAdministration, index)}
-                       type="primary"
-                       size={"small"}>编辑</ClrButton>
-            &nbsp;&nbsp;
-            <ClrButton onClick={e => {
-              ClrModalService.confirm("确实要删除吗?", {
-                async onOk({close, failBack, setLoading}) {
-                  setLoading();
-                  // @ts-ignore
-                  const [, err] = await AdministrationService.deleteAdministration([row.id]);
-                  if (err) {
-                    failBack();
-                    err.showMessage();
-                    return;
-                  }
-                  close();
-                  refresh();
-                  ClrMessageService.success('删除成功!');
-                }
-              })
-            }}
-                       type="danger"
-                       size={"small"}>删除</ClrButton>
+            <Button size={"small"}
+                    type={"primary"}
+                    onClick={() => {
+                      WLModal.openModal(AdministrationAddModal, {
+                        title: '编辑管理员',
+                        data: row,
+                        defaultCanDismiss: false,
+                        onComplete() {
+                          refresh();
+                        }
+                      });
+                    }}>编辑</Button>
+            &nbsp;
+            <Button size={"small"}
+                    type={"danger"}
+                    onClick={() => {
+                      WLModal.confirm("确实要删除吗?", {
+                        async onOk({setLoading, close, failBack}) {
+                          setLoading();
+                          const [, err] = await AdministrationService.deleteAdministration([row.id!]);
+                          if (err) {
+                            failBack();
+                            return;
+                          }
+                          close();
+                          refresh();
+                          message.success('删除成功!');
+                        }
+                      });
+                    }}>删除</Button>
           </>
         );
       }
     },
   ];
-
-  async function handleToggleAdministrationStatus(id: number, index: number, newValue: any) {
-    let newData = [...data] as IAdministrationWithStatus[];
-    const oldValue = newData[index].status;
-    newData[index].__toggleStatusIng = true;
-    newData[index].status = newValue;
-    setData(newData);
-    const [, err] = await AdministrationService.toggleAdministrationStatus(id, {
-      status: newValue,
-    });
-    newData = [...data] as IAdministrationWithStatus[];
-    newData[index].__toggleStatusIng = false;
-
-    if (err) {
-      err.showMessage();
-      newData[index].status = oldValue;
-      setData(newData);
-      return;
-    }
-    newData = [...data];
-    setData(newData);
-  }
+  const {total, data, isLoading, isError, page, setPage, refresh} = AdministrationService.useAdministrationList();
 
   function handleAddAdministration() {
-    ClrModalService.openModal(AdministrationAddModal, {
+    WLModal.openModal(AdministrationAddModal, {
       title: '添加管理员',
+      defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
     });
+
   }
 
-  function handleEditAdministration(row: IAdministration, index: number) {
-    ClrModalService.openModal(AdministrationAddModal, {
-      title: '编辑管理员',
-      data: row,
-      onComplete() {
-        refresh();
-      }
-    });
-  }
-
-  //
-  // function handleDelete({row}: any) {
-  //   ClrModalService.confirm("确实要删除吗?", {
-  //     async onOk({close, failBack, setLoading}) {
-  //       setLoading();
-  //       // @ts-ignore
-  //       const [, err] = await AdministrationService.deleteAdministration([row.id]);
-  //       if (err) {
-  //         failBack();
-  //         err.showMessage();
-  //         return;
-  //       }
-  //       close();
-  //       refresh();
-  //       ClrMessageService.success('删除成功!');
-  //     }
-  //   })
-  // }
   return (
-    <div className={"frame-content"} ref={container}>
-      <div style={{marginBottom: '20px'}}>
-        <ClrButton onClick={handleAddAdministration} type={"primary"}>+ 添加管理员</ClrButton>
-      </div>
-      <ClrErrorTip show={isError} onClick={refresh}/>
-      <ClrTableWithSpinner position={"flex-start"} spinner={isLoading} even showText columns={columns} data={data || []}/>
+    <div className={"frame-content"}>
+      <div style={{marginBottom: '20px', textAlign: 'right'}}>
+        <Button onClick={handleAddAdministration} type={"primary"}>
+          <Icon type={"plus"}/>
+          添加管理员
+        </Button>
 
-      <ClrPagination disabled={isLoading} total={total} page={page} pageSize={20} onChange={page => {
-        container.current!.scrollTop = 0;
-        setPage(page);
-      }}/>
+        {isError && (
+          <Alert style={{marginTop: '20px'}}
+                 showIcon
+                 message={"抱歉"}
+                 description={(
+                   <>
+                     <span>出现了一点问题, 请稍后再试或</span>
+                     <Button type={"link"} onClick={() => refresh()}>点击重试</Button>
+                   </>
+                 )}
+                 type="error"
+                 closable
+          />
+        )}
+      </div>
+      <Table size={"small"}
+             bordered
+             loading={{
+               spinning: isLoading,
+               delay: 250,
+             }}
+             locale={{
+               emptyText: isLoading ? '拼命加载中...' : '抱歉, 暂无数据'
+             }}
+             pagination={false}
+             rowKey={"id"}
+             columns={columns}
+             dataSource={data}/>
+      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
+                  pageSize={20}
+                  disabled={isLoading}
+                  hideOnSinglePage
+                  onChange={page => setPage(page)}
+                  total={total}/>
     </div>
   );
 };
-
 export default AdministrationPage;

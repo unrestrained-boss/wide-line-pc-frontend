@@ -1,137 +1,118 @@
-import React, {createRef, RefObject} from "react";
-import {RouterProps} from "react-router";
+import React from 'react';
+import {Alert, Button, Icon, message, Pagination, Table, Tag} from "antd";
+import {ColumnProps} from "antd/lib/table";
 import RoleService, {IRole} from "../../../services/system/RoleService";
-import {ClrTableWithSpinner, ITableColumn} from "../../../components/clr-table/ClrTable";
-import ClrButton from "../../../components/clr-button/ClrButton";
-import ClrModalService from "../../../components/clr-modal/ClrModalService";
-import ClrMessageService from "../../../components/clr-message/ClrMessageService";
-import ClrPagination from "../../../components/clr-pagination/ClrPagination";
+import WLModal from "../../../components/wl-modal/WLModal";
 import RoleAddModal from "./RoleAddModal";
-import {ClrSwitchWithSpinner} from "../../../components/clr-switch/ClrSwitch";
-import ClrErrorTip from "../../../components/clr-error-tip/ClrErrorTip";
 
-interface Props extends RouterProps {
+interface Props {
 
-}
-
-interface IRoleWithStatus extends IRole {
-  __toggleStatusIng?: boolean;
 }
 
 const RolePage: React.FC<Props> = (props) => {
-  const {total, data, setData, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
-  const container: RefObject<HTMLDivElement> = createRef<HTMLDivElement>();
-  const columns: ITableColumn[] = [
-    {title: '名称', dataIndex: 'name', align: 'center', width: '200px'},
-    {title: '描述', dataIndex: 'desc', align: 'center', width: '400px'},
+  const columns: ColumnProps<IRole>[] = [
+    {title: '账号', dataIndex: 'name', width: 160, align: 'left',},
+    {title: '账号', dataIndex: 'desc', width: 200, align: 'left',},
     {
-      title: '状态', dataIndex: 'status', align: 'left', render: (row, index) => {
+      title: '状态', dataIndex: 'status', render: (text) => {
         return (
-          <ClrSwitchWithSpinner spinner={!!row.__toggleStatusIng}
-                                inactiveValue={0}
-                                activeValue={1}
-                                onChange={(e) => {
-                                  handleToggleRoleStatus(row.id, index, e.target.value);
-                                }} value={row.status}/>
+          <Tag color={text === 1 ? 'blue' : 'red'}>
+            {text === 1 ? '启用' : '禁用'}
+          </Tag>
         );
-      },
+      }
     },
     {
-      title: '操作',
-      align: 'center',
-      width: '160px',
-      render: (row, index, data) => {
+      title: '操作', align: 'center', width: 120, render: (_, row) => {
         return (
           <>
-            <ClrButton onClick={() => {
-              handleEditRole(row as IRole, index);
-            }}
-                       type="primary"
-                       size={"small"}>编辑</ClrButton>
-            &nbsp;&nbsp;
-            <ClrButton onClick={e => {
-              ClrModalService.confirm('确实要删除吗?', {
-                async onOk({close, setLoading, failBack}) {
-                  setLoading();
-                  // @ts-ignore
-                  const [, err] = await RoleService.deleteRole([row.id]);
-                  if (err) {
-                    failBack();
-                    err.showMessage();
-                    return;
-                  }
-                  close();
-                  refresh();
-                  ClrMessageService.success('删除成功!');
-                },
-              });
-            }}
-                       type="danger"
-                       size={"small"}>删除</ClrButton>
+            <Button size={"small"}
+                    type={"primary"}
+                    onClick={() => {
+                      WLModal.openModal(RoleAddModal, {
+                        title: '编辑角色',
+                        data: row,
+                        defaultCanDismiss: false,
+                        onComplete() {
+                          refresh();
+                        }
+                      });
+                    }}>编辑</Button>
+            &nbsp;
+            <Button size={"small"}
+                    type={"danger"}
+                    onClick={() => {
+                      WLModal.confirm("确实要删除吗?", {
+                        async onOk({setLoading, close, failBack}) {
+                          setLoading();
+                          const [, err] = await RoleService.deleteRole([row.id!]);
+                          if (err) {
+                            failBack();
+                            return;
+                          }
+                          close();
+                          refresh();
+                          message.success('删除成功!');
+                        }
+                      });
+                    }}>删除</Button>
           </>
         );
       }
     },
   ];
-
-  async function handleToggleRoleStatus(id: number, index: number, newValue: any) {
-    let newData = [...data] as IRoleWithStatus[];
-    const oldValue = newData[index].status;
-    newData[index].__toggleStatusIng = true;
-    newData[index].status = newValue;
-    setData(newData);
-    const [, err] = await RoleService.toggleRoleStatus(id, {
-      status: newValue,
-    });
-    newData = [...data] as IRoleWithStatus[];
-    newData[index].__toggleStatusIng = false;
-
-    if (err) {
-      err.showMessage();
-      newData[index].status = oldValue;
-      setData(newData);
-      return;
-    }
-    newData = [...data];
-    setData(newData);
-  }
-
+  const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
   function handleAddRole() {
-    ClrModalService.openModal(RoleAddModal, {
-      title: '新建角色',
+    WLModal.openModal(RoleAddModal, {
+      title: '添加角色',
+      defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
     });
   }
-
-  function handleEditRole(row: IRole, index: number) {
-
-    ClrModalService.openModal(RoleAddModal, {
-      title: '编辑角色',
-      data: row,
-      onComplete() {
-        refresh();
-      }
-    });
-  }
-
   return (
-    <div ref={container} className={"frame-content"}>
-      <div style={{marginBottom: '20px'}}>
-        <ClrButton onClick={() => handleAddRole()} type={"primary"}>+ 新建角色</ClrButton>
+    <div className={"frame-content"}>
+      <div style={{marginBottom: '20px', textAlign: 'right'}}>
+        <Button onClick={handleAddRole} type={"primary"}>
+          <Icon type={"plus"}/>
+          添加角色
+        </Button>
+
+        {isError && (
+          <Alert style={{marginTop: '20px'}}
+                 showIcon
+                 message={"抱歉"}
+                 description={(
+                   <>
+                     <span>出现了一点问题, 请稍后再试或</span>
+                     <Button type={"link"} onClick={() => refresh()}>点击重试</Button>
+                   </>
+                 )}
+                 type="error"
+                 closable
+          />
+        )}
       </div>
-      <ClrErrorTip show={isError} onClick={refresh}/>
-      <ClrTableWithSpinner position={"flex-start"} spinner={isLoading}
-                           showText
-                           even
-                           size="normal"
-                           columns={columns}
-                           data={data}/>
-      <ClrPagination disabled={isLoading} onChange={page => {
-        container.current!.scrollTop = 0;
-        setPage(page);
-      }} total={total} page={page} pageSize={20}/>
+      <Table size={"small"}
+             bordered
+             loading={{
+               spinning: isLoading,
+               delay: 250,
+             }}
+             locale={{
+               emptyText: isLoading ? '拼命加载中...' : '抱歉, 暂无数据'
+             }}
+             pagination={false}
+             rowKey={"id"}
+             columns={columns}
+             dataSource={data}/>
+      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
+                  pageSize={20}
+                  disabled={isLoading}
+                  hideOnSinglePage
+                  onChange={page => setPage(page)}
+                  total={total}/>
     </div>
   );
 };

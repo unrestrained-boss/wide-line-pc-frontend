@@ -1,66 +1,65 @@
 import React from "react";
 import './LoginPage.scss'
-import {Formik} from "formik";
-import ClrInput from "../components/clr-input/ClrInput";
-import * as Yup from "yup";
-import ClrButton from "../components/clr-button/ClrButton";
 import {history} from "../utils/Constant";
-import ClrFormItem from "../components/clr-form-item/ClrFormItem";
-import ClrForm from "../components/clr-form/ClrForm";
 import UserService from "../services/UserService";
-import ClrMessageService from "../components/clr-message/ClrMessageService";
+import {Button, Form, Input, message} from "antd";
+import {FormComponentProps} from "antd/lib/form";
+import './LoginPage.scss';
 
-export const LoginPage: React.FC = () => {
-  const validationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(4, '用户名至少 4 位')
-      .max(16, '用户名最多 16 位')
-      .required('用户名必填'),
-    password: Yup.string()
-      .min(4, '密码至少 4 位')
-      .max(16, '密码最多 16 位')
-      .required('密码必填'),
-  });
-  async function handleSubmit(values: any, {setSubmitting}: any) {
-    // @ts-ignore
-    const [data, err] = await UserService.loginUser(values);
-    setSubmitting(false);
-    if (err) {
-      err.showMessage();
-      return;
-    }
-    UserService.setUserToken(data.token);
-    history.push('/');
-    ClrMessageService.success('登录成功!');
+const formItemLayout = {
+  labelCol: {span: 8},
+  wrapperCol: {span: 16},
+};
+
+interface Props extends FormComponentProps<{ username: string, password: string }> {
+
+}
+
+const LoginPage: React.FC<Props> = (props) => {
+  const {getFieldDecorator, validateFieldsAndScroll} = props.form;
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    validateFieldsAndScroll(async (error, values) => {
+      if (error) {
+        return;
+      }
+      // @ts-ignore
+      const [data, err] = await UserService.loginUser(values);
+      if (err) {
+        err.showMessage();
+        return;
+      }
+      UserService.setUserToken(data.token);
+      history.push('/');
+      message.success('登陆成功');
+    });
   }
+
   return (
     <div className="login-wrapper">
-      <Formik initialValues={{username: '', password: ''}}
-              onSubmit={handleSubmit}
-              validationSchema={validationSchema}>
-        {({isSubmitting}) => {
-          return <ClrForm>
-            <h3 style={{textAlign: 'center'}}>欢迎登录</h3>
-
-            <ClrFormItem label="用户名"
-                         name="username">
-              <ClrInput placeholder="请输入用户名" type="text"/>
-            </ClrFormItem>
-            <ClrFormItem label="密码"
-                         name="password">
-              <ClrInput placeholder="请输入密码" type="password"/>
-            </ClrFormItem>
-            <ClrFormItem>
-              <ClrButton nativeType={"submit"} type="primary" disabled={isSubmitting}>
-                立即登录
-              </ClrButton>
-            </ClrFormItem>
-          </ClrForm>
-        }}
-
-      </Formik>
+      <Form style={{backgroundColor: '#fff', padding: '20px'}} layout={"horizontal"} onSubmit={e => handleSubmit(e)}>
+        <Form.Item label={"用户名"} {...formItemLayout}>
+          {getFieldDecorator('username', {
+            rules: [{required: true, message: '请输入用户名'}],
+          })(<Input autoFocus placeholder={"请输入用户名"}/>)}
+        </Form.Item>
+        <Form.Item label={"密码"} {...formItemLayout}>
+          {getFieldDecorator('password', {
+            rules: [{required: true, message: '请输入密码'}],
+          })(<Input type={"password"} placeholder={"请输入密码"}/>)}
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary"
+                  block
+                  htmlType="submit">
+            立即登录
+          </Button>
+        </Form.Item>
+      </Form>
 
     </div>
   );
 };
 
+export default  Form.create()(LoginPage);
