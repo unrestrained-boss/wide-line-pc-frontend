@@ -14,6 +14,7 @@ const WLSidebar: React.FC<Props> = (props) => {
   return (
     <Menu theme={"dark"}
           mode={"inline"}
+          defaultOpenKeys={['/user']}
           defaultSelectedKeys={[defaultSelectedKey]}
           onClick={({key}) => {
             handleMenuItemClick(key);
