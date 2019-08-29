@@ -16,6 +16,9 @@ html, body, #root {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
+.ant-layout-sider-children {
+  overflow-y: auto;
+}
 .ant-modal-content {
   max-height: 800px;
   display: flex;

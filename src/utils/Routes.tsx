@@ -1,6 +1,8 @@
 import React, {lazy} from "react";
 import MenuService from "../services/system/MenuService";
 import {Button, Result} from "antd";
+import UserService from "../services/UserService";
+import uniqueId from "lodash/uniqueId";
 
 const loadComponentWithModulesPrefix = (path: string) => lazy(() => import(`../modules/${path}`));
 
@@ -36,34 +38,37 @@ function NotFoundComponent() {
       status="404"
       title="404"
       subTitle="抱歉, 你访问的页面不存在!"
-      extra={<Button type="primary">返回主页</Button>}
+      extra={<Button onClick={() => {
+        window.location.href = process.env.REACT_APP_BASE_URL as string;
+      }}
+     type="primary">返回主页</Button>}
     />
   );
 }
 
 const localRoutes: { [s: number]: IRoute } = {
-  1: {path: '/system',},
-  2: {path: '/user',},
-  3: {path: '/order',},
-  4: {path: '/product',},
+  // 1: {path: '/system',},
+  // 2: {path: '/user',},
+  // 3: {path: '/order',},
+  // 4: {path: '/product',},
   100: {
-    path: '/system/banner',
+    path: '/banner',
     component: loadComponentWithModulesPrefix('system/banner/BannerPage'),
   },
   101: {
-    path: '/system/banner-item',
+    path: '/banner-item',
     component: loadComponentWithModulesPrefix('system/banner-item/BannerItemPage'),
   },
   102: {
-    path: '/system/administration',
+    path: '/administration',
     component: loadComponentWithModulesPrefix('system/administration/AdministrationPage'),
   },
   103: {
-    path: '/system/role',
+    path: '/role',
     component: loadComponentWithModulesPrefix('system/role/RolePage'),
   },
   104: {
-    path: '/system/menu',
+    path: '/menu',
     component: loadComponentWithModulesPrefix('system/menu/MenuPage'),
   }
 };
@@ -71,12 +76,24 @@ const localRoutes: { [s: number]: IRoute } = {
 function getMenuAndRoutes(dynamicRoutes: IDynamicRoute[]): [IMenu[], IRoute[]] {
   const newRoutes: IRoute[] = dynamicRoutes.map(dynamicRoute => {
     const localRoute = localRoutes[dynamicRoute.id];
+    // 未与本地映射
+    if (!localRoute) {
+      return {
+        id: dynamicRoute.id,
+        name: dynamicRoute.name,
+        icon: dynamicRoute.icon,
+        path: uniqueId('/~notfound_'),
+        component: NotFoundComponent,
+        sort: dynamicRoute.sort,
+        pid: dynamicRoute.pid,
+      }
+    }
     return {
       id: dynamicRoute.id,
       name: dynamicRoute.name,
       icon: dynamicRoute.icon,
       path: localRoute.path,
-      component: localRoute.component || NotFoundComponent,
+      component: localRoute.component,
       sort: dynamicRoute.sort,
       pid: dynamicRoute.pid,
     };
@@ -106,11 +123,17 @@ function dd(routes: IRoute[], pid: number): IMenu[] {
   }
   return results.sort((a, b) => a.sort! - b.sort!);
 }
+
 export let menus: IMenu[];
 export let routes: IRoute[];
+
 export async function init() {
+  if (!UserService.getUserToken()) {
+    return;
+  }
   const data = await MenuService.getAvailableMenus();
   const [a, b] = getMenuAndRoutes(data as any);
   menus = a;
   routes = b;
+  console.log(menus);
 }

@@ -13,11 +13,14 @@ interface Props {
 
 const DashBoardPage: React.FC<Props> = (props) => {
   const [collapsed, setCollapsed] = useState(false);
+
   return (
     <Layout style={{height: '100%'}}>
-      <Layout.Sider trigger={null} collapsed={collapsed}>
+      <Layout.Sider trigger={null}
+                    collapsible
+                    collapsed={collapsed}>
         <div style={{textAlign: 'center', color: '#fff', height: '64px', lineHeight: '64px'}}>后台管理</div>
-        <WLSidebar menus={menus}/>
+        <WLSidebar collapsed={collapsed} menus={menus}/>
       </Layout.Sider>
       <Layout>
         <Layout.Header>

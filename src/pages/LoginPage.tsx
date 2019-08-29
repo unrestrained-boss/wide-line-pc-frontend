@@ -1,6 +1,5 @@
 import React from "react";
 import './LoginPage.scss'
-import {history} from "../utils/Constant";
 import UserService from "../services/UserService";
 import {Button, Form, Input, message} from "antd";
 import {FormComponentProps} from "antd/lib/form";
@@ -31,7 +30,7 @@ const LoginPage: React.FC<Props> = (props) => {
         return;
       }
       UserService.setUserToken(data.token);
-      history.push('/');
+      window.location.href = process.env.REACT_APP_BASE_URL as string;
       message.success('登陆成功');
     });
   }
