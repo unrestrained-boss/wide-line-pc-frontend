@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuService, {IMenu} from "../../../services/system/MenuService";
 import {ColumnProps} from "antd/lib/table";
-import {Button, Icon, message, Table, Tag} from "antd";
+import {Alert, Button, Icon, message, Table, Tag} from "antd";
 import WLModal from "../../../components/wl-modal/WLModal";
 import MenuAddModal from "./MenuAddModal";
 
@@ -63,7 +63,7 @@ const MenuPage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {data, isLoading, refresh} = MenuService.useMenuList();
+  const {data, isError, isLoading, refresh} = MenuService.useMenuList();
 
   function handleAddMenu() {
     WLModal.openModal(MenuAddModal, {
@@ -83,6 +83,20 @@ const MenuPage: React.FC<Props> = (props) => {
           添加菜单
         </Button>
       </div>
+      {isError && (
+        <Alert style={{margin: '0 0 20px 0'}}
+               showIcon
+               message={"抱歉"}
+               description={(
+                 <>
+                   <span>出现了一点问题, 请稍后再试或</span>
+                   <Button type={"link"} onClick={() => refresh()}>点击重试</Button>
+                 </>
+               )}
+               type="error"
+               closable
+        />
+      )}
       <Table rowKey={"id"}
              size={"small"}
              pagination={false}

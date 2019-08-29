@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Icon, message, Table, Tag} from "antd";
+import {Alert, Button, Icon, message, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
 import WLModal from "../../../components/wl-modal/WLModal";
 import BannerItemAddModal from "./BannerItemAddModal";
@@ -71,7 +71,7 @@ const BannerItemPage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {data, isLoading, refresh} = BannerItemService.useBannerItemList();
+  const {data, isError, isLoading, refresh} = BannerItemService.useBannerItemList();
 
   function handleAddBanner() {
     WLModal.openModal(BannerItemAddModal, {
@@ -85,12 +85,26 @@ const BannerItemPage: React.FC<Props> = (props) => {
 
   return (
     <div className={"frame-content"}>
-      <div style={{marginBottom: '20px', textAlign: 'right'}}>
+      <div style={{marginBottom: '20px'}}>
         <Button onClick={handleAddBanner} type={"primary"}>
           <Icon type={"plus"}/>
           添加 banner
         </Button>
       </div>
+      {isError && (
+        <Alert style={{margin: '0 0 20px 0'}}
+               showIcon
+               message={"抱歉"}
+               description={(
+                 <>
+                   <span>出现了一点问题, 请稍后再试或</span>
+                   <Button type={"link"} onClick={() => refresh()}>点击重试</Button>
+                 </>
+               )}
+               type="error"
+               closable
+        />
+      )}
       <Table size={"small"}
              bordered
              loading={{
