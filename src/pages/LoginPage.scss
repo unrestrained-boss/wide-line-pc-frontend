@@ -1,8 +1,30 @@
 .login-wrapper {
   height: 100%;
   width: 100%;
-  background-color: #2e8500;
+  background-image: url("https://colorlib.com/etc/lf/Login_v12/images/img-01.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
+
+  &::after {
+    position: absolute;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    background: linear-gradient(-135deg, #005bea, #00c6fb);
+    opacity: .8;
+  }
+}
+.login-form {
+  background-color: rgba(255, 255, 255, .7);
+  padding: 30px 20px;
+  border-radius: 10px;
+  width: 400px;
 }
