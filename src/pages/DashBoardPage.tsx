@@ -1,5 +1,5 @@
 import React, {Suspense, useState} from 'react';
-import {Layout, Icon, Button, Avatar} from 'antd';
+import {Layout, Icon, Avatar} from 'antd';
 import WLSidebar from "../components/wl-sidebar/WLSidebar";
 import {Route, Switch} from "react-router";
 import {dashBoardPath} from "../utils/Constant";
