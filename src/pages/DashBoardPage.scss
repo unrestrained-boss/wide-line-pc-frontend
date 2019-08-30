@@ -1,16 +1,16 @@
-.header {
+.sider-header {
   height: 64px;
   //line-height: 64px;
   overflow: hidden;
   display: flex;
   align-items: center;
-  .header-logo {
+  .sider-logo {
     height: 40px;
     width: 40px;
     margin-left: 20px;
   }
 
-  .header-title {
+  .sider-title {
     flex: 1;
     width: 0;
     font-size: 20px;
@@ -20,13 +20,97 @@
     flex-direction: column;
     text-align: center;
     font-weight: bold;
-    .sub-title {
+    .sider-title {
       font-size: 16px;
       font-weight: normal;
     }
   }
 }
+.header {
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  .header-trigger {
+    color: #f5f5f5;
+    font-size: 25px;
+    &:hover {
+      color: #868686;
+    }
+  }
+  .header-expand {
+    flex: 1;
+    width: 0;
+    height: 100%;
+  }
+  .header-actions {
+    //padding-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .profile-wrap {
+      height: 35px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      position: relative;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      &:hover .profile-popup-wrap {
+        transform: scaleY(1);
+        opacity: 1;
+      }
 
+      &:hover .profile-username {
+        color: #fff;
+      }
+
+      //.profile-avatar {
+      //  width: 35px;
+      //  height: 100%;
+      //  border-radius: 50%;
+      //}
+
+      .profile-username {
+        margin-left: 10px;
+        transition: color .3s;
+        color: rgba(250, 250, 250, .65);
+      }
+
+      .profile-popup-wrap {
+        transition: transform .3s, opacity .3s;
+        transform: scaleY(0);
+        opacity: 0;
+        transform-origin: top;
+        list-style: none;
+        margin: 0;
+        padding: 7px 0;
+        width: 100%;
+        background-color: #fff;
+        position: absolute;
+        left: 0;
+        top: 40px;
+        border: 1px solid #e4eaec;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, .05);
+
+        .profile-item {
+          padding: 0 10px;
+          height: 40px;
+          width: 100%;
+          box-sizing: border-box;
+          line-height: 40px;
+          font-size: 14px;
+          color: #575757;
+
+          &:hover {
+            color: #000;
+            background-color: #ededed;
+          }
+        }
+      }
+    }
+  }
+}
 .router-outlet {
   flex: 1;
   height: 0;
