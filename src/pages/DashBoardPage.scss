@@ -1,7 +1,37 @@
+.header {
+  height: 64px;
+  //line-height: 64px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  .header-logo {
+    height: 40px;
+    width: 40px;
+    margin-left: 20px;
+  }
+
+  .header-title {
+    flex: 1;
+    width: 0;
+    font-size: 20px;
+    color: #fff;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-weight: bold;
+    .sub-title {
+      font-size: 16px;
+      font-weight: normal;
+    }
+  }
+}
+
 .router-outlet {
   flex: 1;
   height: 0;
   overflow: hidden;
+
   .frame-content {
     background-color: #fff;
     height: 100%;

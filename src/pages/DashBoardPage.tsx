@@ -16,10 +16,16 @@ const DashBoardPage: React.FC<Props> = (props) => {
 
   return (
     <Layout style={{height: '100%'}}>
-      <Layout.Sider trigger={null}
+      <Layout.Sider width={240} trigger={null}
                     collapsible
                     collapsed={collapsed}>
-        <div style={{textAlign: 'center', color: '#fff', height: '64px', lineHeight: '64px'}}>后台管理</div>
+        <div className={"header"}>
+          <img className="header-logo" src="http://cdn.admui.com/demo/iframe/2.1.0/images/logo-white-min.svg" alt=""/>
+          <div style={{display: collapsed ? 'none' : 'inline'}} className="header-title">
+            <span>国土战略防御局</span>
+            <span className={"sub-title"}>S.H.I.E.L.D</span>
+          </div>
+        </div>
         <WLSidebar collapsed={collapsed} menus={menus}/>
       </Layout.Sider>
       <Layout>
