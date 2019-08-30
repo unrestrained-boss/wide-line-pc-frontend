@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import React, {useState} from "react";
-import {Button, Modal} from "antd";
+import {Button, Icon, Modal} from "antd";
 import './WLModal.scss';
 import zhCN from 'antd/es/locale/zh_CN';
 import {ConfigProvider} from "antd";
@@ -120,7 +120,8 @@ function alert(Component: any, options: IWLAlertModalOpenOptions = {}) {
 
     return (
       <ConfigProvider locale={zhCN}>
-        <Modal title={options.title || <span>提示</span>}
+        <Modal className={"wl-modal"}
+               title={getTitle(options.title!, "info-circle")}
                destroyOnClose
                afterClose={() => {
                  clearDom();
@@ -183,7 +184,8 @@ function confirm(Component: any, options: IWLConfirmModalOpenOptions = {}) {
 
     return (
       <ConfigProvider locale={zhCN}>
-        <Modal title={options.title || <span>提示</span>}
+        <Modal className={"wl-modal"}
+               title={getTitle(options.title!)}
                destroyOnClose
                afterClose={() => {
                  clearDom();
@@ -213,3 +215,13 @@ const WLModal = {
 };
 
 export default WLModal;
+
+function getTitle(title: string, iconType = 'question-circle') {
+  return (
+    <h3>
+      <Icon className={"title-icon"} type={iconType} />
+      <span style={{marginLeft: '10px'}}>{title || '提示'}</span>
+    </h3>
+  );
+
+}
