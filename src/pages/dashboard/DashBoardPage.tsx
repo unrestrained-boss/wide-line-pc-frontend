@@ -1,13 +1,15 @@
 import React, {Suspense, useState} from 'react';
 import {Layout, Icon, Avatar} from 'antd';
-import WLSidebar from "../components/wl-sidebar/WLSidebar";
+import WLSidebar from "../../components/wl-sidebar/WLSidebar";
 import {Route, Switch} from "react-router";
-import {dashBoardPath} from "../utils/Constant";
-import NotFound from "./NotFound";
+import {dashBoardPath} from "../../utils/Constant";
+import NotFound from "../NotFound";
 import './DashBoardPage.scss';
-import {menus, routes} from "../utils/Routes";
-import WLModal from "../components/wl-modal/WLModal";
-import UserService from "../services/UserService";
+import {menus, routes} from "../../utils/Routes";
+import WLModal from "../../components/wl-modal/WLModal";
+import UserService from "../../services/UserService";
+import ChangePasswordModal from "./ChangePasswordModal";
+import AccountInformationModal from "./AccountInformationModal";
 
 interface Props {
 
@@ -47,8 +49,20 @@ const DashBoardPage: React.FC<Props> = (props) => {
               </Avatar>
               <span className="profile-username">面对疾风吧</span>
               <ul className="profile-popup-wrap">
-                <li className="profile-item">账户信息</li>
-                <li className="profile-item">修改密码</li>
+                <li onClick={() => {
+                  WLModal.openModal(AccountInformationModal, {
+                    title: '账户信息'
+                  });
+                }}
+                    className="profile-item">账户信息
+                </li>
+                <li onClick={() => {
+                  WLModal.openModal(ChangePasswordModal, {
+                    title: '修改密码',
+                  });
+                }}
+                    className="profile-item">修改密码
+                </li>
                 <li onClick={() => {
                   WLModal.confirm('确认退出吗?', {
                     onOk: ({close}) => {
@@ -57,7 +71,8 @@ const DashBoardPage: React.FC<Props> = (props) => {
                       close();
                     }
                   });
-                }} className="profile-item">退出登录
+                }}
+                    className="profile-item">退出登录
                 </li>
               </ul>
             </div>

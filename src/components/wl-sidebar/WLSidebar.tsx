@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {IMenu} from "../../pages/DashBoardPage";
+import {IMenu} from "../../pages/dashboard/DashBoardPage";
 import {dashBoardPath, history} from "../../utils/Constant";
 import {Icon, Menu} from 'antd';
 

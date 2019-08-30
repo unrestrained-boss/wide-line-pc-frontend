@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Redirect, Route, Router, Switch} from "react-router";
 import {dashBoardPath, history} from './utils/Constant';
-import DashBoardPage from "./pages/DashBoardPage";
+import DashBoardPage from "./pages/dashboard/DashBoardPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 import zhCN from 'antd/es/locale/zh_CN';
