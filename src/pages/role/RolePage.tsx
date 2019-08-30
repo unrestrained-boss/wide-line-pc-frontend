@@ -1,31 +1,18 @@
 import React from 'react';
-import {Table, Button, Icon, Pagination, Alert, Tag, message} from 'antd';
+import {Alert, Button, Icon, message, Pagination, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
-import AdministrationService, {IAdministration} from "../../../services/system/AdministrationService";
-import WLModal from "../../../components/wl-modal/WLModal";
-import AdministrationAddModal from "./AdministrationAddModal";
+import RoleService, {IRole} from "../../services/RoleService";
+import WLModal from "../../components/wl-modal/WLModal";
+import RoleAddModal from "./RoleAddModal";
 
 interface Props {
 
 }
 
-const AdministrationPage: React.FC<Props> = (props) => {
-  const columns: ColumnProps<IAdministration>[] = [
-    {title: '账号', dataIndex: 'username', width: 160, align: 'left',},
-    {
-      title: '头像&昵称', dataIndex: 'nickname', width: 200, align: 'left', render: (_, row) => {
-        return (
-          <>
-            <img src={row.avatar as string}
-                 style={{height: '30px', width: '30px', verticalAlign: 'middle', borderRadius: '5px'}}
-                 alt=""/>&nbsp;&nbsp;
-            <span>{row.nickname}</span>
-          </>
-        );
-      }
-    },
-    {title: '电话号码', dataIndex: 'mobile', width: 140},
-    {title: '邮箱', dataIndex: 'email', width: 300},
+const RolePage: React.FC<Props> = (props) => {
+  const columns: ColumnProps<IRole>[] = [
+    {title: '账号', dataIndex: 'name', width: 160, align: 'left',},
+    {title: '账号', dataIndex: 'desc', width: 200, align: 'left',},
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -42,8 +29,8 @@ const AdministrationPage: React.FC<Props> = (props) => {
             <Button size={"small"}
                     type={"primary"}
                     onClick={() => {
-                      WLModal.openModal(AdministrationAddModal, {
-                        title: '编辑管理员',
+                      WLModal.openModal(RoleAddModal, {
+                        title: '编辑角色',
                         data: row,
                         defaultCanDismiss: false,
                         onComplete() {
@@ -58,7 +45,7 @@ const AdministrationPage: React.FC<Props> = (props) => {
                       WLModal.confirm("确实要删除吗?", {
                         async onOk({setLoading, close, failBack}) {
                           setLoading();
-                          const [, err] = await AdministrationService.deleteAdministration([row.id!]);
+                          const [, err] = await RoleService.deleteRole([row.id!]);
                           if (err) {
                             err.showMessage();
                             failBack();
@@ -75,29 +62,25 @@ const AdministrationPage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {total, data, isLoading, isError, page, setPage, refresh} = AdministrationService.useAdministrationList();
-
-  function handleAddAdministration() {
-    WLModal.openModal(AdministrationAddModal, {
-      title: '添加管理员',
+  const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
+  function handleAddRole() {
+    WLModal.openModal(RoleAddModal, {
+      title: '添加角色',
       defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
     });
-
   }
-
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
-        <Button onClick={handleAddAdministration} type={"primary"}>
+        <Button onClick={handleAddRole} type={"primary"}>
           <Icon type={"plus"}/>
-          添加管理员
+          添加角色
         </Button>
 
       </div>
-
       {isError && (
         <Alert style={{margin: '0 0 20px 0'}}
                showIcon
@@ -134,4 +117,4 @@ const AdministrationPage: React.FC<Props> = (props) => {
     </div>
   );
 };
-export default AdministrationPage;
+export default RolePage;

@@ -1,17 +1,19 @@
 import React from 'react';
-import BannerService, {IBanner} from "../../../services/system/BannerService";
-import {Alert, Button, Icon, message, Table, Tag} from "antd";
+import MenuService, {IMenu} from "../../services/MenuService";
 import {ColumnProps} from "antd/lib/table";
-import WLModal from "../../../components/wl-modal/WLModal";
-import BannerAddModal from "./BannerAddModal";
+import {Alert, Button, Icon, message, Table, Tag} from "antd";
+import WLModal from "../../components/wl-modal/WLModal";
+import MenuAddModal from "./MenuAddModal";
 
 interface Props {
 
 }
 
-const BannerPage: React.FC<Props> = (props) => {
-  const columns: ColumnProps<IBanner>[] = [
-    {title: '名称', dataIndex: 'name', width: 200, align: 'left',},
+const MenuPage: React.FC<Props> = (props) => {
+  const columns: ColumnProps<IMenu>[] = [
+    {title: '名称', dataIndex: 'name', width: 500, align: 'left',},
+    {title: '图标', dataIndex: 'icon', width: 200, align: 'left',},
+    {title: '链接', dataIndex: 'url', width: 200, align: 'left',},
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -22,14 +24,14 @@ const BannerPage: React.FC<Props> = (props) => {
       }
     },
     {
-      title: '操作', align: 'center', width: 120, render: (_, row) => {
+      title: '操作', align: 'center', width: 140, render: (_, row) => {
         return (
           <>
             <Button size={"small"}
                     type={"primary"}
                     onClick={() => {
-                      WLModal.openModal(BannerAddModal, {
-                        title: '编辑分类',
+                      WLModal.openModal(MenuAddModal, {
+                        title: '编辑菜单',
                         data: row,
                         defaultCanDismiss: false,
                         onComplete() {
@@ -44,7 +46,7 @@ const BannerPage: React.FC<Props> = (props) => {
                       WLModal.confirm("确实要删除吗?", {
                         async onOk({setLoading, close, failBack}) {
                           setLoading();
-                          const [, err] = await BannerService.deleteBanner([row.id!]);
+                          const [, err] = await MenuService.deleteMenu([row.id!]);
                           if (err) {
                             err.showMessage();
                             failBack();
@@ -61,11 +63,11 @@ const BannerPage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {data, isError, isLoading, refresh} = BannerService.useBannerList();
+  const {data, isError, isLoading, refresh} = MenuService.useMenuList();
 
-  function handleAddBanner() {
-    WLModal.openModal(BannerAddModal, {
-      title: '添加分类',
+  function handleAddMenu() {
+    WLModal.openModal(MenuAddModal, {
+      title: '添加菜单',
       defaultCanDismiss: false,
       onComplete() {
         refresh();
@@ -76,9 +78,9 @@ const BannerPage: React.FC<Props> = (props) => {
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
-        <Button onClick={handleAddBanner} type={"primary"}>
+        <Button onClick={handleAddMenu} type={"primary"}>
           <Icon type={"plus"}/>
-          添加 banner 分类
+          添加菜单
         </Button>
       </div>
       {isError && (
@@ -95,7 +97,11 @@ const BannerPage: React.FC<Props> = (props) => {
                closable
         />
       )}
-      <Table size={"small"}
+      <Table rowKey={"id"}
+             size={"small"}
+             pagination={false}
+             columns={columns}
+             dataSource={data}
              bordered
              loading={{
                spinning: isLoading,
@@ -104,12 +110,9 @@ const BannerPage: React.FC<Props> = (props) => {
              locale={{
                emptyText: isLoading ? '拼命加载中...' : '抱歉, 暂无数据'
              }}
-             pagination={false}
-             rowKey={"id"}
-             columns={columns}
-             dataSource={data}/>
+      />
     </div>
   );
 };
 
-export default BannerPage;
+export default MenuPage;

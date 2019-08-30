@@ -1,4 +1,4 @@
-import BaseService from "../BaseService";
+import BaseService from "./BaseService";
 
 const useMenuList = () => BaseService.useServiceListWithoutPagingBase<IMenu>('/menus/index');
 

@@ -1,10 +1,10 @@
 import React, {lazy} from "react";
-import MenuService from "../services/system/MenuService";
+import MenuService from "../services/MenuService";
 import {Button, Result} from "antd";
 import UserService from "../services/UserService";
 import uniqueId from "lodash/uniqueId";
 
-const loadComponentWithModulesPrefix = (path: string) => lazy(() => import(`../modules/${path}`));
+const loadComponent = (path: string) => lazy(() => import(`../pages/${path}`));
 
 interface IDynamicRoute {
   id: number;
@@ -53,23 +53,23 @@ const localRoutes: { [s: number]: IRoute } = {
   // 4: {path: '/product',},
   100: {
     path: '/banner',
-    component: loadComponentWithModulesPrefix('system/banner/BannerPage'),
+    component: loadComponent('banner/BannerPage'),
   },
   101: {
     path: '/banner-item',
-    component: loadComponentWithModulesPrefix('system/banner-item/BannerItemPage'),
+    component: loadComponent('banner-item/BannerItemPage'),
   },
   102: {
     path: '/administration',
-    component: loadComponentWithModulesPrefix('system/administration/AdministrationPage'),
+    component: loadComponent('administration/AdministrationPage'),
   },
   103: {
     path: '/role',
-    component: loadComponentWithModulesPrefix('system/role/RolePage'),
+    component: loadComponent('role/RolePage'),
   },
   104: {
     path: '/menu',
-    component: loadComponentWithModulesPrefix('system/menu/MenuPage'),
+    component: loadComponent('menu/MenuPage'),
   }
 };
 

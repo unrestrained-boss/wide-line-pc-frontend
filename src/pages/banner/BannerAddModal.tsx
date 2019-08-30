@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Button, Form, Input, Switch, Spin, message} from "antd";
 import {FormComponentProps} from "antd/lib/form";
-import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
-import BannerService, {IBanner} from "../../../services/system/BannerService";
+import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
+import BannerService, {IBanner} from "../../services/BannerService";
 
 interface Props extends FormComponentProps<IBanner>, IWLModalInjectProps {
 }

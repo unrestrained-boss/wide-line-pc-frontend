@@ -1,4 +1,4 @@
-import BaseService from "../BaseService";
+import BaseService from "./BaseService";
 
 const useAdministrationList = () => BaseService.useServiceListBase<IAdministration>('/user/index');
 

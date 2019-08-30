@@ -1,9 +1,9 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Button, Form, Input, Switch, Spin, message, TreeSelect, Alert, InputNumber, Select} from "antd";
 import {FormComponentProps} from "antd/lib/form";
-import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
-import MenuService, {IMenu} from "../../../services/system/MenuService";
-import Tool from "../../../utils/Tool";
+import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
+import MenuService, {IMenu} from "../../services/MenuService";
+import Tool from "../../utils/Tool";
 
 interface Props extends FormComponentProps<IMenu>, IWLModalInjectProps {
 }

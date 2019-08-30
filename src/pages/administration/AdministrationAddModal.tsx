@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
-import AdministrationService, {IAdministration} from "../../../services/system/AdministrationService";
+import AdministrationService, {IAdministration} from "../../services/AdministrationService";
 import {Button, Form, Input, Switch, Spin, message, Upload, Icon} from "antd";
 import {FormComponentProps} from "antd/lib/form";
-import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
-import UserService from "../../../services/UserService";
+import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
+import UserService from "../../services/UserService";
 import {
   uploadCustomRequest,
   uploadGetValueFromEvent,
   uploadPreData,
   uploadResultSerialization
-} from "../../../utils/Upload";
+} from "../../utils/Upload";
 
 interface Props extends FormComponentProps<IAdministration & { avatar: any[] }>, IWLModalInjectProps {
 }

@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {Button, Form, Input, Switch, Spin, message, Upload, Icon} from "antd";
 import {FormComponentProps} from "antd/lib/form";
-import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
+import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
 // import BannerService from "../../../services/system/BannerService";
 import {
   uploadCustomRequest,
   uploadGetValueFromEvent,
   uploadPreData,
   uploadResultSerialization
-} from "../../../utils/Upload";
-import UserService from "../../../services/UserService";
-import BannerItemService, {IBannerItem} from "../../../services/system/BannerItemService";
+} from "../../utils/Upload";
+import UserService from "../../services/UserService";
+import BannerItemService, {IBannerItem} from "../../services/BannerItemService";
 
 interface Props extends FormComponentProps<IBannerItem & { img: any[] }>, IWLModalInjectProps {
 }

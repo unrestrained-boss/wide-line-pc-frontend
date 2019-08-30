@@ -1,19 +1,31 @@
 import React from 'react';
-import MenuService, {IMenu} from "../../../services/system/MenuService";
+import {Table, Button, Icon, Pagination, Alert, Tag, message} from 'antd';
 import {ColumnProps} from "antd/lib/table";
-import {Alert, Button, Icon, message, Table, Tag} from "antd";
-import WLModal from "../../../components/wl-modal/WLModal";
-import MenuAddModal from "./MenuAddModal";
+import AdministrationService, {IAdministration} from "../../services/AdministrationService";
+import WLModal from "../../components/wl-modal/WLModal";
+import AdministrationAddModal from "./AdministrationAddModal";
 
 interface Props {
 
 }
 
-const MenuPage: React.FC<Props> = (props) => {
-  const columns: ColumnProps<IMenu>[] = [
-    {title: '名称', dataIndex: 'name', width: 500, align: 'left',},
-    {title: '图标', dataIndex: 'icon', width: 200, align: 'left',},
-    {title: '链接', dataIndex: 'url', width: 200, align: 'left',},
+const AdministrationPage: React.FC<Props> = (props) => {
+  const columns: ColumnProps<IAdministration>[] = [
+    {title: '账号', dataIndex: 'username', width: 160, align: 'left',},
+    {
+      title: '头像&昵称', dataIndex: 'nickname', width: 200, align: 'left', render: (_, row) => {
+        return (
+          <>
+            <img src={row.avatar as string}
+                 style={{height: '30px', width: '30px', verticalAlign: 'middle', borderRadius: '5px'}}
+                 alt=""/>&nbsp;&nbsp;
+            <span>{row.nickname}</span>
+          </>
+        );
+      }
+    },
+    {title: '电话号码', dataIndex: 'mobile', width: 140},
+    {title: '邮箱', dataIndex: 'email', width: 300},
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -24,14 +36,14 @@ const MenuPage: React.FC<Props> = (props) => {
       }
     },
     {
-      title: '操作', align: 'center', width: 140, render: (_, row) => {
+      title: '操作', align: 'center', width: 120, render: (_, row) => {
         return (
           <>
             <Button size={"small"}
                     type={"primary"}
                     onClick={() => {
-                      WLModal.openModal(MenuAddModal, {
-                        title: '编辑菜单',
+                      WLModal.openModal(AdministrationAddModal, {
+                        title: '编辑管理员',
                         data: row,
                         defaultCanDismiss: false,
                         onComplete() {
@@ -46,7 +58,7 @@ const MenuPage: React.FC<Props> = (props) => {
                       WLModal.confirm("确实要删除吗?", {
                         async onOk({setLoading, close, failBack}) {
                           setLoading();
-                          const [, err] = await MenuService.deleteMenu([row.id!]);
+                          const [, err] = await AdministrationService.deleteAdministration([row.id!]);
                           if (err) {
                             err.showMessage();
                             failBack();
@@ -63,26 +75,29 @@ const MenuPage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {data, isError, isLoading, refresh} = MenuService.useMenuList();
+  const {total, data, isLoading, isError, page, setPage, refresh} = AdministrationService.useAdministrationList();
 
-  function handleAddMenu() {
-    WLModal.openModal(MenuAddModal, {
-      title: '添加菜单',
+  function handleAddAdministration() {
+    WLModal.openModal(AdministrationAddModal, {
+      title: '添加管理员',
       defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
     });
+
   }
 
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
-        <Button onClick={handleAddMenu} type={"primary"}>
+        <Button onClick={handleAddAdministration} type={"primary"}>
           <Icon type={"plus"}/>
-          添加菜单
+          添加管理员
         </Button>
+
       </div>
+
       {isError && (
         <Alert style={{margin: '0 0 20px 0'}}
                showIcon
@@ -97,11 +112,7 @@ const MenuPage: React.FC<Props> = (props) => {
                closable
         />
       )}
-      <Table rowKey={"id"}
-             size={"small"}
-             pagination={false}
-             columns={columns}
-             dataSource={data}
+      <Table size={"small"}
              bordered
              loading={{
                spinning: isLoading,
@@ -110,9 +121,17 @@ const MenuPage: React.FC<Props> = (props) => {
              locale={{
                emptyText: isLoading ? '拼命加载中...' : '抱歉, 暂无数据'
              }}
-      />
+             pagination={false}
+             rowKey={"id"}
+             columns={columns}
+             dataSource={data}/>
+      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
+                  pageSize={20}
+                  disabled={isLoading}
+                  hideOnSinglePage
+                  onChange={page => setPage(page)}
+                  total={total}/>
     </div>
   );
 };
-
-export default MenuPage;
+export default AdministrationPage;

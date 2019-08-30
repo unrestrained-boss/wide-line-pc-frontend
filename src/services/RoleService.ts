@@ -1,4 +1,4 @@
-import BaseService from "../BaseService";
+import BaseService from "./BaseService";
 
 const useRoleList = () => BaseService.useServiceListBase<IRole>('/roles/index');
 

@@ -1,11 +1,11 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Button, Form, Input, Switch, Spin, message, TreeSelect, Alert} from "antd";
 import {FormComponentProps} from "antd/lib/form";
-import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
-import RoleService, {IRole} from "../../../services/system/RoleService";
+import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
+import RoleService, {IRole} from "../../services/RoleService";
 import TextArea from "antd/lib/input/TextArea";
-import MenuService from "../../../services/system/MenuService";
-import Tool from "../../../utils/Tool";
+import MenuService from "../../services/MenuService";
+import Tool from "../../utils/Tool";
 
 interface Props extends FormComponentProps<IRole>, IWLModalInjectProps {
 }

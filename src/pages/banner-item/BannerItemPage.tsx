@@ -1,18 +1,27 @@
 import React from 'react';
-import {Alert, Button, Icon, message, Pagination, Table, Tag} from "antd";
+import {Alert, Button, Icon, message, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
-import RoleService, {IRole} from "../../../services/system/RoleService";
-import WLModal from "../../../components/wl-modal/WLModal";
-import RoleAddModal from "./RoleAddModal";
+import WLModal from "../../components/wl-modal/WLModal";
+import BannerItemAddModal from "./BannerItemAddModal";
+import BannerItemService, {IBannerItem} from "../../services/BannerItemService";
 
 interface Props {
 
 }
 
-const RolePage: React.FC<Props> = (props) => {
-  const columns: ColumnProps<IRole>[] = [
-    {title: '账号', dataIndex: 'name', width: 160, align: 'left',},
-    {title: '账号', dataIndex: 'desc', width: 200, align: 'left',},
+const BannerItemPage: React.FC<Props> = (props) => {
+  const columns: ColumnProps<IBannerItem>[] = [
+    {title: '类型', dataIndex: 'type', width: 200, align: 'left',},
+    {
+      title: 'banner', dataIndex: 'img', width: 240, align: 'center', render: (text) => {
+        return (
+          <img style={{height: '80px', width: '200px'}}
+               src={text}
+               alt=""/>
+        );
+      }
+    },
+    {title: '链接地址', dataIndex: 'value', width: 200, align: 'left',},
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -29,8 +38,8 @@ const RolePage: React.FC<Props> = (props) => {
             <Button size={"small"}
                     type={"primary"}
                     onClick={() => {
-                      WLModal.openModal(RoleAddModal, {
-                        title: '编辑角色',
+                      WLModal.openModal(BannerItemAddModal, {
+                        title: '编辑banner',
                         data: row,
                         defaultCanDismiss: false,
                         onComplete() {
@@ -45,7 +54,7 @@ const RolePage: React.FC<Props> = (props) => {
                       WLModal.confirm("确实要删除吗?", {
                         async onOk({setLoading, close, failBack}) {
                           setLoading();
-                          const [, err] = await RoleService.deleteRole([row.id!]);
+                          const [, err] = await BannerItemService.deleteBannerItem([row.id!]);
                           if (err) {
                             err.showMessage();
                             failBack();
@@ -62,24 +71,25 @@ const RolePage: React.FC<Props> = (props) => {
       }
     },
   ];
-  const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
-  function handleAddRole() {
-    WLModal.openModal(RoleAddModal, {
-      title: '添加角色',
+  const {data, isError, isLoading, refresh} = BannerItemService.useBannerItemList();
+
+  function handleAddBanner() {
+    WLModal.openModal(BannerItemAddModal, {
+      title: '添加banner',
       defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
     });
   }
+
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
-        <Button onClick={handleAddRole} type={"primary"}>
+        <Button onClick={handleAddBanner} type={"primary"}>
           <Icon type={"plus"}/>
-          添加角色
+          添加 banner
         </Button>
-
       </div>
       {isError && (
         <Alert style={{margin: '0 0 20px 0'}}
@@ -108,13 +118,8 @@ const RolePage: React.FC<Props> = (props) => {
              rowKey={"id"}
              columns={columns}
              dataSource={data}/>
-      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
-                  pageSize={20}
-                  disabled={isLoading}
-                  hideOnSinglePage
-                  onChange={page => setPage(page)}
-                  total={total}/>
     </div>
   );
 };
-export default RolePage;
+
+export default BannerItemPage;
