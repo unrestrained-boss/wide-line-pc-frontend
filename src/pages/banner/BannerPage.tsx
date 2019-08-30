@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import BannerService, {IBanner} from "../../services/BannerService";
 import {Alert, Button, Icon, message, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
@@ -40,27 +40,13 @@ const BannerPage: React.FC<Props> = (props) => {
             &nbsp;
             <Button size={"small"}
                     type={"danger"}
-                    onClick={() => {
-                      WLModal.confirm("确实要删除吗?", {
-                        async onOk({setLoading, close, failBack}) {
-                          setLoading();
-                          const [, err] = await BannerService.deleteBanner([row.id!]);
-                          if (err) {
-                            err.showMessage();
-                            failBack();
-                            return;
-                          }
-                          close();
-                          refresh();
-                          message.success('删除成功!');
-                        }
-                      });
-                    }}>删除</Button>
+                    onClick={() => handleDelete([row.id!])}>删除</Button>
           </>
         );
       }
     },
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
   const {data, isError, isLoading, refresh} = BannerService.useBannerList();
 
   function handleAddBanner() {
@@ -72,13 +58,39 @@ const BannerPage: React.FC<Props> = (props) => {
       }
     });
   }
+  function handleDelete(ids: number[], clearSelectedRowKeys = false) {
+    WLModal.confirm("确实要删除吗?", {
+      async onOk({setLoading, close, failBack}) {
+        setLoading();
+        const [, err] = await BannerService.deleteBanner(ids);
+        if (err) {
+          err.showMessage();
+          failBack();
+          return;
+        }
+        close();
+        refresh();
+        if (clearSelectedRowKeys) {
+          setSelectedRowKeys([]);
+        }
+        message.success('删除成功!');
+      }
+    });
 
+  }
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
         <Button onClick={handleAddBanner} type={"primary"}>
           <Icon type={"plus"}/>
           添加 banner 分类
+        </Button>
+        &nbsp;
+        <Button onClick={() => handleDelete(selectedRowKeys as number[], true)}
+                disabled={selectedRowKeys.length === 0}
+                type={"danger"}>
+          <Icon type={"delete"}/>
+          批量删除
         </Button>
       </div>
       {isError && (
@@ -96,6 +108,10 @@ const BannerPage: React.FC<Props> = (props) => {
         />
       )}
       <Table size={"small"}
+             rowSelection={{
+               selectedRowKeys,
+               onChange: e => setSelectedRowKeys(e),
+             }}
              bordered
              loading={{
                spinning: isLoading,

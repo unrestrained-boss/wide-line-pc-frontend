@@ -1,5 +1,5 @@
-import React from 'react';
-import {Alert, Button, Icon, message, Table, Tag} from "antd";
+import React, {useState} from 'react';
+import {Alert, Button, Icon, message, Pagination, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
 import WLModal from "../../components/wl-modal/WLModal";
 import BannerItemAddModal from "./BannerItemAddModal";
@@ -36,7 +36,7 @@ const BannerItemPage: React.FC<Props> = (props) => {
         return (
           <>
             <Button size={"small"}
-                    type={"primary"}
+                    type={"link"}
                     onClick={() => {
                       WLModal.openModal(BannerItemAddModal, {
                         title: '编辑banner',
@@ -49,29 +49,15 @@ const BannerItemPage: React.FC<Props> = (props) => {
                     }}>编辑</Button>
             &nbsp;
             <Button size={"small"}
-                    type={"danger"}
-                    onClick={() => {
-                      WLModal.confirm("确实要删除吗?", {
-                        async onOk({setLoading, close, failBack}) {
-                          setLoading();
-                          const [, err] = await BannerItemService.deleteBannerItem([row.id!]);
-                          if (err) {
-                            err.showMessage();
-                            failBack();
-                            return;
-                          }
-                          close();
-                          refresh();
-                          message.success('删除成功!');
-                        }
-                      });
-                    }}>删除</Button>
+                    type={"link"}
+                    onClick={() => handleDelete([row.id!])}>删除</Button>
           </>
         );
       }
     },
   ];
-  const {data, isError, isLoading, refresh} = BannerItemService.useBannerItemList();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
+  const {total, data, isError, isLoading, page, setPage, refresh} = BannerItemService.useBannerItemList();
 
   function handleAddBanner() {
     WLModal.openModal(BannerItemAddModal, {
@@ -83,12 +69,39 @@ const BannerItemPage: React.FC<Props> = (props) => {
     });
   }
 
+  function handleDelete(ids: number[], clearSelectedRowKeys = false) {
+    WLModal.confirm("确实要删除吗?", {
+      async onOk({setLoading, close, failBack}) {
+        setLoading();
+        const [, err] = await BannerItemService.deleteBannerItem(ids);
+        if (err) {
+          err.showMessage();
+          failBack();
+          return;
+        }
+        close();
+        refresh();
+        if (clearSelectedRowKeys) {
+          setSelectedRowKeys([]);
+        }
+        message.success('删除成功!');
+      }
+    });
+
+  }
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
         <Button onClick={handleAddBanner} type={"primary"}>
           <Icon type={"plus"}/>
           添加 banner
+        </Button>
+        &nbsp;
+        <Button onClick={() => handleDelete(selectedRowKeys as number[], true)}
+                disabled={selectedRowKeys.length === 0}
+                type={"danger"}>
+          <Icon type={"delete"}/>
+          批量删除
         </Button>
       </div>
       {isError && (
@@ -106,6 +119,10 @@ const BannerItemPage: React.FC<Props> = (props) => {
         />
       )}
       <Table size={"small"}
+             rowSelection={{
+               selectedRowKeys,
+               onChange: e => setSelectedRowKeys(e),
+             }}
              bordered
              loading={{
                spinning: isLoading,
@@ -118,6 +135,12 @@ const BannerItemPage: React.FC<Props> = (props) => {
              rowKey={"id"}
              columns={columns}
              dataSource={data}/>
+      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
+                  pageSize={20}
+                  disabled={isLoading}
+                  hideOnSinglePage
+                  onChange={page => setPage(page)}
+                  total={total}/>
     </div>
   );
 };

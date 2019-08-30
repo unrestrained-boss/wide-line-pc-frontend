@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import MenuService, {IMenu} from "../../services/MenuService";
 import {ColumnProps} from "antd/lib/table";
 import {Alert, Button, Icon, message, Table, Tag} from "antd";
@@ -42,27 +42,14 @@ const MenuPage: React.FC<Props> = (props) => {
             &nbsp;
             <Button size={"small"}
                     type={"danger"}
-                    onClick={() => {
-                      WLModal.confirm("确实要删除吗?", {
-                        async onOk({setLoading, close, failBack}) {
-                          setLoading();
-                          const [, err] = await MenuService.deleteMenu([row.id!]);
-                          if (err) {
-                            err.showMessage();
-                            failBack();
-                            return;
-                          }
-                          close();
-                          refresh();
-                          message.success('删除成功!');
-                        }
-                      });
-                    }}>删除</Button>
+                    onClick={() => handleDelete([row.id!])}>删除</Button>
           </>
         );
       }
     },
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
+
   const {data, isError, isLoading, refresh} = MenuService.useMenuList();
 
   function handleAddMenu() {
@@ -74,6 +61,26 @@ const MenuPage: React.FC<Props> = (props) => {
       }
     });
   }
+  function handleDelete(ids: number[], clearSelectedRowKeys = false) {
+    WLModal.confirm("确实要删除吗?", {
+      async onOk({setLoading, close, failBack}) {
+        setLoading();
+        const [, err] = await MenuService.deleteMenu(ids);
+        if (err) {
+          err.showMessage();
+          failBack();
+          return;
+        }
+        close();
+        refresh();
+        if (clearSelectedRowKeys) {
+          setSelectedRowKeys([]);
+        }
+        message.success('删除成功!');
+      }
+    });
+
+  }
 
   return (
     <div className={"frame-content"}>
@@ -81,6 +88,13 @@ const MenuPage: React.FC<Props> = (props) => {
         <Button onClick={handleAddMenu} type={"primary"}>
           <Icon type={"plus"}/>
           添加菜单
+        </Button>
+        &nbsp;
+        <Button onClick={() => handleDelete(selectedRowKeys as number[], true)}
+                disabled={selectedRowKeys.length === 0}
+                type={"danger"}>
+          <Icon type={"delete"}/>
+          批量删除
         </Button>
       </div>
       {isError && (
@@ -97,12 +111,17 @@ const MenuPage: React.FC<Props> = (props) => {
                closable
         />
       )}
-      <Table rowKey={"id"}
+      <Table
              size={"small"}
+             rowSelection={{
+               selectedRowKeys,
+               onChange: e => setSelectedRowKeys(e),
+             }}
+             bordered
+             rowKey={"id"}
              pagination={false}
              columns={columns}
              dataSource={data}
-             bordered
              loading={{
                spinning: isLoading,
                delay: 250,

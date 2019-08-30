@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Alert, Button, Icon, message, Pagination, Table, Tag} from "antd";
 import {ColumnProps} from "antd/lib/table";
 import RoleService, {IRole} from "../../services/RoleService";
@@ -27,7 +27,7 @@ const RolePage: React.FC<Props> = (props) => {
         return (
           <>
             <Button size={"small"}
-                    type={"primary"}
+                    type={"link"}
                     onClick={() => {
                       WLModal.openModal(RoleAddModal, {
                         title: '编辑角色',
@@ -40,29 +40,16 @@ const RolePage: React.FC<Props> = (props) => {
                     }}>编辑</Button>
             &nbsp;
             <Button size={"small"}
-                    type={"danger"}
-                    onClick={() => {
-                      WLModal.confirm("确实要删除吗?", {
-                        async onOk({setLoading, close, failBack}) {
-                          setLoading();
-                          const [, err] = await RoleService.deleteRole([row.id!]);
-                          if (err) {
-                            err.showMessage();
-                            failBack();
-                            return;
-                          }
-                          close();
-                          refresh();
-                          message.success('删除成功!');
-                        }
-                      });
-                    }}>删除</Button>
+                    type={"link"}
+                    onClick={() => handleDelete([row.id!])}>删除</Button>
           </>
         );
       }
     },
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
   const {total, data, isLoading, isError, page, setPage, refresh} = RoleService.useRoleList();
+
   function handleAddRole() {
     WLModal.openModal(RoleAddModal, {
       title: '添加角色',
@@ -72,6 +59,27 @@ const RolePage: React.FC<Props> = (props) => {
       }
     });
   }
+
+  function handleDelete(ids: number[], clearSelectedRowKeys = false) {
+    WLModal.confirm("确实要删除吗?", {
+      async onOk({setLoading, close, failBack}) {
+        setLoading();
+        const [, err] = await RoleService.deleteRole(ids);
+        if (err) {
+          err.showMessage();
+          failBack();
+          return;
+        }
+        close();
+        refresh();
+        if (clearSelectedRowKeys) {
+          setSelectedRowKeys([]);
+        }
+        message.success('删除成功!');
+      }
+    });
+  }
+
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
@@ -79,7 +87,13 @@ const RolePage: React.FC<Props> = (props) => {
           <Icon type={"plus"}/>
           添加角色
         </Button>
-
+        &nbsp;
+        <Button onClick={() => handleDelete(selectedRowKeys as number[], true)}
+                disabled={selectedRowKeys.length === 0}
+                type={"danger"}>
+          <Icon type={"delete"}/>
+          批量删除
+        </Button>
       </div>
       {isError && (
         <Alert style={{margin: '0 0 20px 0'}}
@@ -96,6 +110,10 @@ const RolePage: React.FC<Props> = (props) => {
         />
       )}
       <Table size={"small"}
+             rowSelection={{
+               selectedRowKeys,
+               onChange: e => setSelectedRowKeys(e),
+             }}
              bordered
              loading={{
                spinning: isLoading,
