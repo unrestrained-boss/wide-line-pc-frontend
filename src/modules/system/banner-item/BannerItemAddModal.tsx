@@ -3,7 +3,12 @@ import {Button, Form, Input, Switch, Spin, message, Upload, Icon} from "antd";
 import {FormComponentProps} from "antd/lib/form";
 import {IWLModalInjectProps} from "../../../components/wl-modal/WLModal";
 // import BannerService from "../../../services/system/BannerService";
-import {uploadCustomRequest, uploadGetValueFromEvent, uploadResultSerialization} from "../../../utils/Upload";
+import {
+  uploadCustomRequest,
+  uploadGetValueFromEvent,
+  uploadPreData,
+  uploadResultSerialization
+} from "../../../utils/Upload";
 import UserService from "../../../services/UserService";
 import BannerItemService, {IBannerItem} from "../../../services/system/BannerItemService";
 
@@ -77,8 +82,10 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
   useEffect(() => {
     if (isEditMode) {
       setFieldsValue({
-        // name: preData.name,
-        // status: preData.status === 1,
+        img: preData.img ? uploadPreData([preData.img]) : [],
+        type: preData.type,
+        value: preData.value,
+        status: preData.status === 1,
       });
     }
     // eslint-disable-next-line
