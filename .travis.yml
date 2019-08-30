@@ -19,6 +19,7 @@ script:
 #  on:
 #    branch: master
 after_success:
+  # https://github.com/8427003/book/blob/master/.travis.yml
   - sshpass -p $DEPLOY_PASS scp -o stricthostkeychecking=no -r ./build/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
 
 after_script: # Upload coverage reports

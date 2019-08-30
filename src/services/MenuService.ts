@@ -20,7 +20,7 @@ const getAvailableMenus = () => {
     setTimeout(() => {
 
       resolve([
-        {id: 1, name: '系统设置1', icon: 'icon-1', sort: 1, pid: 0},
+        {id: 1, name: '系统设置', icon: 'icon-1', sort: 1, pid: 0},
         {id: 2, name: '用户管理', icon: 'icon-2', sort: 3, pid: 0},
         {id: 3, name: '订单管理', icon: '', sort: 2, pid: 0},
         {id: 4, name: '产品管理', icon: '', sort: 4, pid: 0},
