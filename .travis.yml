@@ -5,14 +5,17 @@ cache:
   directories:
     - node_modules
 script:
-  - npm run test:coverage
+#  - npm run test:coverage
   - npm run build:staging
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  local_dir: build
-  on:
-    branch: master
+#deploy:
+#  provider: pages
+#  skip_cleanup: true
+#  github_token: $GITHUB_TOKEN
+#  local_dir: build
+#  on:
+#    branch: master
+after_success:
+  - sshpass -p $DEPLOY_PASS scp stricthostkeychecking=no -r build/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+
 after_script: # Upload coverage reports
   - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run coveralls
