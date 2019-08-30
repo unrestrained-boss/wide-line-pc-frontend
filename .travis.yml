@@ -5,6 +5,8 @@ addons:
   apt:
     packages:
       - sshpass
+git:
+  depth: 1
 cache:
   directories:
     - node_modules

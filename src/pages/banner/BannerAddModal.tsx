@@ -76,10 +76,8 @@ const BannerAddModal: React.FC<Props> = (props) => {
     }
     // eslint-disable-next-line
   }, []);
-
   return (
     <Spin spinning={submitting}>
-
       <Form layout={"horizontal"} onSubmit={e => handleSubmit(e)}>
         <Form.Item label={"分类名称"} {...formItemLayout}>
           {getFieldDecorator('name', {

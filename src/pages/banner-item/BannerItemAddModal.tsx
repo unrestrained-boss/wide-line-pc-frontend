@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, Switch, Spin, message, Upload, Icon} from "antd";
+import {Button, Form, Input, Switch, Spin, message, Upload, Icon, Select, Alert} from "antd";
 import {FormComponentProps} from "antd/lib/form";
 import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
 // import BannerService from "../../../services/system/BannerService";
@@ -11,13 +11,14 @@ import {
 } from "../../utils/Upload";
 import UserService from "../../services/UserService";
 import BannerItemService, {IBannerItem} from "../../services/BannerItemService";
+import BannerService from "../../services/BannerService";
 
 interface Props extends FormComponentProps<IBannerItem & { img: any[] }>, IWLModalInjectProps {
 }
 
 const formItemLayout = {
-  labelCol: {span: 4},
-  wrapperCol: {span: 20},
+  labelCol: {span: 5},
+  wrapperCol: {span: 19},
 };
 const BannerItemAddModal: React.FC<Props> = (props) => {
   const preData = props.getPreData<IBannerItem>();
@@ -44,7 +45,7 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
       value: values.value,
       type: values.type,
       status: values.status ? 1 : 0,
-      pid: 1,
+      pid: values.pid,
     };
     if (isEditMode) {
       handleEditSubmit(body);
@@ -86,14 +87,30 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
         type: preData.type,
         value: preData.value,
         status: preData.status === 1,
+        pid: preData.pid,
       });
     }
     // eslint-disable-next-line
   }, []);
   const img = getFieldValue('img') || [];
-  return (
-    <Spin spinning={submitting}>
+  const {data: bannerData, isLoading: bannerIsLoading, isError: bannerIsError, refresh: bannerRefresh} = BannerService.useAllBannerList();
 
+  return (
+    <Spin spinning={submitting || bannerIsLoading}>
+      {bannerIsError && (
+        <Alert style={{marginTop: '20px'}}
+               showIcon
+               message={"抱歉"}
+               description={(
+                 <>
+                   <span>出现了一点问题, 请稍后再试或</span>
+                   <Button type={"link"} onClick={() => bannerRefresh()}>点击重试</Button>
+                 </>
+               )}
+               type="error"
+               closable
+        />
+      )}
       <Form layout={"horizontal"} onSubmit={e => handleSubmit(e)}>
         <Form.Item label={"banner"} {...formItemLayout} extra="上传 jpg/png 文件">
           {getFieldDecorator('img', {
@@ -133,10 +150,21 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
             )}
           </Upload>)}
         </Form.Item>
+        <Form.Item label={"banner分类"} {...formItemLayout}>
+          {getFieldDecorator('pid', {
+            rules: [{required: true, message: '请选择banner分类'}],
+          })(<Select autoFocus placeholder={"请选择banner分类"}>
+            {bannerData.map(item => {
+              return (
+                <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
+              );
+            })}
+          </Select>)}
+        </Form.Item>
         <Form.Item label={"参数"} {...formItemLayout}>
           {getFieldDecorator('value', {
             rules: [{required: true, message: '请输入参数'}],
-          })(<Input autoFocus placeholder={"请输入参数"}/>)}
+          })(<Input placeholder={"请输入参数"}/>)}
         </Form.Item>
         <Form.Item label={"类型"} {...formItemLayout}>
           {getFieldDecorator('type', {
