@@ -1,24 +1,13 @@
-import BaseService from "./BaseService";
+import {NewBaseService} from "./BaseService";
 
-const useAllProductBrandList = () => BaseService.useServiceListWithoutPagingBase<IProductBrand>('/brand/all');
+class ProductBrandService extends NewBaseService<IProductBrand> {
+  constructor() {
+    super();
+    this.path = '/user';
+  }
+}
 
-const useProductBrandList = () => BaseService.useServiceListBase<IProductBrand>('/brand/index');
-
-const addProductBrand = BaseService.addServiceBase<IProductBrand>('/brand/add');
-
-const updateProductBrand = BaseService.updateServiceBase<IProductBrand>('/brand/edit');
-
-const deleteProductBrand = BaseService.deleteServiceBase('/brand/delete');
-
-const ProductBrandService = {
-  useAllProductBrandList,
-  useProductBrandList,
-  addProductBrand,
-  updateProductBrand,
-  deleteProductBrand,
-};
-
-export default ProductBrandService;
+export default new ProductBrandService();
 
 export interface IProductBrand {
   id?: number;

@@ -5,10 +5,6 @@ class BannerService extends NewBaseService<IBanner> {
     super();
     this.path = '/banner';
   }
-
-  // useAllBannerList() {
-  //   return BaseService.useServiceListWithoutPagingBase<IBanner>("/banner/all");
-  // }
 }
 
 export default new BannerService();

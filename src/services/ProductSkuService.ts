@@ -1,6 +1,6 @@
 import {NewBaseService} from "./BaseService";
 
-class ProductSkuService extends NewBaseService<IAdministration> {
+class ProductSkuService extends NewBaseService<IProductSku> {
   constructor() {
     super();
     this.path = '/user';
@@ -9,12 +9,6 @@ class ProductSkuService extends NewBaseService<IAdministration> {
 
 export default new ProductSkuService();
 
-export interface IAdministration {
+export interface IProductSku {
   id?: number;
-  username: string;
-  nickname: string;
-  avatar?: string | null;
-  email: string;
-  mobile: string;
-  status: number;
 }
