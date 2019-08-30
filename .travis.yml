@@ -19,7 +19,8 @@ script:
 #  on:
 #    branch: master
 after_success:
-  - sshpass -p $DEPLOY_PASS scp -P 29134 -o stricthostkeychecking=no -r build/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+  - export SSHPASS=$DEPLOY_PASS
+  - sshpass -e scp -r stricthostkeychecking=no build/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
 
 after_script: # Upload coverage reports
   - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run coveralls
