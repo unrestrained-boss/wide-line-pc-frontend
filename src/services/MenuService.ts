@@ -28,7 +28,12 @@ const getAvailableMenus = () => {
         {id: 101, name: 'banner管理', icon: '', sort: 2, pid: 1,},
         {id: 102, name: '管理员管理', icon: '', sort: 3, pid: 1,},
         {id: 103, name: '角色管理', icon: '', sort: 1, pid: 1,},
-        {id: 104, name: '菜单管理', icon: '', sort: 5, pid: 1,}
+        {id: 104, name: '菜单管理', icon: '', sort: 5, pid: 1,},
+        {id: 200, name: '产品管理', icon: '', sort: 5, pid: 4,},
+        {id: 201, name: 'SKU管理', icon: '', sort: 5, pid: 4,},
+        {id: 202, name: '分类管理', icon: '', sort: 5, pid: 4,},
+        {id: 203, name: '品牌管理', icon: '', sort: 5, pid: 4,},
+        {id: 300, name: '订单管理', icon: '', sort: 5, pid: 3,},
       ])
     }, 500);
   });

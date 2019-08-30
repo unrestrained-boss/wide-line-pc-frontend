@@ -10,6 +10,7 @@ export interface IWLModalOpenOptions {
   defaultCanDismiss?: boolean;
   defaultClosable?: boolean;
   data?: any;
+  width?: number | string;
   onComplete?: () => void;
 }
 export interface IWLAlertModalOpenOptions {
@@ -58,6 +59,7 @@ function openModal(Component: any, options: IWLModalOpenOptions = {}) {
     return (
       <ConfigProvider locale={zhCN}>
         <Modal title={options.title || <span>&nbsp;</span>}
+               width={options.width}
                destroyOnClose
                afterClose={() => {
                  clearDom();
@@ -68,7 +70,7 @@ function openModal(Component: any, options: IWLModalOpenOptions = {}) {
                onCancel={() => setVisible(false)}
                onOk={() => setVisible(false)}
                visible={visible}
-               centered
+               centered={false}
                footer={null}>
           <Component {...injectProps} />
         </Modal>

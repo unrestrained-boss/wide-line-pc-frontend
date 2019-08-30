@@ -42,7 +42,7 @@ const BannerAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleAddSubmit(values: IBanner) {
-    const [, err] = await BannerService.addBanner(values);
+    const [, err] = await BannerService.add(values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -55,7 +55,7 @@ const BannerAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleEditSubmit(values: IBanner) {
-    const [, err] = await BannerService.updateBanner(preData.id!, values);
+    const [, err] = await BannerService.update(preData.id!, values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {

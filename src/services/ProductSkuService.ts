@@ -1,13 +1,13 @@
-import  {NewBaseService} from "./BaseService";
+import {NewBaseService} from "./BaseService";
 
-class AdministrationService extends NewBaseService<IAdministration> {
+class ProductSkuService extends NewBaseService<IAdministration> {
   constructor() {
     super();
     this.path = '/user';
   }
 }
 
-export default new AdministrationService();
+export default new ProductSkuService();
 
 export interface IAdministration {
   id?: number;

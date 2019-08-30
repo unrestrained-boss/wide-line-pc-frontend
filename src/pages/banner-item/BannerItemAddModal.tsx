@@ -55,7 +55,7 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleAddSubmit(values: IBannerItem) {
-    const [, err] = await BannerItemService.addBannerItem(values);
+    const [, err] = await BannerItemService.add(values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -68,7 +68,7 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleEditSubmit(values: IBannerItem) {
-    const [, err] = await BannerItemService.updateBannerItem(preData.id!, values);
+    const [, err] = await BannerItemService.update(preData.id!, values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -93,7 +93,7 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
     // eslint-disable-next-line
   }, []);
   const img = getFieldValue('img') || [];
-  const {data: bannerData, isLoading: bannerIsLoading, isError: bannerIsError, refresh: bannerRefresh} = BannerService.useAllBannerList();
+  const {data: bannerData, isLoading: bannerIsLoading, isError: bannerIsError, refresh: bannerRefresh} = BannerService.listWithOutPaging();
 
   return (
     <Spin spinning={submitting || bannerIsLoading}>

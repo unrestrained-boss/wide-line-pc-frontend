@@ -4,7 +4,7 @@ import {FormComponentProps} from "antd/lib/form";
 import WLModal, {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
 import UserService from "../../services/UserService";
 
-interface Props extends FormComponentProps<{
+interface IProps extends FormComponentProps<{
   originPsw: string;
   password: string;
   repassword: string;
@@ -15,7 +15,7 @@ const formItemLayout = {
   labelCol: {span: 4},
   wrapperCol: {span: 20},
 };
-const ChangePasswordModal: React.FC<Props> = (props) => {
+const ChangePasswordModal: React.FC<IProps> = (props) => {
   const {getFieldDecorator, validateFieldsAndScroll} = props.form;
   const [submitting, setSubmitting] = useState(false);
 

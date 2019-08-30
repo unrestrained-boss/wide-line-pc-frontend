@@ -1,19 +1,23 @@
-import React, {useState} from 'react';
-import MenuService, {IMenu} from "../../services/MenuService";
-import {ColumnProps} from "antd/lib/table";
-import {Alert, Button, Icon, message, Table, Tag} from "antd";
+import React, {useState} from "react";
+import "./ProductBrandPage.scss";
+import {Alert, Button, Icon, message, Pagination, Table, Tag} from "antd";
+import BannerService, {IBanner} from "../../services/BannerService";
 import WLModal from "../../components/wl-modal/WLModal";
-import MenuAddModal from "./MenuAddModal";
+import BannerAddModal from "../banner/BannerAddModal";
+import {ColumnProps} from "antd/lib/table";
 
 interface IProps {
 
 }
 
-const MenuPage: React.FC<IProps> = (props) => {
-  const columns: ColumnProps<IMenu>[] = [
-    {title: '名称', dataIndex: 'name', width: 500, align: 'left',},
-    {title: '图标', dataIndex: 'icon', width: 200, align: 'left',},
-    {title: '链接', dataIndex: 'url', width: 200, align: 'left',},
+const ProductBrandPage: React.FC<IProps> = (props: IProps) => {
+  const columns: ColumnProps<IBanner>[] = [
+    {title: '名称', dataIndex: 'name', width: 200, align: 'left',},
+    {title: '首字母', dataIndex: 'initials', width: 200, align: 'left',},
+    {title: 'logo', dataIndex: 'logo', width: 200, align: 'left',},
+    {title: '专区大图', dataIndex: 'lager', width: 200, align: 'left',},
+    {title: '起源故事', dataIndex: 'story', width: 200, align: 'left',},
+    {title: '品牌制造商', dataIndex: 'isTheManufacturer', width: 200, align: 'left',},
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -24,14 +28,14 @@ const MenuPage: React.FC<IProps> = (props) => {
       }
     },
     {
-      title: '操作', align: 'center', width: 140, render: (_, row) => {
+      title: '操作', align: 'center', width: 120, render: (_, row) => {
         return (
           <>
             <Button size={"small"}
                     type={"primary"}
                     onClick={() => {
-                      WLModal.openModal(MenuAddModal, {
-                        title: '编辑菜单',
+                      WLModal.openModal(BannerAddModal, {
+                        title: '编辑分类',
                         data: row,
                         defaultCanDismiss: false,
                         onComplete() {
@@ -48,13 +52,13 @@ const MenuPage: React.FC<IProps> = (props) => {
       }
     },
   ];
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
+  const {total, data, isError, isLoading, page, setPage, refresh} = BannerService.useBannerList();
 
-  const {data, isError, isLoading, refresh} = MenuService.useMenuList();
-
-  function handleAddMenu() {
-    WLModal.openModal(MenuAddModal, {
-      title: '添加菜单',
+  function handleAddBanner() {
+    WLModal.openModal(BannerAddModal, {
+      title: '添加品牌',
       defaultCanDismiss: false,
       onComplete() {
         refresh();
@@ -65,7 +69,7 @@ const MenuPage: React.FC<IProps> = (props) => {
     WLModal.confirm("确实要删除吗?", {
       async onOk({setLoading, close, failBack}) {
         setLoading();
-        const [, err] = await MenuService.deleteMenu(ids);
+        const [, err] = await BannerService.deleteBanner(ids);
         if (err) {
           err.showMessage();
           failBack();
@@ -81,13 +85,12 @@ const MenuPage: React.FC<IProps> = (props) => {
     });
 
   }
-
   return (
     <div className={"frame-content"}>
       <div style={{marginBottom: '20px'}}>
-        <Button onClick={handleAddMenu} type={"primary"}>
+        <Button onClick={handleAddBanner} type={"primary"}>
           <Icon type={"plus"}/>
-          添加菜单
+          添加品牌
         </Button>
         &nbsp;
         <Button onClick={() => handleDelete(selectedRowKeys as number[], true)}
@@ -111,17 +114,12 @@ const MenuPage: React.FC<IProps> = (props) => {
                closable
         />
       )}
-      <Table
-             size={"small"}
+      <Table size={"small"}
              rowSelection={{
                selectedRowKeys,
                onChange: e => setSelectedRowKeys(e),
              }}
              bordered
-             rowKey={"id"}
-             pagination={false}
-             columns={columns}
-             dataSource={data}
              loading={{
                spinning: isLoading,
                delay: 250,
@@ -129,9 +127,18 @@ const MenuPage: React.FC<IProps> = (props) => {
              locale={{
                emptyText: isLoading ? '拼命加载中...' : '抱歉, 暂无数据'
              }}
-      />
+             pagination={false}
+             rowKey={"id"}
+             columns={columns}
+             dataSource={data}/>
+      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
+                  pageSize={20}
+                  disabled={isLoading}
+                  hideOnSinglePage
+                  onChange={page => setPage(page)}
+                  total={total}/>
     </div>
   );
 };
 
-export default MenuPage;
+export default ProductBrandPage;

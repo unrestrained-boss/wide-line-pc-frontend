@@ -1,26 +1,13 @@
-import BaseService from "./BaseService";
+import  {NewBaseService} from "./BaseService";
 
-const useRoleList = () => BaseService.useServiceListBase<IRole>('/roles/index');
+class RoleService extends NewBaseService<IRole> {
+  constructor() {
+    super();
+    this.path = '/roles';
+  }
+}
 
-const roleList = BaseService.listServiceBase<IRole>('/roles/index');
-
-const addRole = BaseService.addServiceBase<IRole>('/roles/add');
-
-const updateRole = BaseService.updateServiceBase<IRole>('/roles/edit');
-
-const deleteRole = BaseService.deleteServiceBase('/roles/delete');
-
-const toggleRoleStatus = BaseService.updateServiceBase<{ status: boolean }>('/roles/edit');
-
-const RoleService = {
-  useRoleList,
-  roleList,
-  addRole,
-  updateRole,
-  deleteRole,
-  toggleRoleStatus,
-};
-export default RoleService;
+export default new RoleService();
 
 export interface IRole {
   id?: number;

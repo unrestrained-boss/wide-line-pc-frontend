@@ -41,16 +41,12 @@ function NotFoundComponent() {
       extra={<Button onClick={() => {
         window.location.href = process.env.REACT_APP_BASE_URL as string;
       }}
-     type="primary">返回主页</Button>}
+                     type="primary">返回主页</Button>}
     />
   );
 }
 
 const localRoutes: { [s: number]: IRoute } = {
-  // 1: {path: '/system',},
-  // 2: {path: '/user',},
-  // 3: {path: '/order',},
-  // 4: {path: '/product',},
   100: {
     path: '/banner',
     component: loadComponent('banner/BannerPage'),
@@ -70,6 +66,26 @@ const localRoutes: { [s: number]: IRoute } = {
   104: {
     path: '/menu',
     component: loadComponent('menu/MenuPage'),
+  },
+  200: {
+    path: '/product',
+    component: loadComponent('product/ProductPage'),
+  },
+  201: {
+    path: '/product-sku',
+    component: loadComponent('product-sku/ProductSkuPage'),
+  },
+  202: {
+    path: '/product-classification',
+    component: loadComponent('product-classification/ProductClassificationPage'),
+  },
+  203: {
+    path: '/product-brand',
+    component: loadComponent('product-brand/ProductBrandPage'),
+  },
+  300: {
+    path: '/order',
+    component: loadComponent('order/OrderPage'),
   }
 };
 

@@ -1,24 +1,13 @@
-import BaseService from "./BaseService";
+import {NewBaseService} from "./BaseService";
 
-const useBannerItemList = () => BaseService.useServiceListBase<IBannerItem>('/banner-item/index');
+class BannerItemService extends NewBaseService<IBannerItem> {
+  constructor() {
+    super();
+    this.path = '/banner-item';
+  }
+}
 
-const addBannerItem = BaseService.addServiceBase<IBannerItem>('/banner-item/add');
-
-const updateBannerItem = BaseService.updateServiceBase<IBannerItem>('/banner-item/edit');
-
-const deleteBannerItem = BaseService.deleteServiceBase('/banner-item/delete');
-
-const toggleBannerItemStatus = BaseService.updateServiceBase<{ status: boolean }>('/banner-item/edit');
-
-const BannerItemService = {
-  useBannerItemList,
-  addBannerItem,
-  updateBannerItem,
-  deleteBannerItem,
-  toggleBannerItemStatus,
-};
-
-export default BannerItemService;
+export default new BannerItemService();
 
 export interface IBannerItem {
   id?: number;

@@ -11,11 +11,11 @@ import UserService from "../../services/UserService";
 import ChangePasswordModal from "./ChangePasswordModal";
 import AccountInformationModal from "./AccountInformationModal";
 
-interface Props {
+interface IProps {
 
 }
 
-const DashBoardPage: React.FC<Props> = (props) => {
+const DashBoardPage: React.FC<IProps> = (props) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (

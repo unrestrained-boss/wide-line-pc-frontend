@@ -7,14 +7,14 @@ import TextArea from "antd/lib/input/TextArea";
 import MenuService from "../../services/MenuService";
 import Tool from "../../utils/Tool";
 
-interface Props extends FormComponentProps<IRole>, IWLModalInjectProps {
+interface IProps extends FormComponentProps<IRole>, IWLModalInjectProps {
 }
 
 const formItemLayout = {
   labelCol: {span: 4},
   wrapperCol: {span: 20},
 };
-const RoleAddModal: React.FC<Props> = (props) => {
+const RoleAddModal: React.FC<IProps> = (props) => {
   const preData = props.getPreData<IRole>();
   const isEditMode = preData !== undefined;
   const [submitting, setSubmitting] = useState(false);
@@ -47,7 +47,7 @@ const RoleAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleAddSubmit(values: IRole) {
-    const [, err] = await RoleService.addRole(values);
+    const [, err] = await RoleService.add(values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -60,7 +60,7 @@ const RoleAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleEditSubmit(values: IRole) {
-    const [, err] = await RoleService.updateRole(preData.id!, values);
+    const [, err] = await RoleService.update(preData.id!, values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {

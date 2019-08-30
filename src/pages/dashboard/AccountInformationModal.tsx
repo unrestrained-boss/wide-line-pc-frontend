@@ -2,13 +2,13 @@ import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
 import React from "react";
 import { Row, Col } from 'antd';
 
-interface Props extends IWLModalInjectProps {
+interface IProps extends IWLModalInjectProps {
 
 }
 
 const labelSpan = 4;
 const valueSpan = 20;
-const AccountInformationModal: React.FC<Props> = (props) => {
+const AccountInformationModal: React.FC<IProps> = (props) => {
   return (
     <div>
       <Row>

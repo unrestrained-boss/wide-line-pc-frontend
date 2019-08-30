@@ -1,15 +1,16 @@
-import React from 'react';
-import {Tag} from 'antd';
-import {ColumnProps} from "antd/lib/table";
-import AdministrationService, {IAdministration} from "../../services/AdministrationService";
-import AdministrationAddModal from "./AdministrationAddModal";
+import React from "react";
+import "./ProductSkuPage.scss";
 import PageHoc from "../../utils/PageHoc";
+import {IAdministration} from "../../services/AdministrationService";
+import AdministrationAddModal from "../administration/AdministrationAddModal";
+import {ColumnProps} from "antd/lib/table";
+import ProductSkuService from "../../services/ProductSkuService";
 
 interface IProps {
 
 }
 
-const AdministrationPage: React.FC<IProps> = (props) => {
+const ProductSkuPage: React.FC<IProps> = (props: IProps) => {
   const columns: ColumnProps<IAdministration>[] = [
     {title: '账号', dataIndex: 'username', width: 160, align: 'left',},
     {
@@ -26,22 +27,12 @@ const AdministrationPage: React.FC<IProps> = (props) => {
     },
     {title: '电话号码', dataIndex: 'mobile', width: 140},
     {title: '邮箱', dataIndex: 'email', width: 300},
-    {
-      title: '状态', dataIndex: 'status', render: (text) => {
-        return (
-          <Tag color={text === 1 ? 'blue' : 'red'}>
-            {text === 1 ? '启用' : '禁用'}
-          </Tag>
-        );
-      }
-    },
   ];
-
   return PageHoc.TableWithPaging<IAdministration>(
     columns,
     AdministrationAddModal,
-    AdministrationService,
-    '管理员'
+    ProductSkuService
   );
 };
-export default AdministrationPage;
+
+export default ProductSkuPage;

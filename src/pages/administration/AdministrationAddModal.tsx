@@ -59,7 +59,7 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleAddSubmit(values: IAdministration & { password: string, repassword: string }) {
-    const [, err] = await AdministrationService.addAdministration(values);
+    const [, err] = await AdministrationService.add(values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -72,7 +72,7 @@ const AdministrationAddModal: React.FC<Props> = (props) => {
   }
 
   async function handleEditSubmit(values: IAdministration) {
-    const [, err] = await AdministrationService.updateAdministration(preData.id!, values);
+    const [, err] = await AdministrationService.update(preData.id!, values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {

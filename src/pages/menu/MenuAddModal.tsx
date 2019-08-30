@@ -5,14 +5,14 @@ import {IWLModalInjectProps} from "../../components/wl-modal/WLModal";
 import MenuService, {IMenu} from "../../services/MenuService";
 import Tool from "../../utils/Tool";
 
-interface Props extends FormComponentProps<IMenu>, IWLModalInjectProps {
+interface IProps extends FormComponentProps<IMenu>, IWLModalInjectProps {
 }
 
 const formItemLayout = {
   labelCol: {span: 4},
   wrapperCol: {span: 20},
 };
-const MenuAddModal: React.FC<Props> = (props) => {
+const MenuAddModal: React.FC<IProps> = (props) => {
   const preData = props.getPreData<IMenu>();
   const isEditMode = preData !== undefined;
   const [submitting, setSubmitting] = useState(false);

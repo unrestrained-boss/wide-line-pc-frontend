@@ -3,14 +3,14 @@ import {IMenu} from "../../pages/dashboard/DashBoardPage";
 import {dashBoardPath, history} from "../../utils/Constant";
 import {Icon, Menu} from 'antd';
 
-interface Props {
+interface IProps {
   menus?: IMenu[];
   collapsed: boolean;
 }
 
 const dashBoardPathReg = new RegExp(`^${dashBoardPath}`);
 const defaultSelectedKey = history.location.pathname.replace(dashBoardPathReg, '');
-const WLSidebar: React.FC<Props> = (props) => {
+const WLSidebar: React.FC<IProps> = (props) => {
   const {menus = [], collapsed = false} = props;
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   useEffect(() => {
