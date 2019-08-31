@@ -58,7 +58,8 @@ function openModal(Component: any, options: IWLModalOpenOptions = {}) {
     };
     return (
       <ConfigProvider locale={zhCN}>
-        <Modal title={options.title || <span>&nbsp;</span>}
+        <Modal className={"wl-modal"}
+               title={options.title || <span>&nbsp;</span>}
                width={options.width}
                destroyOnClose
                afterClose={() => {

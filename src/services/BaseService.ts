@@ -128,49 +128,6 @@ export default {
   useListWithPagingBase,
 }
 
-export interface IBaseService<T> {
-  useList: () => {
-    total: number;
-    data: T[],
-    setData: Dispatch<SetStateAction<T[]>>;
-    isLoading: boolean;
-    setIsLoading: Dispatch<SetStateAction<boolean>>;
-    isError: boolean;
-    setIsError: Dispatch<SetStateAction<boolean>>;
-    page: number;
-    setPage: Dispatch<SetStateAction<number>>;
-    refresh: () => void;
-  };
-  useListWithPaging: () => {
-    total: number;
-    data: T[],
-    setData: Dispatch<SetStateAction<T[]>>;
-    isLoading: boolean;
-    setIsLoading: Dispatch<SetStateAction<boolean>>;
-    isError: boolean;
-    setIsError: Dispatch<SetStateAction<boolean>>;
-    page: number;
-    setPage: Dispatch<SetStateAction<number>>;
-    refresh: () => void;
-  },
-  add: (body: T) => Promise<[
-    any,
-    ResponseError | null,
-    AxiosResponse
-    ]>;
-  update: (id: number, body: T) => Promise<[
-    any,
-    ResponseError | null,
-    AxiosResponse
-    ]>;
-  remove: (ids: number[]) => Promise<[
-    any,
-    ResponseError | null,
-    AxiosResponse
-    ]>;
-}
-
-
 export class NewBaseService<T> {
   path: string = '';
   useList() {
