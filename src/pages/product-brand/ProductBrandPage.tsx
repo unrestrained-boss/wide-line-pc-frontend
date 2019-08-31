@@ -28,7 +28,7 @@ const ProductBrandPage: React.FC<IProps> = (props: IProps) => {
       }
     },
   ];
-  return PageHoc.TableWithPaging<IProductBrand>(
+  return PageHoc.TablePage<IProductBrand>(
     columns,
     BannerAddModal,
     ProductBrandService,

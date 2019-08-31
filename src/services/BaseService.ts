@@ -3,7 +3,8 @@ import {AxiosResponse} from "axios";
 import Http, {ResponseError} from "../utils/Http";
 
 
-function useServiceListWithoutPagingBase<T>(path: string): {
+function useListBase<T>(path: string): {
+  total: number,
   data: T[],
   setData: Dispatch<SetStateAction<T[]>>;
   isLoading: boolean;
@@ -45,6 +46,7 @@ function useServiceListWithoutPagingBase<T>(path: string): {
     };
   }, [page, count, path]);
   return {
+    total: data.length,
     data,
     setData,
     isLoading,
@@ -59,7 +61,7 @@ function useServiceListWithoutPagingBase<T>(path: string): {
   };
 }
 
-function useServiceListBase<T>(path: string, pageSize = 20): {
+function useListWithPagingBase<T>(path: string, pageSize = 20): {
   total: number;
   data: T[],
   setData: Dispatch<SetStateAction<T[]>>;
@@ -121,66 +123,13 @@ function useServiceListBase<T>(path: string, pageSize = 20): {
   };
 }
 
-function listServiceBase<T>(path: string): (page: number, pageSize?: number) => Promise<[
-  { total: number, data: T[] },
-  ResponseError | null,
-  AxiosResponse
-  ]> {
-  return (page: number, pageSize = 20) => {
-    return Http.get(path, {
-      params: {page, pageSize}
-    });
-  }
-}
-
-function addServiceBase<T>(path: string): (body: T) => Promise<[
-  any,
-  ResponseError | null,
-  AxiosResponse
-  ]> {
-  return (body: T) => {
-    return Http.post(path, body);
-  }
-}
-
-function updateServiceBase<T>(path: string): (id: number, body: T) => Promise<[
-  any,
-  ResponseError | null,
-  AxiosResponse
-  ]> {
-  return (id: number, body: T) => {
-    return Http.post(path, {
-      id,
-      ...body,
-    });
-  }
-}
-
-function deleteServiceBase(path: string): (ids: number[]) => Promise<[
-  any,
-  ResponseError | null,
-  AxiosResponse
-  ]> {
-  return (ids: number[]) => {
-    return Http.get(path, {
-      params: {
-        ids: ids.join(','),
-      }
-    });
-  }
-}
-
 export default {
-  useServiceListWithoutPagingBase,
-  useServiceListBase,
-  listServiceBase,
-  addServiceBase,
-  updateServiceBase,
-  deleteServiceBase,
+  useListBase,
+  useListWithPagingBase,
 }
 
 export interface IBaseService<T> {
-  listWithPaging: () => {
+  useList: () => {
     total: number;
     data: T[],
     setData: Dispatch<SetStateAction<T[]>>;
@@ -192,11 +141,18 @@ export interface IBaseService<T> {
     setPage: Dispatch<SetStateAction<number>>;
     refresh: () => void;
   };
-  // list: (page: number, pageSize?: number) => Promise<[
-  //   { total: number, data: T[] },
-  //   ResponseError | null,
-  //   AxiosResponse
-  //   ]>,
+  useListWithPaging: () => {
+    total: number;
+    data: T[],
+    setData: Dispatch<SetStateAction<T[]>>;
+    isLoading: boolean;
+    setIsLoading: Dispatch<SetStateAction<boolean>>;
+    isError: boolean;
+    setIsError: Dispatch<SetStateAction<boolean>>;
+    page: number;
+    setPage: Dispatch<SetStateAction<number>>;
+    refresh: () => void;
+  },
   add: (body: T) => Promise<[
     any,
     ResponseError | null,
@@ -217,102 +173,14 @@ export interface IBaseService<T> {
 
 export class NewBaseService<T> {
   path: string = '';
-
-  listWithOutPaging() {
+  useList() {
     const path = this.path;
-    const [count, setCount] = useState<number>(1);
-    const [page, setPage] = useState<number>(1);
-    const [data, setData] = useState<T[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isError, setIsError] = useState<boolean>(false);
-
-    useEffect(() => {
-      let mounted = true;
-      const fetchData = async () => {
-        setIsError(false);
-        setIsLoading(true);
-        const [data, err] = await Http.get(path);
-        if (!mounted) {
-          return;
-        }
-        setIsLoading(false);
-        if (err) {
-          setIsError(true);
-          return;
-        }
-        if (data) {
-          setData(data);
-        }
-      };
-      fetchData();
-      return () => {
-        mounted = false;
-      };
-    }, [page, count, path]);
-    return {
-      data,
-      setData,
-      isLoading,
-      setIsLoading,
-      isError,
-      setIsError,
-      page,
-      setPage,
-      refresh() {
-        setCount(count + 1);
-      }
-    };
+    return useListBase<T>(path + '/all');
   }
 
-  listWithPaging(pageSize = 20) {
+  useListWithPaging(pageSize = 20) {
     const path = this.path;
-    const [count, setCount] = useState<number>(1);
-    const [page, setPage] = useState<number>(1);
-    const [total, setTotal] = useState<number>(1);
-    const [data, setData] = useState<T[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isError, setIsError] = useState<boolean>(false);
-
-    useEffect(() => {
-      let mounted = true;
-      const fetchData = async () => {
-        setIsError(false);
-        setIsLoading(true);
-        const [data, err] = await Http.get(path + '/index', {
-          params: {page, pageSize}
-        });
-        if (!mounted) {
-          return;
-        }
-        setIsLoading(false);
-        if (err) {
-          setIsError(true);
-          return;
-        }
-        if (data) {
-          setTotal(data.total);
-          setData(data.data);
-        }
-      };
-      fetchData();
-      return () => {
-        mounted = false;
-      };
-    }, [page, count, path, pageSize]);
-    return {
-      total,
-      data,
-      setData,
-      isLoading,
-      setIsLoading,
-      isError,
-      setIsError,
-      page,
-      setPage,
-      refresh() {
-        setCount(count + 1);
-      }
-    };
+    return useListWithPagingBase<T>(path + '/index', pageSize);
   }
 
   add(body: T): Promise<[

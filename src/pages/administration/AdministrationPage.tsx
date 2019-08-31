@@ -37,7 +37,7 @@ const AdministrationPage: React.FC<IProps> = (props) => {
     },
   ];
 
-  return PageHoc.TableWithPaging<IAdministration>(
+  return PageHoc.TablePage<IAdministration>(
     columns,
     AdministrationAddModal,
     AdministrationService,

@@ -47,7 +47,7 @@ const MenuAddModal: React.FC<IProps> = (props) => {
   }
 
   async function handleAddSubmit(values: IMenu) {
-    const [, err] = await MenuService.addMenu(values);
+    const [, err] = await MenuService.add(values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -60,7 +60,7 @@ const MenuAddModal: React.FC<IProps> = (props) => {
   }
 
   async function handleEditSubmit(values: IMenu) {
-    const [, err] = await MenuService.updateMenu(preData.id!, values);
+    const [, err] = await MenuService.update(preData.id!, values);
     props.setCanClosable(true);
     setSubmitting(false);
     if (err) {
@@ -84,8 +84,8 @@ const MenuAddModal: React.FC<IProps> = (props) => {
     }
     // eslint-disable-next-line
   }, []);
-  const {data: menuData, isLoading: menuIsLoading, isError: menuIsError, refresh: menuRefresh} = MenuService.useMenuList();
-  const {data: urlData, isLoading: urlIsLoading, isError: urlIsError, refresh: urlRefresh} = MenuService.useMenuUrlList();
+  const {data: menuData, isLoading: menuIsLoading, isError: menuIsError, refresh: menuRefresh} = MenuService.useList();
+  const {data: urlData, isLoading: urlIsLoading, isError: urlIsError, refresh: urlRefresh} = MenuService.useMenuList();
   const treeData = useMemo(() => {
     return [
       {

@@ -22,7 +22,7 @@ const BannerPage: React.FC<IProps> = (props) => {
       }
     },
   ];
-  return PageHoc.TableWithPaging<IBanner>(
+  return PageHoc.TablePage<IBanner>(
     columns,
     BannerAddModal,
     BannerService,

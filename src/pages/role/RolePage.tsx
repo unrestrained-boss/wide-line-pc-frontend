@@ -23,7 +23,7 @@ const RolePage: React.FC<IProps> = (props) => {
       }
     },
   ];
-  return PageHoc.TableWithPaging<IRole>(
+  return PageHoc.TablePage<IRole>(
     columns,
     RoleAddModal,
     RoleService,

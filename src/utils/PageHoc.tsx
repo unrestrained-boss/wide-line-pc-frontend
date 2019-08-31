@@ -1,15 +1,22 @@
 import React, {useState} from "react";
-import {ColumnProps} from "antd/lib/table";
+import {ColumnProps, TableProps} from "antd/lib/table";
 import {Alert, Button, Icon, message, Pagination, Table} from "antd";
 import WLModal from "../components/wl-modal/WLModal";
 import {NewBaseService} from "../services/BaseService";
 
-function TableWithPaging<T extends {id?: number}>(
+interface ITablePageOption<T> {
+  pagination?: boolean;
+  tableProps?: TableProps<T>;
+}
+function TablePage<T extends {id?: number}>(
   columns: ColumnProps<T>[],
   modal: any,
   service: NewBaseService<T>,
   label: string,
+  options?: ITablePageOption<T>,
 ) {
+  options = options || {};
+  const { tableProps = {}, pagination = true } = options;
   columns.push({
     title: '操作', align: 'center', width: 120, render: (_, row) => {
       return (
@@ -26,7 +33,7 @@ function TableWithPaging<T extends {id?: number}>(
     }
   },);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
-  const {total, data, isLoading, isError, page, setPage, refresh} = service.listWithPaging();
+  const {total, data, isLoading, isError, page, setPage, refresh} = !pagination ?  service.useList() : service.useListWithPaging();
 
   function handleAdd() {
     WLModal.openModal(modal, {
@@ -79,7 +86,6 @@ function TableWithPaging<T extends {id?: number}>(
           批量删除
         </Button>
       </div>
-
       {isError && (
         <Alert style={{margin: '0 0 20px 0'}}
                showIcon
@@ -99,6 +105,7 @@ function TableWithPaging<T extends {id?: number}>(
                selectedRowKeys,
                onChange: e => setSelectedRowKeys(e),
              }}
+             {...tableProps}
              bordered
              loading={{
                spinning: isLoading,
@@ -111,18 +118,21 @@ function TableWithPaging<T extends {id?: number}>(
              rowKey={"id"}
              columns={columns}
              dataSource={data}/>
-      <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
-                  pageSize={20}
-                  disabled={isLoading}
-                  hideOnSinglePage
-                  onChange={page => setPage(page)}
-                  total={total}/>
+      {pagination && (
+        <Pagination style={{marginTop: '20px', textAlign: 'right'}} current={page}
+                    pageSize={20}
+                    disabled={isLoading}
+                    hideOnSinglePage={false}
+                    onChange={page => setPage(page)}
+                    total={total}/>
+      )}
     </div>
   );
 }
 
+
 const PageHoc = {
-  TableWithPaging,
+  TablePage,
 };
 
 export default PageHoc;

@@ -27,7 +27,7 @@ const ProductSkuPage: React.FC<IProps> = (props: IProps) => {
     {title: '电话号码', dataIndex: 'mobile', width: 140},
     {title: '邮箱', dataIndex: 'email', width: 300},
   ];
-  return PageHoc.TableWithPaging<IProductSku>(
+  return PageHoc.TablePage<IProductSku>(
     columns,
     AdministrationAddModal,
     ProductSkuService,

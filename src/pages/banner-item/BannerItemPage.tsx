@@ -32,7 +32,7 @@ const BannerItemPage: React.FC<IProps> = (props) => {
       }
     },
   ];
-  return PageHoc.TableWithPaging<IBannerItem>(
+  return PageHoc.TablePage<IBannerItem>(
     columns,
     BannerItemAddModal,
     BannerItemService,

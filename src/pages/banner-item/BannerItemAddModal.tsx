@@ -93,7 +93,7 @@ const BannerItemAddModal: React.FC<Props> = (props) => {
     // eslint-disable-next-line
   }, []);
   const img = getFieldValue('img') || [];
-  const {data: bannerData, isLoading: bannerIsLoading, isError: bannerIsError, refresh: bannerRefresh} = BannerService.listWithOutPaging();
+  const {data: bannerData, isLoading: bannerIsLoading, isError: bannerIsError, refresh: bannerRefresh} = BannerService.useList();
 
   return (
     <Spin spinning={submitting || bannerIsLoading}>
