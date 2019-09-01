@@ -1,10 +1,10 @@
 import React from "react";
 import "./ProductBrandPage.scss";
 import {Tag} from "antd";
-import BannerAddModal from "../banner/BannerAddModal";
 import {ColumnProps} from "antd/lib/table";
 import PageHoc from "../../utils/PageHoc";
 import ProductBrandService, {IProductBrand} from "../../services/ProductBrandService";
+import ProductBrandAddModal from "./ProductBrandAddModal";
 
 interface IProps {
 
@@ -12,12 +12,16 @@ interface IProps {
 
 const ProductBrandPage: React.FC<IProps> = (props: IProps) => {
   const columns: ColumnProps<IProductBrand>[] = [
-    {title: '名称', dataIndex: 'name', width: 200, align: 'left',},
-    {title: '首字母', dataIndex: 'initials', width: 200, align: 'left',},
-    {title: 'logo', dataIndex: 'logo', width: 200, align: 'left',},
-    {title: '专区大图', dataIndex: 'lager', width: 200, align: 'left',},
-    {title: '起源故事', dataIndex: 'story', width: 200, align: 'left',},
-    {title: '品牌制造商', dataIndex: 'isTheManufacturer', width: 200, align: 'left',},
+    {title: '名称', dataIndex: 'name', width: 500, align: 'left',},
+    {
+      title: 'is_bottom', dataIndex: 'is_bottom', align: 'left', render: (text) => {
+        return (
+          <Tag color={text === 1 ? 'blue' : 'red'}>
+            {text === 1 ? '是' : '否'}
+          </Tag>
+        );
+      }
+    },
     {
       title: '状态', dataIndex: 'status', render: (text) => {
         return (
@@ -30,9 +34,12 @@ const ProductBrandPage: React.FC<IProps> = (props: IProps) => {
   ];
   return PageHoc.TablePage<IProductBrand>(
     columns,
-    BannerAddModal,
+    ProductBrandAddModal,
     ProductBrandService,
-    '品牌'
+    '品牌',
+    {
+      pagination: false
+    }
   );
 };
 

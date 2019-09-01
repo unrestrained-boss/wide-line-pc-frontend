@@ -1,9 +1,13 @@
-import {NewBaseService} from "./BaseService";
+import BaseService, {NewBaseService} from "./BaseService";
 
 class ProductBrandService extends NewBaseService<IProductBrand> {
   constructor() {
     super();
-    this.path = '/user';
+    this.path = '/product-brand';
+  }
+  useList() {
+    const path = this.path;
+    return BaseService.useListBase<IProductBrand>(path + '/index');
   }
 }
 
@@ -13,4 +17,6 @@ export interface IProductBrand {
   id?: number;
   name: string;
   status: number;
+  is_bottom: number;
+  pid: number;
 }
