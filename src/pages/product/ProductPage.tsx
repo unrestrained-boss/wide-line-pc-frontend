@@ -11,7 +11,7 @@ function handleAdd() {
   WLModal.openModal(ProductAddModal, {
     title: '添加产品',
     defaultCanDismiss: false,
-    width: '90%'
+    width: '680px'
   });
   
 }

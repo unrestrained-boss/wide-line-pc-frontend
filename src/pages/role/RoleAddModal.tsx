@@ -83,7 +83,7 @@ const RoleAddModal: React.FC<IProps> = (props) => {
     }
     // eslint-disable-next-line
   }, []);
-  const {data: menuData, isLoading: menuIsLoading, isError: menuIsError, refresh: menuRefresh} = MenuService.useMenuList();
+  const {data: menuData, isLoading: menuIsLoading, isError: menuIsError, refresh: menuRefresh} = MenuService.useList();
   const treeData = useMemo(() => {
     return Tool.transformTitleAndValue(menuData, [], 'name', 'id');
   }, [menuData]);
