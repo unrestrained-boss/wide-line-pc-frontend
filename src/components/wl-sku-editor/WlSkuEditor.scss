@@ -1,0 +1,19 @@
+.wl-sku-editor {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  .wl-sku-editor-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    &:first-child {
+      margin-top: 0;
+    }
+    >.ant-input,
+    >.ant-input-number {
+      flex: 1;
+      width: 0;
+    }
+  }
+}

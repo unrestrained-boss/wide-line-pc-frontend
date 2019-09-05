@@ -38,6 +38,7 @@ function TablePage<T extends {id?: number}>(
   function handleAdd() {
     WLModal.openModal(modal, {
       title: '添加' + label,
+      defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
@@ -47,6 +48,7 @@ function TablePage<T extends {id?: number}>(
     WLModal.openModal(modal, {
       title: '编辑' + label,
       data: row,
+      defaultCanDismiss: false,
       onComplete() {
         refresh();
       }
@@ -54,6 +56,7 @@ function TablePage<T extends {id?: number}>(
   }
   function handleDel(ids: number[], clearSelectedRowKeys = false) {
     WLModal.confirm("确实要删除吗?", {
+
       async onOk({setLoading, close, failBack}) {
         setLoading();
         const [, err] = await service.remove(ids);

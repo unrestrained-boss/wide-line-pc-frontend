@@ -123,6 +123,57 @@ function useListWithPagingBase<T>(path: string, pageSize = 20): {
   };
 }
 
+function useDetailBase<T>(path: string, id: number): {
+  data: T | undefined,
+  setData: Dispatch<SetStateAction<T | undefined>>;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isError: boolean;
+  setIsError: Dispatch<SetStateAction<boolean>>;
+  refresh: () => void;
+} {
+  const [count, setCount] = useState<number>(1);
+  const [data, setData] = useState<T>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  useEffect(() => {
+    let mounted = true;
+    const fetchData = async () => {
+      setIsError(false);
+      setIsLoading(true);
+      const [data, err] = await Http.get(path, {
+        params: {id}
+      });
+      if (!mounted) {
+        return;
+      }
+      setIsLoading(false);
+      if (err) {
+        setIsError(true);
+        return;
+      }
+      if (data) {
+        setData(data.data);
+      }
+    };
+    fetchData();
+    return () => {
+      mounted = false;
+    };
+  }, [count, id, path]);
+  return {
+    data,
+    setData,
+    isLoading,
+    setIsLoading,
+    isError,
+    setIsError,
+    refresh() {
+      setCount(count + 1);
+    }
+  };
+}
+
 export default {
   useListBase,
   useListWithPagingBase,
@@ -130,6 +181,7 @@ export default {
 
 export class NewBaseService<T> {
   path: string = '';
+
   useList() {
     const path = this.path;
     return useListBase<T>(path + '/all');
@@ -138,6 +190,19 @@ export class NewBaseService<T> {
   useListWithPaging(pageSize = 20) {
     const path = this.path;
     return useListWithPagingBase<T>(path + '/index', pageSize);
+  }
+
+  useDetail(id: number) {
+    const path = this.path;
+    return useDetailBase<T>(path + '/view', id);
+  }
+
+  detail<T>(id: number): Promise<[
+    T,
+    ResponseError | null,
+    AxiosResponse
+    ]> {
+    return Http.get(this.path + '/view', {params: {id}});
   }
 
   add(body: T): Promise<[

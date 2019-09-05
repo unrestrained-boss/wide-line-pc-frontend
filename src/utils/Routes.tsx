@@ -72,14 +72,10 @@ const localRoutes: { [s: number]: IRoute } = {
     component: loadComponent('product/ProductPage'),
   },
   201: {
-    path: '/product-sku',
-    component: loadComponent('product-sku/ProductSkuPage'),
-  },
-  202: {
     path: '/product-classification',
     component: loadComponent('product-classification/ProductClassificationPage'),
   },
-  203: {
+  202: {
     path: '/product-brand',
     component: loadComponent('product-brand/ProductBrandPage'),
   },

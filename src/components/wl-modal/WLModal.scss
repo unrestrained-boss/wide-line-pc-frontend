@@ -1,11 +1,12 @@
 .ant-modal-content {
-  //max-height: 800px;
   display: flex;
   flex-direction: column;
+  max-height: 800px;
   .ant-modal-body {
     flex: 1;
     height: 0;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 .wl-modal {
